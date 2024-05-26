@@ -3,31 +3,35 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="style.css">
 
         <title>calculator</title>
     </head>
     <body>
         <h1>Calculator</h1>
-        <table>
-            <tr>
-                <td><input type="text"></td>
-            </tr>
-            <tr class="row-2">
-                <td><input type="button" value="1"></td>
-                <td><input type="button" value="2"></td>
-                <td><input type="button" value="3"></td>
-            </tr>
-            <tr>
-                <td><input type="button" value="4"></td>
-                <td><input type="button" value="5"></td>
-                <td><input type="button" value="6"></td>
-            </tr>
-            <tr>
-                <td><input type="button" value="7"></td>
-                <td><input type="button" value="8"></td>
-                <td><input type="button" value="9"></td>
-            </tr>
-        </table>
+
+        <div class="calculator">
+            <input type="text" id="calculator-text"/>
+            <input type="button" value="C" class="symbol"/>
+            <input type="button" value="1" class="symbol"/>
+            <input type="button" value="2" class="symbol"/>
+            <input type="button" value="3" class="symbol"/>
+            <input type="button" value="/" class="symbol"/>
+            <input type="button" value="4" class="symbol"/>
+            <input type="button" value="5" class="symbol"/>
+            <input type="button" value="6" class="symbol"/>
+            <input type="button" value="*" class="symbol"/>
+
+            <input type="button" value="7" class="symbol"/>
+            <input type="button" value="8" class="symbol"/>
+            <input type="button" value="9" class="symbol"/>
+            <input type="button" value="-" class="symbol"/>
+            <input type="button" value="0" class="symbol"/>
+            <input type="button" value="." class="symbol">
+            <input type="button" value="=" class="symbol"/>
+            <input type="button" value="+" class="symbol"/>
+        </div>
 
     </body>
+    <script src="index.js"></script>
 </html>

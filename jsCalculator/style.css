@@ -1,7 +1,19 @@
-.row-2 {
-    width: 0px;
+body {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
 }
 
-*td {
-    width: 0px;
+.calculator {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.calculator input[type="text"] {
+    flex-basis: calc(74.6% - 10px);
+}
+
+.calculator input[type="button"] {
+    flex-basis: calc(25% - 5px);
 }
