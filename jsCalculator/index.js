@@ -231,6 +231,3 @@ function calculate(outPutQueue) {
   return stack[0];
 
 }
-
-// test calculator
-// why is it returning NaN
