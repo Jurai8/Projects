@@ -229,5 +229,4 @@ function calculate(outPutQueue) {
 
   // return the final answer to "polish"
   return stack[0];
-
 }
