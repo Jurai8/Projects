@@ -1,24 +1,41 @@
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <nav>
-        <p>hello</p>
-      </nav>
-
-      {menu()}
+    <div>
+      <Navbar />
     </div>
   );
 }
 
-function menu() {
+
+function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleNavbar = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="menu">
-      <p>h</p>
+    <div className={`navbar ${isOpen ? 'navbar--open' : ''}`} onClick={toggleNavbar}>
+      {/* Navbar content */}
+      <div className="navbar navbar-content">
+        <button className='navbar_link' id="menu">
+          <span onClick={toggleNavbar} class="material-icons">
+            list
+          </span>
+          {/* when textflag is false show the text  */}
+          {!isOpen && ''}
+        </button>
+      </div>
     </div>
   );
 }
+
+// create two components?
+// sidebar closed and sidebar opened?
+
 
 /*1. left vertical active bar
   2. top horizontal active bar
