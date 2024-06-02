@@ -13,9 +13,8 @@
   transition: left 0.25s ease-in-out, opacity 0.25s ease-in-out;
 }
 
-.navbar-open {
-  left: 0;
-  opacity: 1;
+.navbar-closed {
+  left: -100;
 }
 
 .navbar_link {
