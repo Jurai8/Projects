@@ -1,6 +1,36 @@
 import React, { useState } from 'react';
 
-export default function Navbar() {
+// take toggleNabar as an arg
+export function OpenNavbar ({ toggleNavbar }) {
+  return (
+
+    <div className="navbar">
+      <div className='navbar_link'>
+
+        {/* when list is clicked, call toggleNavbar */}
+        <span onClick={toggleNavbar} className="material-icons">
+            list
+        </span>
+      </div>
+      {/* when list is clicked, call toggleNavbar */}
+    </div>
+  );
+}
+
+
+export function ClosedNavbar({ toggleNavbar }) {
+  return (
+    <div className="navbar navbar-closed">
+      <div className='navbar_link closed'>
+        <span onClick={toggleNavbar} className="material-icons">
+              menu_open
+        </span>
+      </div>
+    </div>
+);
+}
+
+export function Navbar() {
 
   // set 'isOpen to false
   const [isOpen, setIsOpen] = useState(false);
@@ -18,30 +48,6 @@ export default function Navbar() {
   // else close the navbar
   : <ClosedNavbar toggleNavbar={toggleNavbar} />;
 }
-
-// take toggleNabar as an arg
-export function OpenNavbar ({ toggleNavbar }) {
-  return (
-    <div className="navbar">
-      {/* when list is clicked, call toggleNavbar */}
-        <span onClick={toggleNavbar} className="material-icons">
-            list
-        </span>
-    </div>
-  );
-}
-
-
-export function ClosedNavbar({ toggleNavbar }) {
-  return (
-    <div className="navbar navbar-closed">
-        <span onClick={toggleNavbar} className="material-icons">
-            menu_open
-        </span>
-    </div>
-);
-}
-
 
 // named component = the open version of navbar
 // default  component = closed version

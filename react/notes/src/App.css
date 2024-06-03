@@ -10,16 +10,15 @@
   border-right: 2px solid #008C71;
   box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.25);
   opacity: 1;
-  transition: left 0.25s ease-in-out, opacity 0.25s ease-in-out;
+  transition: left 1.50s ease-in-out, opacity 0.25s ease-in-out;
 }
 
 .navbar-closed {
-  left: -100;
+  left: -150px;
 }
 
 .navbar_link {
   display: flex;
-  align-items: center;
   background: #008C71;
   color: white;
   padding: 12px;
@@ -29,11 +28,11 @@
   border-bottom: 1px solid  #009879;
 }
 
+.closed {
+  justify-content: flex-end;
+}
+
 .navbar_link:active {
   background: #007d65;
 }
 
-.navbar-content {
-  display: flex;
-  justify-content: flex-end;
-}

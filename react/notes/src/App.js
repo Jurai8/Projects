@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import './App.css';
-import { OpenNavbar, ClosedNavbar } from './path_to_your_file';
+import { OpenNavbar, ClosedNavbar, Navbar} from './Sidebar.js';
 
 function App() {
   return (
     <div>
-      <ClosedNavbar />
+      <Navbar />
     </div>
   );
 }
@@ -16,7 +16,11 @@ function App() {
 
 
 /*1. left vertical active bar
-  2. top horizontal active bar
+    - new note
+    - account
+    - save note
+    
+
   3. top left corner - user icon
   4. the page to write on (color, default font)
   5. page to create an account
