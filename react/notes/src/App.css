@@ -18,7 +18,7 @@
 }
 
 .navbar_link {
-  display: flex;
+  display: block;
   background: #008C71;
   color: white;
   padding: 12px;
@@ -29,10 +29,26 @@
 }
 
 .closed {
-  justify-content: flex-end;
+  text-align: right;
+  width: 89%;
 }
 
-.navbar_link:active {
+.sidebar-items:active {
   background: #007d65;
 }
 
+.sidebar-items {
+  display: flex;
+  align-items: center;
+  background: #008C71;
+  color: white;
+  padding: 12px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.85rem;
+  border-bottom: 1px solid  #009879;
+}
+
+span.material-icons {
+  margin: 5px;
+}

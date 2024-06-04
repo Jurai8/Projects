@@ -3,16 +3,42 @@ import React, { useState } from 'react';
 // take toggleNabar as an arg
 export function OpenNavbar ({ toggleNavbar }) {
   return (
-
     <div className="navbar">
       <div className='navbar_link'>
 
-        {/* when list is clicked, call toggleNavbar */}
-        <span onClick={toggleNavbar} className="material-icons">
-            list
-        </span>
+        {/* sidebar = display flex */}
+        <div onClick={toggleNavbar} className='sidebar-items'>
+          {/* when list is clicked, call toggleNavbar */}
+          <span className="material-icons">
+              list
+          </span> Menu
+        </div>
+
+        <div onClick={toggleNavbar} className='sidebar-items'>
+          <span className="material-icons">
+              add_circle
+          </span> New note
+        </div>
+
+        <div onClick={toggleNavbar} className='sidebar-items'>
+          <span className="material-icons">
+              save
+          </span> Save note
+        </div>
+
+        <div onClick={toggleNavbar} className='sidebar-items'>
+          <span className="material-icons">
+              share
+          </span> Share
+        </div>
+
+        <div onClick={toggleNavbar} className='sidebar-items'>
+          <span className="material-icons">
+              person
+          </span> Account
+        </div>
+
       </div>
-      {/* when list is clicked, call toggleNavbar */}
     </div>
   );
 }
@@ -21,8 +47,8 @@ export function OpenNavbar ({ toggleNavbar }) {
 export function ClosedNavbar({ toggleNavbar }) {
   return (
     <div className="navbar navbar-closed">
-      <div className='navbar_link closed'>
-        <span onClick={toggleNavbar} className="material-icons">
+      <div onClick={toggleNavbar} className='navbar_link closed'>
+        <span className="material-icons">
               menu_open
         </span>
       </div>
@@ -57,18 +83,5 @@ export function Navbar() {
 // css handles transtion time etc
 
 
-/*
-<div className={`navbar ${isOpen ? 'navbar--open' : ''}`} onClick={toggleNavbar}>
-    **Navbar content 
-  <div className="navbar navbar-content">
-    <button className='navbar_link' id="menu">
-      <span onClick={toggleNavbar} class="material-icons">
-        list
-      </span>
-        **when textflag is false show the text  
-      {!isOpen && ''}
-    </button>
-  </div> 
-</div>
-*/
+
 

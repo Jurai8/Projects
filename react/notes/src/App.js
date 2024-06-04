@@ -4,6 +4,8 @@ import { OpenNavbar, ClosedNavbar, Navbar} from './Sidebar.js';
 
 function App() {
   return (
+    // figure out how to allow people to write on the page
+    // should a div cover the entire page, the said div=input tag?
     <div>
       <Navbar />
     </div>
