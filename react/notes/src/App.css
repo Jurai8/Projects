@@ -1,3 +1,5 @@
+
+/* Sidebar */
 .navbar {
   /* fix on top everything as you scroll */
   position: fixed;
@@ -10,7 +12,7 @@
   border-right: 2px solid #008C71;
   box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.25);
   opacity: 1;
-  transition: left 1.50s ease-in-out, opacity 0.25s ease-in-out;
+  transition: left 10.50s ease-in-out, opacity 0.25s ease-in-out;
 }
 
 .navbar-closed {
@@ -51,4 +53,34 @@
 
 span.material-icons {
   margin: 5px;
+}
+
+/* Cursor */
+.cursor {cursor: auto;}
+
+.text {
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* after the .text input blinking cursor */
+.text :after {
+  content: '';
+  width: 2px;
+  height: 25px;
+  margin-top: 10px;
+  background: black;
+  opacity: 0;
+  display: inline-block;
+  animation: blink 1s linear infinite alternate;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
