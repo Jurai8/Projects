@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 
+// when user types add it in between the h1 tag
 export function Cursor () {
     return (
-        // create the vertical line
-        // how to return what the user is typing
-        // update letter and put cursor in front of last letter
+        // create giant text area and figure out how to change it with css
+        // then how to change it's state? e.g when user wants bullet points
         <div className="text">
-            <h1>lorem</h1>
+            <textarea rows="4" cols="50"></textarea>
         </div> 
     )
 }
