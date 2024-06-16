@@ -6,12 +6,9 @@ import { Navbar } from './Sidebar.js';
 
 function App() {
   return (
-    <div>
+    <div className='parent-container'>
       <Navbar />
-
-      <div className=''>
-        <Cursor />
-      </div>
+      <Cursor />
     </div>
   );
 }
