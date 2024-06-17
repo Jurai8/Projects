@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { Cursor } from './Cursor.js';
+import { FullTextArea } from './Cursor.js';
 import { Navbar } from './Sidebar.js';
 
 
@@ -8,7 +8,11 @@ function App() {
   return (
     <div className='parent-container'>
       <Navbar />
-      <Cursor />
+      <FullTextArea />
+      {/* when navbar is toggled, texarea also needs to change
+          However, i can't call textare within the navbar components
+          it needs to be called within App.js so that it's displayed correctly
+          .. maybe return a value to app.js. if that value changes then toggle textarea */}
     </div>
   );
 }

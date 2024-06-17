@@ -14,30 +14,29 @@ export function OpenNavbar ({ toggleNavbar }) {
           </span> Menu
         </div>
 
-        <div onClick={toggleNavbar} className='sidebar-items'>
+        <div className='sidebar-items'>
           <span className="material-icons">
               add_circle
           </span> New note
         </div>
 
-        <div onClick={toggleNavbar} className='sidebar-items'>
+        <div className='sidebar-items'>
           <span className="material-icons">
               save
           </span> Save note
         </div>
 
-        <div onClick={toggleNavbar} className='sidebar-items'>
+        <div className='sidebar-items'>
           <span className="material-icons">
               share
           </span> Share
         </div>
 
-        <div onClick={toggleNavbar} className='sidebar-items'>
+        <div className='sidebar-items'>
           <span className="material-icons">
               person
           </span> Account
         </div>
-
       </div>
     </div>
   );
@@ -70,18 +69,18 @@ export function Navbar() {
   // if "isOpen" =  true
   return isOpen ? 
   // open the navbar
-  <OpenNavbar toggleNavbar={toggleNavbar} /> 
+  <div>
+    <OpenNavbar toggleNavbar={toggleNavbar}/> 
+  </div>
   // else close the navbar
-  : <ClosedNavbar toggleNavbar={toggleNavbar} />;
+  : <div>
+      <ClosedNavbar toggleNavbar={toggleNavbar} />;
+    </div>
 }
 
-// named component = the open version of navbar
-// default  component = closed version
-// when a button within the defualt component is clicked
-    // return the named component
 
-// css handles transtion time etc
-
-
+// a prop is basically a variable?
+// i'm defining a variable called textAreaSize and setting it's value to the function textAreaSize
+// the other components can then reference the variable to call the function.
 
 

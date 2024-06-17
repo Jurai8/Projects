@@ -3,15 +3,18 @@ html {
 }
 
 body {
-  height: 100vh;
+  height: 100%;
 }
 
 .parent-container {
-  height: 100vh;
+  height: 100%;
+
 }
 
 #root {
-  height: 100vh;
+  height: 100%;
+  margin-top: 0px;
+  padding-top: 0px;
 }
 
 
@@ -94,3 +97,5 @@ span.material-icons {
 .textarea-shrink {
   margin-left: 37.5vh;
 }
+
+/* The page shouldn't scroll yet */

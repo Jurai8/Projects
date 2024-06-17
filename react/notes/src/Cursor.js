@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; 
 
 // when user types add it in between the h1 tag
-export function Cursor () {
+export function FullTextArea () {
     return (
         // create giant text area and figure out how to change it with css
         // then how to change it's state? e.g when user wants bullet points
@@ -10,6 +10,16 @@ export function Cursor () {
         </div> 
     )
 }
+
+/* export function SmallTextArea () {
+    return (
+        // create giant text area and figure out how to change it with css
+        // then how to change it's state? e.g when user wants bullet points
+        <div className="textarea-container textarea-shrink">
+            <textarea id="typing-area" name="typing-area"></textarea>
+        </div> 
+    )
+} */
 
 
 
