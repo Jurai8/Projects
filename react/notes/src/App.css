@@ -49,7 +49,7 @@ body {
 
 .closed {
   text-align: right;
-  width: 89%;
+  max-width: 89%;
 }
 
 .sidebar-items:active {
@@ -77,15 +77,20 @@ span.material-icons {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 95%;
+  max-width: 95%;
   margin-left: 10vh;
-  height: 100%
+  margin-right: 3vh;
+  height: 100%;
 }
 
 #typing-area {
   resize: none;
   width: 100%;
+  max-width: 100%;
   height: 100%;
 }
 
 /* when the navbar opens, the textarea width must decrease*/
+.textarea-shrink {
+  margin-left: 37.5vh;
+}
