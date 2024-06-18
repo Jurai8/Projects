@@ -1,32 +1,33 @@
-html {
-  height: 100vh;
-}
 
-body {
+html, body {
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .parent-container {
+  display: flex;
   height: 100%;
-
+  margin: 0;
+  padding: 0;
 }
 
 #root {
   height: 100%;
-  margin-top: 0px;
-  padding-top: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 
 /* Sidebar */
-.navbar {
+ .navbar {
   /* fix on top everything as you scroll */
   position: fixed;
   /* position at the top left  window*/
   top: 0;
   left: 0;
   width: 200px;
-  height: 100vh; 
+  height: 100%; 
   background: #009879;
   border-right: 2px solid #008C71;
   box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.25);
@@ -75,14 +76,16 @@ span.material-icons {
   margin: 5px;
 }
 
+
 /* textarea */
 .textarea-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   max-width: 95%;
-  margin-left: 10vh;
-  margin-right: 3vh;
+  width: 95%;
+  margin-left: 10%;
+  margin-right: 3%;
   height: 100%;
 }
 
@@ -93,9 +96,8 @@ span.material-icons {
   height: 100%;
 }
 
-/* when the navbar opens, the textarea width must decrease*/
+
 .textarea-shrink {
   margin-left: 37.5vh;
-}
+} 
 
-/* The page shouldn't scroll yet */
