@@ -28,17 +28,13 @@ html, body {
   left: 0;
   width: 200px;
   height: 100%; 
-  background: #009879;
+  background:#008C71;
   border-right: 2px solid #008C71;
   box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.25);
   opacity: 1;
   transition: left 10.50s ease-in-out, opacity 0.25s ease-in-out;
 }
 
-.navbar-closed {
-  /* figure out how left moves it*/
-  left: -27.22VH;
-}
 
 .navbar_link {
   display: block;
@@ -49,6 +45,11 @@ html, body {
   font-weight: bold;
   font-size: 0.85rem;
   border-bottom: 1px solid  #009879;
+}
+
+.navbar-closed {
+  /* figure out how left moves it*/
+  left: -11.8%;
 }
 
 .closed {
@@ -84,7 +85,7 @@ span.material-icons {
   align-items: center;
   max-width: 95%;
   width: 95%;
-  margin-left: 10%;
+  margin-left: 5%;
   margin-right: 3%;
   height: 100%;
 }
@@ -95,9 +96,4 @@ span.material-icons {
   max-width: 100%;
   height: 100%;
 }
-
-
-.textarea-shrink {
-  margin-left: 37.5vh;
-} 
 
