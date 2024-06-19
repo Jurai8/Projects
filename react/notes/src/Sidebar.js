@@ -3,39 +3,41 @@ import React, { useState } from 'react';
 // take toggleNabar as an arg
 export function OpenNavbar ({ toggleNavbar }) {
   return (
-    <div className="navbar">
-      <div className='navbar_link'>
+    <div className='overlay'>
+      <div className="navbar ">
+        <div className='navbar_link'>
 
-        {/* sidebar = display flex */}
-        <div onClick={toggleNavbar} className='sidebar-items'>
-          {/* when list is clicked, call toggleNavbar */}
-          <span className="material-icons">
-              list
-          </span> Menu
-        </div>
+          {/* sidebar = display flex */}
+          <div onClick={toggleNavbar} className='sidebar-items'>
+            {/* when list is clicked, call toggleNavbar */}
+            <span className="material-icons">
+                list
+            </span> Menu
+          </div>
 
-        <div className='sidebar-items'>
-          <span className="material-icons">
-              add_circle
-          </span> New note
-        </div>
+          <div className='sidebar-items'>
+            <span className="material-icons">
+                add_circle
+            </span> New note
+          </div>
 
-        <div className='sidebar-items'>
-          <span className="material-icons">
-              save
-          </span> Save note
-        </div>
+          <div className='sidebar-items'>
+            <span className="material-icons">
+                save
+            </span> Save note
+          </div>
 
-        <div className='sidebar-items'>
-          <span className="material-icons">
-              share
-          </span> Share
-        </div>
+          <div className='sidebar-items'>
+            <span className="material-icons">
+                share
+            </span> Share
+          </div>
 
-        <div className='sidebar-items'>
-          <span className="material-icons">
-              person
-          </span> Account
+          <div className='sidebar-items'>
+            <span className="material-icons">
+                person
+            </span> Account
+          </div>
         </div>
       </div>
     </div>
