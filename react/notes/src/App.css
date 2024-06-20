@@ -67,8 +67,19 @@ html, body {
   left: -11.8%;
 }
 
-.top-bar {
-  
+#top-bar {
+  /* fix on top everything as you scroll */
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  top: 0;
+  width: 90%;
+  height: 40px; 
+  background:#009879;
+  border-right: 2px solid #008C71;
+  box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.25);
+  opacity: 1;
+  z-index: 2000;
 }
 
 .closed {
@@ -90,6 +101,18 @@ html, body {
   font-weight: bold;
   font-size: 0.85rem;
   border-bottom: 1px solid  #009879;
+}
+
+.top-bar-items {
+  display: inline-block;
+  align-items: center;
+  background: #008C71;
+  color: white;
+  padding: 2px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.85rem;
+  border-left: 1px solid  #009879;
 }
 
 span.material-icons {

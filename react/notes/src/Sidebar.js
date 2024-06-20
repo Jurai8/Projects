@@ -2,7 +2,37 @@ import React, { useState } from 'react';
 
 export function TopNavbar () {
   return (
-    <div className='navbar-closed top-bar'></div>
+    <div id='top-bar'>
+      <div className='top-bar-items'>
+          <span className="material-icons">
+            format_bold
+          </span>
+        </div>
+
+        <div className='top-bar-items'>
+          <span className="material-icons">
+            format_align_center
+          </span>
+        </div>
+
+        <div className='top-bar-items'>
+          <span className="material-icons">
+            format_align_right
+          </span>
+        </div>
+
+        <div className='top-bar-items'>
+          <span className="material-icons">
+            format_align_left
+          </span>
+        </div>
+
+        <div className='top-bar-items'>
+          <span className="material-icons">
+            format_list_bulleted
+          </span>
+        </div>
+    </div>
   )
 }
 
@@ -83,7 +113,7 @@ export function Navbar() {
   </div>
   // else close the navbar
   : <div>
-      <ClosedNavbar toggleNavbar={toggleNavbar} />;
+      <ClosedNavbar toggleNavbar={toggleNavbar} />
     </div>
 }
 
