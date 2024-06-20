@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { TextArea } from './Cursor.js';
-import { Navbar } from './Sidebar.js';
+import { Navbar, TopNavbar } from './Sidebar.js';
 
 
 function App() {
@@ -9,6 +9,7 @@ function App() {
     <div className='parent-container'>
       <Navbar />
       <TextArea />
+      <TopNavbar />
       {/* when navbar is toggled, texarea also needs to change
           However, i can't call textare within the navbar components
           it needs to be called within App.js so that it's displayed correctly

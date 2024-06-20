@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 export function TextArea () {
     return (
         // contenteditable = allow people to type in it
-        <div className="textarea-container" contenteditable="true">
-        </div> 
+        <div className="textarea-container" contenteditable="true"></div> 
     )
 }
 

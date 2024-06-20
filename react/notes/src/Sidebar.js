@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
 
+export function TopNavbar () {
+  return (
+    <div className='navbar-closed top-bar'></div>
+  )
+}
+
+
 // take toggleNabar as an arg
 export function OpenNavbar ({ toggleNavbar }) {
   return (
