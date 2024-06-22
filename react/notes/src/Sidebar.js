@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { Position } from './Cursor.js';
 
 export function TopNavbar () {
+  const [position, setPosition] = useState("");
+
   return (
     <div id='top-bar'>
       <div className='top-bar-items'>
@@ -10,19 +13,19 @@ export function TopNavbar () {
         </div>
 
         <div className='top-bar-items'>
-          <span className="material-icons">
+          <span className="material-icons" onClick={() => setPosition("center")}>
             format_align_center
           </span>
         </div>
 
         <div className='top-bar-items'>
-          <span className="material-icons">
+          <span className="material-icons" onClick={() => setPosition("right")}>
             format_align_right
           </span>
         </div>
 
         <div className='top-bar-items'>
-          <span className="material-icons">
+          <span className="material-icons" onClick={() => setPosition("left")}>
             format_align_left
           </span>
         </div>
@@ -32,6 +35,8 @@ export function TopNavbar () {
             format_list_bulleted
           </span>
         </div>
+
+        <Position setPosition={setPosition} />
     </div>
   )
 }
