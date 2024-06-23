@@ -8,7 +8,6 @@ function App() {
   return (
     <div className='parent-container'>
       <Navbar />
-      <TextArea />
       <TopNavbar />
       {/* when navbar is toggled, texarea also needs to change
           However, i can't call textare within the navbar components

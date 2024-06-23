@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Position } from './Cursor.js';
+import { TextArea } from './Cursor.js';
 
 export function TopNavbar () {
   const [position, setPosition] = useState("");
@@ -36,7 +36,6 @@ export function TopNavbar () {
           </span>
         </div>
 
-        <Position setPosition={setPosition} />
     </div>
   )
 }
