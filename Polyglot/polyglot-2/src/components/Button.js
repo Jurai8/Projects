@@ -1,5 +1,4 @@
 const MyButton = ({ to }) => { 
-  
     return ( 
         <a href={`/${to}`}> 
             <button className="my-button"> 
