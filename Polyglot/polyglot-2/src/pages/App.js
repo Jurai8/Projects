@@ -3,21 +3,29 @@ import {
   Route 
 } from "react-router-dom"; 
 
-import Heft from "./pages/Heft";
+import Heft from "./Heft.js";
+import MyButton from "../components/Button";
 
 function App() {
   return (
     <div className="App">
        <Router> 
-          <Button to="" /> 
-          <Button to="about" /> 
+          <MyButton to="" /> 
+          <MyButton to="heft" /> 
           <Routes> 
             <Route path="/" element={<Home />} /> 
-            <Route path="/about" element={<About />} /> 
+            <Route path="/heft" element={<Heft />} /> 
           </Routes> 
         </Router> 
     </div>
   );
+}
+
+// home page
+export function Home () {
+  return (
+    <h1>Hello</h1>
+  )
 }
 
 export default App;
