@@ -3,6 +3,7 @@ import {
   Route 
 } from "react-router-dom"; 
 
+import SignUp from "./SignUp.js";
 import Heft from "./Heft.js";
 import MyButton from "../components/Button";
 
@@ -12,7 +13,9 @@ function App() {
        <Router> 
           <MyButton to="" /> 
           <MyButton to="heft" /> 
+          <MyButton to="signup" /> 
           <Routes> 
+            <Route path="/signup" element={<SignUp />} /> 
             <Route path="/" element={<Home />} /> 
             <Route path="/heft" element={<Heft />} /> 
           </Routes> 
