@@ -1,3 +1,8 @@
 #Confirm-word {
   display: block
 }
+
+/* .css- ensure that styles are scoped specifically to the component they belong to. */
+.css-11xur9t-MuiPaper-root-MuiTableContainer-root {
+
+}
