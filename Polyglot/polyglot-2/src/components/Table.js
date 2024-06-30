@@ -1,3 +1,4 @@
+import '../App.css';
 import * as React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,6 +8,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+
 function createData(word, translation) {
   return {word, translation};
 }
@@ -15,12 +17,13 @@ const rows = [
   createData('Red', 'Rot'),
   createData('Blue', 'Blau'),
   createData('Yellow', 'Gelb'),
-  createData('The man', 'Der Mann')
+  createData('The man', 'Der Mann'),
+  createData('have', 'haben')
 ];
 
 export default function VocabBook() {
   return (
-    <TableContainer component={Paper}>
+    <TableContainer id='table-container' component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>

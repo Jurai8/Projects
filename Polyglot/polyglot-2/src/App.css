@@ -1,8 +1,22 @@
+html, body, #root, .App {
+  height: 100%;
+  overflow: hidden;
+}
+
 #Confirm-word {
   display: block
 }
 
-/* .css- ensure that styles are scoped specifically to the component they belong to. */
-.css-11xur9t-MuiPaper-root-MuiTableContainer-root {
+#table-position {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
 
+/* when there's a certain amount of words make the table scrollable*/
+#table-container {
+  width: 50%;
+  /*spacing on the sides isn't nice */
+  overflow: hidden;
 }
