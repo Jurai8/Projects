@@ -3,9 +3,6 @@ html, body, #root, .App {
   overflow: hidden;
 }
 
-#Confirm-word {
-  display: block
-}
 
 #table-position {
   display: flex;
@@ -26,4 +23,39 @@ html, body, #root, .App {
   width: 50%;
   text-align: right;
   margin-bottom: 3px;
+}
+
+/* modal for new word */
+
+.new-word-modal {
+  position: fixed;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 2000;
+}
+
+#confirm-word {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+#confirm-word Button {
+  width: 50%;
+}
+
+.overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Adjust the last value for transparency */
+  z-index: 1000;
 }

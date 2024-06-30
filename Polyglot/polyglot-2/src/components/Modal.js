@@ -1,3 +1,4 @@
+import '../App.css';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -5,21 +6,29 @@ import Button from '@mui/material/Button';
 
 
 export default function AddWord () {
+    // when confirm is clicked close modal
     return (
-        <Box
-            component="form"
-            sx={{
-                '& > :not(style)': { m: 1, width: '25ch' },
-            }}
-            noValidate
-            autoComplete="off"
-            >
-            <TextField id="outlined-basic-english" label="English" variant="outlined" />
-            <TextField id="outlined-basic-german" label="German" variant="outlined" />
-            <Button id="Confirm-word" variant="contained" style={{ display: 'block' }}>
-                Confirm
-            </Button>
-        </Box>
+        <div className='overlay'>
+            <Box 
+                className='new-word-modal'
+                component="form"
+                sx={{
+                    '& > :not(style)': { m: 1, width: '25ch' },
+                }}
+                noValidate
+                autoComplete="off"
+                >
+
+                <TextField id="outlined-basic-english" label="English" variant="outlined" />
+                <TextField id="outlined-basic-german" label="German" variant="outlined" />
+    
+                <div id='confirm-word'>
+                    <Button variant="contained" >
+                        Confirm
+                    </Button>
+                </div>
+            </Box>
+        </div>
     )
 }
 
