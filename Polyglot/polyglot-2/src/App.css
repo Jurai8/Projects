@@ -11,6 +11,7 @@ html, body, #root, .App {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   height: 100%;
 }
 
@@ -19,4 +20,10 @@ html, body, #root, .App {
   width: 50%;
   /*spacing on the sides isn't nice */
   overflow: hidden;
+}
+
+.button-container {
+  width: 50%;
+  text-align: right;
+  margin-bottom: 3px;
 }
