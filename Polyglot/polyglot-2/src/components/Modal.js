@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 
-export default function AddWord () {
+export default function AddWord ({ onClose }) {
     // when confirm is clicked close modal
     return (
         <div className='overlay'>
@@ -23,7 +23,7 @@ export default function AddWord () {
                 <TextField id="outlined-basic-german" label="German" variant="outlined" />
     
                 <div id='confirm-word'>
-                    <Button variant="contained" >
+                    <Button variant="contained" onClick={onClose}>
                         Confirm
                     </Button>
                 </div>
