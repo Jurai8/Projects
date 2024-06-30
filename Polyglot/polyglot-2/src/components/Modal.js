@@ -4,13 +4,18 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
-
+import { createData } from './Table'
 
 export default function AddWord ({ onClose }) {
     const [input, setInput] = useState({
         native: '',
         translation: ''
     })
+
+    const newWord = (e) = {
+        native: e.input,
+        translation: e.input
+    }
 
     return (
         <div className='overlay'>
@@ -23,12 +28,13 @@ export default function AddWord ({ onClose }) {
                 noValidate
                 autoComplete="off"
                 >
-
+                 {/* set the value with onChange */}
                 <TextField id="outlined-basic-english" label="English" name="native" variant="outlined" />
                 <TextField id="outlined-basic-german" label="German" name="translation" variant="outlined" />
     
                 <div id='confirm-word'>
-                    <Button variant="contained" onClick={onClose} >
+                    {/* onClick={() => { onClose(); createData(native, translation); }} */}
+                    <Button variant="contained" onClick={onClose}>
                         Confirm
                     </Button>
                 </div>

@@ -9,7 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 
-function createData(word, translation) {
+export function createData(word, translation) {
   return {word, translation};
 }
 
