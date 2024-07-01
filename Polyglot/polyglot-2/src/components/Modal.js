@@ -12,11 +12,17 @@ export default function AddWord ({ onClose }) {
         translation: ''
     })
 
-    const newWord = (e) => ({
-        native: e.input,
-        translation: e.input
-    });
+    const newNative = (e) => {
+        setInput ({
+            translation: e.target.value
+        });
+    };
 
+    const newTranslation = (e) => {
+        setInput ({
+            translation: e.target.value
+        });
+    };
     return (
         <div className='overlay'>
             <Box 
@@ -29,11 +35,15 @@ export default function AddWord ({ onClose }) {
                 autoComplete="off"
                 >
                  {/* set the value with onChange */}
-                <TextField id="outlined-basic-english" label="English" name="native" variant="outlined" />
-                <TextField id="outlined-basic-german" label="German" name="translation" variant="outlined" />
+                <TextField id="outlined-basic-english" label="English" name="native" variant="outlined"
+                 onChange={ newNative } 
+                />
+                <TextField id="outlined-basic-german" label="German" name="translation" variant="outlined"
+                onChange={ newTranslation }
+                 />
     
                 <div id='confirm-word'>
-                    {/* onClick={() => { onClose(); createData(native, translation); }} */}
+                    {/* onClick={() => { onClose(); createData(input.native, input.translation); }} */}
                     <Button variant="contained" onClick={onClose}>
                         Confirm
                     </Button>
