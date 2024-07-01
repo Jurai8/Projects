@@ -8,7 +8,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-
+// word & translation need to become objects
+// createData {{ word, translation }}
+// read, "passing props to a component" - react
 export function createData(word, translation) {
   return {word, translation};
 }

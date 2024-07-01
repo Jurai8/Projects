@@ -13,15 +13,17 @@ export default function AddWord ({ onClose }) {
     })
 
     const newNative = (e) => {
-        setInput ({
-            translation: e.target.value
-        });
+        setInput(prevInput => ({
+            ...prevInput,
+            native: e.target.value
+        }));
     };
 
     const newTranslation = (e) => {
-        setInput ({
+        setInput(prevInput => ({
+            ...prevInput,
             translation: e.target.value
-        });
+        }));
     };
     return (
         <div className='overlay'>
@@ -43,8 +45,9 @@ export default function AddWord ({ onClose }) {
                  />
     
                 <div id='confirm-word'>
-                    {/* onClick={() => { onClose(); createData(input.native, input.translation); }} */}
-                    <Button variant="contained" onClick={onClose}>
+                    <Button variant="contained" onClick={() => { 
+                        onClose(); createData(input.native, input.translation); 
+                        }}>
                         Confirm
                     </Button>
                 </div>
