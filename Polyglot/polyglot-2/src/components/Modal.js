@@ -12,10 +12,10 @@ export default function AddWord ({ onClose }) {
         translation: ''
     })
 
-    const newWord = (e) = {
+    const newWord = (e) => ({
         native: e.input,
         translation: e.input
-    }
+    });
 
     return (
         <div className='overlay'>
