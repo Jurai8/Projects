@@ -45,6 +45,15 @@ export default function AddWord ({ onClose }) {
                  />
     
                 <div id='confirm-word'>
+                    {/*don't use createData function. use as component
+
+                    CreateData is a constructor not a component do it another way
+                        <CreateData
+                            wordset={{ word: input.native , translation: input.translation}}
+                        /> 
+
+                        Can i do this without a return statement?
+                    */}
                     <Button variant="contained" onClick={() => { 
                         onClose(); createData(input.native, input.translation); 
                         }}>

@@ -8,14 +8,22 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-// word & translation need to become objects
-// createData {{ word, translation }}
-// read, "passing props to a component" - react
+// word & translation need to become properties of an object
+// the function needs to be a constructor
+
+/* 
+  // export function CreateData(wordset) {
+    this.word = wordset.word;
+    this.translation = wordset.translation;
+}
+*/ 
+
 export function createData(word, translation) {
   return {word, translation};
 }
 
 const rows = [
+  // const vocab = new CreateData(wordset);
   createData('Red', 'Rot'),
   createData('Blue', 'Blau'),
   createData('Yellow', 'Gelb'),
