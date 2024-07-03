@@ -12,9 +12,9 @@ import Paper from '@mui/material/Paper';
 // the function needs to be a constructor
 
 /* 
-  // export function CreateData(wordset) {
-    this.word = wordset.word;
-    this.translation = wordset.translation;
+  // export function CreateData(input) {
+    this.word = input.native;
+    this.translation = input.translation;
 }
 */ 
 

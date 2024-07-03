@@ -51,7 +51,7 @@ export default function AddWord ({ onClose }) {
                         <CreateData
                             wordset={{ word: input.native , translation: input.translation}}
                         /> 
-
+                        CreateData(input)
                         Can i do this without a return statement?
                     */}
                     <Button variant="contained" onClick={() => { 
