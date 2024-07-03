@@ -29,6 +29,9 @@ import Paper from '@mui/material/Paper';
       Row will create a row but then be sent as a prop to VocabBook
       Maybe i can just render VocabBook in Modal.js while removing the modal?
       figure out if that's possible or if i can pass the prop without rendering in modal.js
+
+      Note!!:
+      Google, sharing state between two components react
 }]
 */
 
