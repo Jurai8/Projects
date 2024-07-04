@@ -25,6 +25,8 @@ export default function AddWord ({ onClose }) {
             translation: e.target.value
         }));
     };
+    /* instead of moving rows, just directly pass the input object as a prop to VocabBook. then either create a rows array within vocab book or just use map the input object into table rows, using input.native as unique key */
+    const rows = [input];
     return (
         <div className='overlay'>
             <Box 
@@ -51,8 +53,6 @@ export default function AddWord ({ onClose }) {
                         <CreateData
                             wordset={{ word: input.native , translation: input.translation}}
                         /> 
-                        CreateData(input)
-                        Can i do this without a return statement?
                     */}
                     <Button variant="contained" onClick={() => { 
                         onClose(); createData(input.native, input.translation); 
