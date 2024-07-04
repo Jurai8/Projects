@@ -4,29 +4,9 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
-import { createData } from './Table'
+import VocabBook from './Table'
 
 export default function AddWord ({ onClose }) {
-    const [input, setInput] = useState({
-        native: '',
-        translation: ''
-    })
-
-    const newNative = (e) => {
-        setInput(prevInput => ({
-            ...prevInput,
-            native: e.target.value
-        }));
-    };
-
-    const newTranslation = (e) => {
-        setInput(prevInput => ({
-            ...prevInput,
-            translation: e.target.value
-        }));
-    };
-    /* instead of moving rows, just directly pass the input object as a prop to VocabBook. then either create a rows array within vocab book or just use map the input object into table rows, using input.native as unique key */
-    const rows = [input];
     return (
         <div className='overlay'>
             <Box 
@@ -47,16 +27,7 @@ export default function AddWord ({ onClose }) {
                  />
     
                 <div id='confirm-word'>
-                    {/*don't use createData function. use as component
-
-                    CreateData is a constructor not a component do it another way
-                        <CreateData
-                            wordset={{ word: input.native , translation: input.translation}}
-                        /> 
-                    */}
-                    <Button variant="contained" onClick={() => { 
-                        onClose(); createData(input.native, input.translation); 
-                        }}>
+                    <Button variant="contained" onClick={ onClose }>
                         Confirm
                     </Button>
                 </div>
