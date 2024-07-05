@@ -52,6 +52,8 @@ export default function Heft () {
         }
     }
 
+    /* Problem: i only want the words to show once the user has clicked confirm
+        solution: Hide and show the words? */
     return (
         <div id='table-position'>
             <div className='button-container'>

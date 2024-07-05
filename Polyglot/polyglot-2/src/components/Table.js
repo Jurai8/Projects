@@ -14,7 +14,10 @@ export function createData(word, translation) {
   return {word, translation};
 }
 
-
+/*Problem: new rows aren't being created 
+  Solution: a function that creates new row arrays? - 
+    when confirm is clicked create a new array? create a new element?
+  Or: reset the array?*/
 export default function VocabBook({ input }) {
 
   // will this array keep grouwing, or will it reset?
