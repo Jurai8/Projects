@@ -43,12 +43,14 @@ export default function Heft () {
 
     };
 
-    /* create eventhandler, use e as arg
-        if name of input = native
-            update native 
-
-    */
-
+    const eventHandler = (e) => {
+        if (e.target.name === "native") {
+            newNative(e);
+        } 
+        if (e.target.name === "translation") {
+            newTranslation(e);
+        }
+    }
 
     return (
         <div id='table-position'>
@@ -57,15 +59,14 @@ export default function Heft () {
                     New Word
                 </Button>
             </div>
-            <VocabBook input={ input }/>
+            <VocabBook input={input}/>
             {/*when the modal closes pass, input to vocab book */}
-            {isModalOpen && <AddWord onClose={() => {
-                closeModal();
-                newTranslation(e);
-                newNative(e);
-                // pass eventhandler as a prop instead of the transltoin and native
-            }}/>
-            }
+            {isModalOpen && (
+                <AddWord 
+                    onClose={closeModal} 
+                    eventHandler={eventHandler} 
+                /> 
+            )}
         </div>
     )
 }

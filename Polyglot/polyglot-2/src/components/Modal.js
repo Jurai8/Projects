@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import { useState } from 'react';
 import VocabBook from './Table'
 
-export default function AddWord ({ onClose }) {
+export default function AddWord ({ onClose, eventHandler}) {
     return (
         <div className='overlay'>
             <Box 
@@ -19,15 +19,16 @@ export default function AddWord ({ onClose }) {
                 autoComplete="off"
                 >
                  {/* set the value with onChange */}
-                <TextField id="outlined-basic-english" label="English" name="native" variant="outlined"
-                 onChange={ newNative } 
+                <TextField 
+                    id="outlined-basic-english" label="English" name="native" variant="outlined" onChange={eventHandler} 
                 />
-                <TextField id="outlined-basic-german" label="German" name="translation" variant="outlined"
-                onChange={ newTranslation }
+                <TextField 
+                    id="outlined-basic-german" label="German" name="translation" variant="outlined" 
+                    onChange={eventHandler}
                  />
     
                 <div id='confirm-word'>
-                    <Button variant="contained" onClick={ onClose }>
+                    <Button variant="contained" onClick={onClose}>
                         Confirm
                     </Button>
                 </div>
