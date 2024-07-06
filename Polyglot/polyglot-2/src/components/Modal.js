@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
-export default function AddWord ({ onClose, eventHandler}) {
+export default function AddWord ({ onClose, eventHandler, updateRows}) {
     return (
         <div className='overlay'>
             <Box 
@@ -26,7 +26,10 @@ export default function AddWord ({ onClose, eventHandler}) {
                  />
     
                 <div id='confirm-word'>
-                    <Button variant="contained" onClick={onClose}>
+                    <Button variant="contained" onClick={() => {
+                        updateRows();
+                        onClose();
+                    }}>
                         Confirm
                     </Button>
                 </div>

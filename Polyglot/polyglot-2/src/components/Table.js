@@ -16,16 +16,9 @@ export function createData(word, translation) {
 
 /*Problem: new rows aren't being created 
   Solution: a function that creates new row arrays? - 
-    when newWord is clicked create a new array? create a new element?
+   create a new element?
   Or: reset the array?*/
-export default function VocabBook({ input }) {
-
-  // will this array keep grouwing, or will it reset?
-  const rows = [
-    createData('Red', 'Rot'),
-    createData(input.native, input.translation)
-  ]
-
+export default function VocabBook({ rows }) {
   return (
     <TableContainer id='table-container' component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

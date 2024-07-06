@@ -4,16 +4,21 @@ import VocabBook from '../components/Table'
 import AddWord from '../components/Modal';
 import { Button } from '@mui/material';
 
-/*Idea: 
-    pass the buttons as a prop to the modal component
-    maybe just pass all the important stuff as props */
-
-
 // button leading to current page should be removed
 export default function Heft () {
     // <AddWord> will pop up as a modal when the user wants to enter a word
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    // update row of words added into vocab book
+    const [rows, setRows] = useState([]);
+
+    // Updating input to add it into vocabBook
+    const [input, setInput] = useState({
+        native: '',
+        translation: ''
+    })
+
+    // Modal
     const openModal = () => {
         setIsModalOpen(true);
     };
@@ -22,12 +27,7 @@ export default function Heft () {
         setIsModalOpen(false);
     };
 
-    // Updating input to add it into vocabBook
-    const [input, setInput] = useState({
-        native: '',
-        translation: ''
-    })
-
+    // input newWord
     const newNative = (e) => {
         setInput(prevInput => ({
             ...prevInput,
@@ -52,8 +52,16 @@ export default function Heft () {
         }
     }
 
-    /* Problem: i only want the words to show once the user has clicked confirm
-        solution: Hide and show the words? */
+    // update rows in VocabBook
+    const updateRows = () => {
+        setRows([
+            ...rows,
+            { word: input.native, translation: input.translation }
+        ]);
+    };
+    /* 1. add function to delete/edit words
+        2. if I confirm on the empty modal it update's with the same word, how do i stop this. 
+            Solution: don't let words with the same key be added?*/
     return (
         <div id='table-position'>
             <div className='button-container'>
@@ -61,14 +69,16 @@ export default function Heft () {
                     New Word
                 </Button>
             </div>
-            <VocabBook input={input}/>
             {/*when the modal closes pass, input to vocab book */}
-            {isModalOpen && (
+            {isModalOpen ? (
                 <AddWord 
                     onClose={closeModal} 
-                    eventHandler={eventHandler} 
+                    eventHandler={eventHandler}
+                    // allow addword to update state of rows
+                    updateRows={updateRows}
                 /> 
-            )}
+            ) : <VocabBook rows={rows}/>
+            }
         </div>
     )
 }
