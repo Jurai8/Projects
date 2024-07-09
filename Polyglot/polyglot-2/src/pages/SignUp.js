@@ -11,19 +11,23 @@ import { addDoc, collection } from "@firebase/firestore";
 
 
 export default function SignUp () {
-    const messageRef = useRef(null);
+    const emailRef = useRef(null);
+    const usernameRef = useRef(null);
+    const passwordRef = useRef(null);
     // collection name = user
     const ref = collection(firestore, "user")
 
     const handleSave = async (e) => {
         e.preventDefault();
-        console.log(messageRef.current);
+        console.log(emailRef.current);
 
-        if (messageRef.current) {
-            const username = messageRef.current.value;
+        if (emailRef.current && usernameRef && passwordRef ) {
+            const email = emailRef.current.value;
+            const username = usernameRef.current.value;
+            const password = passwordRef.current.value;
       
             try {
-              await addDoc(ref, { username });
+              await addDoc(ref, { email, username, password });
               console.log('Document successfully written!');
             } catch (error) {
               console.error('Error writing document: ', error);
@@ -52,6 +56,7 @@ export default function SignUp () {
                     placeholder="carlos@gmail.com"
                     label="Email"
                     variant="outlined"
+                    inputRef={emailRef}
                     />
                 </div>
                 <div >
@@ -60,7 +65,7 @@ export default function SignUp () {
                     label="Username"
                     variant="outlined"
                     typeof='text'
-                    inputRef={messageRef}
+                    inputRef={usernameRef}
                     />
                 </div>
                 <div>
@@ -68,6 +73,7 @@ export default function SignUp () {
                     id='outlined-basic-password'
                     label="Password"
                     variant="outlined"
+                    inputRef={passwordRef}
                     />
                 </div>
                 <Button id="Confirm-word" variant="contained" type='submit'>
