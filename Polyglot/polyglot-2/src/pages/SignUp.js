@@ -11,7 +11,7 @@ import { addDoc, collection } from "@firebase/firestore";
 
 
 export default function SignUp () {
-    const messageRef = useRef();
+    const messageRef = useRef(null);
     // collection name = user
     const ref = collection(firestore, "user")
 
@@ -19,17 +19,18 @@ export default function SignUp () {
         e.preventDefault();
         console.log(messageRef.current);
 
-        let data = {
-            message: messageRef.current.value,
-        }
-
-        try {
-            addDoc(ref, { data });
-            console.log('Document successfully written!');
-        } catch(e) {
-            console.log(e);
-            console.log('Unsuccessful!');
-        }
+        if (messageRef.current) {
+            const username = messageRef.current.value;
+      
+            try {
+              await addDoc(ref, { username });
+              console.log('Document successfully written!');
+            } catch (error) {
+              console.error('Error writing document: ', error);
+            }
+          } else {
+            console.warn('messageRef.current is undefined or null');
+          }
     }
 
     return (
@@ -37,42 +38,42 @@ export default function SignUp () {
             <CssBaseline />
             {/* <Register handleSave={handleSave} messageRef={messageRef} /> */}
             <Box
-            component="form"
-            sx={{
-                '& > :not(style)': { m: 1, width: '25ch' },
-            }}
-            noValidate
-            autoComplete="off"
-            onSubmit={handleSave}
-            >
-            <div >
-                <TextField
-                id='outlined-basic-email'
-                placeholder="carlos@gmail.com"
-                label="Email"
-                variant="outlined"
-                />
-            </div>
-            <div >
-                <TextField
-                id='outlined-basic-username'
-                label="Username"
-                variant="outlined"
-                type='text'
-                inputref={messageRef}
-                />
-            </div>
-            <div>
-                <TextField
-                id='outlined-basic-password'
-                label="Password"
-                variant="outlined"
-                />
-            </div>
-            <Button id="Confirm-word" variant="contained" type='sumbit'>
-                Sign up
-            </Button>
-        </Box>
+                component="form"
+                sx={{
+                    '& > :not(style)': { m: 1, width: '25ch' },
+                }}
+                noValidate
+                autoComplete="off"
+                onSubmit={handleSave}
+                >
+                <div >
+                    <TextField
+                    id='outlined-basic-email'
+                    placeholder="carlos@gmail.com"
+                    label="Email"
+                    variant="outlined"
+                    />
+                </div>
+                <div >
+                    <TextField
+                    id='outlined-basic-username'
+                    label="Username"
+                    variant="outlined"
+                    typeof='text'
+                    inputRef={messageRef}
+                    />
+                </div>
+                <div>
+                    <TextField
+                    id='outlined-basic-password'
+                    label="Password"
+                    variant="outlined"
+                    />
+                </div>
+                <Button id="Confirm-word" variant="contained" type='submit'>
+                    Sign up
+                </Button>
+            </Box>
         </div>
     )
 }
