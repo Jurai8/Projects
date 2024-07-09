@@ -3,6 +3,9 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { firestore } from '../firebase';
+import { addDoc, collection } from "@firebase/firestore"
+
 
 export default function AddWord ({ onClose, eventHandler, updateRows}) {
     return (
@@ -38,6 +41,7 @@ export default function AddWord ({ onClose, eventHandler, updateRows}) {
     )
 }
 
+/* 
 export function Register () {
     return (
         <Box
@@ -47,13 +51,15 @@ export function Register () {
             }}
             noValidate
             autoComplete="off"
+            onSubmit={handleSave}
             >
             <div >
                 <TextField
-                id='outlined-basic-username'
+                id='outlined-basic-email'
                 placeholder="carlos@gmail.com"
                 label="Email"
                 variant="outlined"
+                ref={messageRef}
                 />
             </div>
             <div >
@@ -61,6 +67,7 @@ export function Register () {
                 id='outlined-basic-username'
                 label="Username"
                 variant="outlined"
+                ref={messageRef}
                 />
             </div>
             <div>
@@ -68,11 +75,13 @@ export function Register () {
                 id='outlined-basic-password'
                 label="Password"
                 variant="outlined"
+                ref={messageRef}
                 />
             </div>
-            <Button id="Confirm-word" variant="contained" >
+            <Button id="Confirm-word" variant="contained" type='sumbit' >
                 Sign up
             </Button>
         </Box>
     )
 }
+*/
