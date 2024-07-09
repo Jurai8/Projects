@@ -21,6 +21,8 @@ export default function Heft () {
     // Modal
     const openModal = () => {
         setIsModalOpen(true);
+        // clear current input
+        setInput('');
     };
 
     const closeModal = () => {
