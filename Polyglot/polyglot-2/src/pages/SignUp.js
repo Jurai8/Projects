@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import { firestore } from '../firebase';
 import { addDoc, collection } from "@firebase/firestore";
 
-
+// !!! move all necessary stuf back to the register component
 
 export default function SignUp () {
     const emailRef = useRef(null);
