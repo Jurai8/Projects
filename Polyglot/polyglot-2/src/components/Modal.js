@@ -9,7 +9,7 @@ import { addDoc, collection } from "@firebase/firestore"
 
 export default function AddWord ({ onClose, eventHandler, updateRows}) {
     return (
-        <div className='overlay'>
+        <div className='overlay' onClick={onClose}>
             <Box 
                 className='new-word-modal'
                 component="form"
