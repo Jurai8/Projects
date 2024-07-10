@@ -6,6 +6,7 @@ import {
 import SignUp from "./SignUp.js";
 import Heft from "./Heft.js";
 import MyButton from "../components/Button";
+import Test from "./Test.js"
 
 function App() {
   return (
@@ -14,10 +15,12 @@ function App() {
           <MyButton to="" /> 
           <MyButton to="heft" /> 
           <MyButton to="signup" /> 
+          <MyButton to="test" /> 
           <Routes> 
             <Route path="/signup" element={<SignUp />} /> 
             <Route path="/" element={<Home />} /> 
-            <Route path="/heft" element={<Heft />} /> 
+            <Route path="/heft" element={<Heft />} />
+            <Route path="/test" element={<Test />} /> 
           </Routes> 
         </Router> 
     </div>
