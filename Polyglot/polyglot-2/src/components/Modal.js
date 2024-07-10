@@ -9,7 +9,7 @@ import { addDoc, collection } from "@firebase/firestore"
 
 export default function AddWord ({ onClose, eventHandler, updateRows}) {
     return (
-        <div className='overlay' onClick={onClose}>
+        <div className='overlay'>
             <Box 
                 className='new-word-modal'
                 component="form"
@@ -30,7 +30,11 @@ export default function AddWord ({ onClose, eventHandler, updateRows}) {
     
                 <div id='confirm-word'>
                     <Button variant="contained" onClick={() => {
-                        updateRows();
+                        if (!updateRows()) {
+                            alert("Please add a word");
+                        } else {
+                            updateRows();
+                        }
                         onClose();
                     }}>
                         Confirm

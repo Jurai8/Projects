@@ -56,11 +56,16 @@ export default function Heft () {
 
     // update rows in VocabBook
     const updateRows = () => {
-        setRows([
-            ...rows,
-            { word: input.native, translation: input.translation }
-        ]);
+        const newRow = { word: input.native, translation: input.translation };  
+        // if current row is empty...
+        if (newRow.word === '' || newRow.translation === '' || !setInput()) {
+            return false;
+        }else {
+            setRows([...rows, newRow]);
+            return true;
+        }
     };
+    
     /* 1. add function to delete/edit words
         2. if I confirm on the empty modal it update's with the same word, how do i stop this. 
             Solution: don't let words with the same key be added?*/
