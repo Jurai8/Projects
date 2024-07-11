@@ -6,6 +6,17 @@ import { Button } from '@mui/material';
 
 // button leading to current page should be removed
 export default function Heft () {
+
+    // pass this to confirm button
+        // async function
+            // call updateRows
+            // if it works return positive
+                // update database
+            // else return negative
+
+
+
+
     // <AddWord> will pop up as a modal when the user wants to enter a word
     const [isModalOpen, setIsModalOpen] = useState(false);
 

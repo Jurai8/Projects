@@ -30,6 +30,8 @@ export default function AddWord ({ onClose, eventHandler, updateRows}) {
     
                 <div id='confirm-word'>
                     <Button variant="contained" onClick={() => {
+                        // replace with async call
+                            // async will return alert
                         if (!updateRows()) {
                             alert("Please add a word");
                         } else {
