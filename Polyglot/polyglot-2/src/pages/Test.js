@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 
 // This is the vocab test
@@ -14,7 +14,8 @@ import TextField from '@mui/material/TextField';
 
 export default function Test() {
     const word = "Heft";
-    // useRef isn't working test it again
+    // still not checking word against userAnswer correctly
+    // alsways returns "correct"
     const [input, setInput] = useState({ userAnswer: ''});
 
     const answer = (e) => {

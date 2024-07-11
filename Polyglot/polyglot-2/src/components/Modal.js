@@ -3,11 +3,9 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { firestore } from '../firebase';
-import { addDoc, collection } from "@firebase/firestore"
 
 
-export default function AddWord ({ onClose, eventHandler, updateRows}) {
+export default function AddWord ({ onClose, eventHandler, dbUpdate}) {
     return (
         <div className='overlay'>
             <Box 
@@ -30,13 +28,8 @@ export default function AddWord ({ onClose, eventHandler, updateRows}) {
     
                 <div id='confirm-word'>
                     <Button variant="contained" onClick={() => {
-                        // replace with async call
-                            // async will return alert
-                        if (!updateRows()) {
-                            alert("Please add a word");
-                        } else {
-                            updateRows();
-                        }
+                        // updateRows and db
+                        dbUpdate();
                         onClose();
                     }}>
                         Confirm

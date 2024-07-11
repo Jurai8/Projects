@@ -4,17 +4,27 @@ import VocabBook from '../components/Table'
 import AddWord from '../components/Modal';
 import { Button } from '@mui/material';
 
+import { firestore } from '../firebase';
+import { addDoc, collection } from "@firebase/firestore"
+
+
 // button leading to current page should be removed
 export default function Heft () {
+    const ref = collection(firestore, "Vocabulary");
 
     // pass this to confirm button
-        // async function
-            // call updateRows
-            // if it works return positive
-                // update database
-            // else return negative
+    const dbUpdate = async () => {
+        try {
+            // update db
+            const wordPair = await updateRows();
+            addDoc(ref, {word: wordPair.word, 
+                translation: wordPair.translation})
 
-
+        } catch (error) {
+            alert("empty input");
+            console.error('Error caught:', error.message);
+        }
+    }
 
 
     // <AddWord> will pop up as a modal when the user wants to enter a word
@@ -68,13 +78,17 @@ export default function Heft () {
     // update rows in VocabBook
     const updateRows = () => {
         const newRow = { word: input.native, translation: input.translation };  
-        // if current row is empty...
-        if (newRow.word === '' || newRow.translation === '' || !setInput()) {
-            return false;
-        }else {
-            setRows([...rows, newRow]);
-            return true;
-        }
+
+        return new Promise((resolve, reject) => {
+            // if current row is empty...
+            if (newRow.word === '' || newRow.translation === '' || !setInput()) {
+                reject(new Error("Validation error: input fields cannot be empty"));
+            }else {
+                setRows([...rows, newRow]);
+                resolve(newRow);
+            }
+        })
+       
     };
     
     /* 1. add function to delete/edit words
@@ -93,7 +107,7 @@ export default function Heft () {
                     onClose={closeModal} 
                     eventHandler={eventHandler}
                     // allow addword to update state of rows
-                    updateRows={updateRows}
+                    dbUpdate={dbUpdate}
                 /> 
             ) : <VocabBook rows={rows}/>
             }
