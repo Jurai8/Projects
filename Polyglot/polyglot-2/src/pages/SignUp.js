@@ -19,7 +19,6 @@ export default function SignUp () {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        console.log(emailRef.current);
 
         if (emailRef.current && usernameRef && passwordRef ) {
             const email = emailRef.current.value;
@@ -32,7 +31,7 @@ export default function SignUp () {
             } catch (error) {
               console.error('Error writing document: ', error);
             }
-          } else {
+        } else {
             console.warn('messageRef.current is undefined or null');
           }
     }
