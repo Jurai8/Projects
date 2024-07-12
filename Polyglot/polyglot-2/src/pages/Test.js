@@ -84,7 +84,7 @@ export default function Test() {
                     Confirm
                 </Button>
 
-                <Button variant="contained" onClick={ async () => {
+                <Button variant="contained" onClick={async () => {
                     await word();
                 }}>
                     Begin
