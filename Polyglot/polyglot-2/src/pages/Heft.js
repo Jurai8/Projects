@@ -7,6 +7,9 @@ import { Button } from '@mui/material';
 import { firestore } from '../firebase';
 import { addDoc, collection } from "@firebase/firestore"
 
+/*!!!!!! 
+    How to create a vocabulary collection under each user? */
+
 
 // button leading to current page should be removed
 export default function Heft () {
