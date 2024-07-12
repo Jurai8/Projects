@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import TextField from '@mui/material/TextField';
 
 // This is the vocab test
@@ -16,14 +16,7 @@ export default function Test() {
     const word = "Heft";
     // still not checking word against userAnswer correctly
     // alsways returns "correct"
-    const [input, setInput] = useState({ userAnswer: ''});
-
-    const answer = (e) => {
-        setInput(prevInput => ({
-            ...prevInput,
-           userAnswer: e.target.value
-        }));
-    } 
+    const answer = useRef(null);
 
     return (
         <div>
@@ -36,13 +29,13 @@ export default function Test() {
                 noValidate
                 autoComplete="off"
                 >
-                <TextField id="standard-basic" label="Standard" variant="standard" onChange={answer} />
+                <TextField id="standard-basic" label="Standard" variant="standard" type='text' inputRef={answer} />
                 {/*display block + justify content right */}
                 <Button variant="contained" onClick={() => {
-                    if (input.userAnswer === word) {
-                        return alert("incorrect");
+                    if (answer.current.value === word) {
+                        return alert("correct");
                     } else {
-                        return alert("correct")
+                        return alert("incorrect");
                     }
                 }}>
                     Contained

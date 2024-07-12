@@ -20,7 +20,15 @@ export default function SignUp () {
     const handleSave = async (e) => {
         e.preventDefault();
 
-        if (emailRef.current && usernameRef && passwordRef ) {
+        if (
+            emailRef.current &&
+            usernameRef.current &&
+            passwordRef.current &&
+            // remove white spaces
+            emailRef.current.value.trim() !== '' &&
+            usernameRef.current.value.trim() !== '' &&
+            passwordRef.current.value.trim() !== ''
+          ) {
             const email = emailRef.current.value;
             const username = usernameRef.current.value;
             const password = passwordRef.current.value;
@@ -63,7 +71,6 @@ export default function SignUp () {
                     id='outlined-basic-username'
                     label="Username"
                     variant="outlined"
-                    typeof='text'
                     inputRef={usernameRef}
                     />
                 </div>
