@@ -40,8 +40,7 @@ export default function AddWord ({ onClose, eventHandler, dbUpdate}) {
     )
 }
 
-/* 
-export function Register () {
+export function Register ({handleSave, emailRef, usernameRef, passwordRef }) {
     return (
         <Box
             component="form"
@@ -58,7 +57,7 @@ export function Register () {
                 placeholder="carlos@gmail.com"
                 label="Email"
                 variant="outlined"
-                ref={messageRef}
+                inputRef={emailRef}
                 />
             </div>
             <div >
@@ -66,7 +65,7 @@ export function Register () {
                 id='outlined-basic-username'
                 label="Username"
                 variant="outlined"
-                ref={messageRef}
+                inputRef={usernameRef}
                 />
             </div>
             <div>
@@ -74,13 +73,12 @@ export function Register () {
                 id='outlined-basic-password'
                 label="Password"
                 variant="outlined"
-                ref={messageRef}
+                inputRef={passwordRef}
                 />
             </div>
-            <Button id="Confirm-word" variant="contained" type='sumbit' >
+            <Button id="Confirm-word" variant="contained" type='submit'>
                 Sign up
             </Button>
         </Box>
     )
 }
-*/
