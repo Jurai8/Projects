@@ -39,6 +39,10 @@ export default function Heft () {
         translation: ''
     })
 
+    const validateInput = () => {
+        return input.native !== '' && input.translation !== '';
+      };
+
     // Modal
     const openModal = () => {
         setIsModalOpen(true);
@@ -81,7 +85,7 @@ export default function Heft () {
 
         return new Promise((resolve, reject) => {
             // if current row is empty...
-            if (newRow.word === '' || newRow.translation === '' || !setInput()) {
+            if (newRow.word === '' || newRow.translation === '' || ! validateInput()) {
                 reject(new Error("Validation error: input fields cannot be empty"));
             }else {
                 setRows([...rows, newRow]);
