@@ -82,3 +82,47 @@ export function Register ({handleSave, emailRef, usernameRef, passwordRef }) {
         </Box>
     )
 }
+
+export function LogIn() {
+    return (
+        <Box
+            component="form"
+            sx={{
+                '& > :not(style)': { m: 1, width: '25ch' },
+            }}
+            noValidate
+            autoComplete="off"
+            // onSubmit={}
+            >
+            <div >
+                <TextField
+                id='outlined-basic-email'
+                placeholder="carlos@gmail.com"
+                label="Email"
+                variant="outlined"
+                //inputRef={}
+                />
+            </div>
+            <div >
+                <TextField
+                id='outlined-basic-username'
+                label="Username"
+                variant="outlined"
+                //inputRef={}
+                />
+            </div>
+            <div>
+                <TextField
+                id='outlined-basic-password'
+                label="Password"
+                variant="outlined"
+                 //inputRef={}
+                />
+            </div>
+            <Button id="Confirm-word" variant="contained" type='submit'>
+                Sign up
+            </Button>
+        </Box>
+    )
+}
+

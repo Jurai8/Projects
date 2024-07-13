@@ -4,10 +4,14 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Register } from '../components/Modal';
 import React, { useRef } from 'react';
 import TextField from '@mui/material/TextField';
+// import sign in
 
 import { firestore } from '../firebase';
 import { addDoc, collection } from "@firebase/firestore";
 
+
+// chnage state from register to sign in if user clicks a button
+// r
 
 export default function SignUp () {
     const emailRef = useRef(null);
@@ -48,6 +52,7 @@ export default function SignUp () {
     return (
         <div>
             <CssBaseline />
+            {/* conditional rendering for register and sign in */}
             <Register 
                 handleSave={handleSave} emailRef={emailRef}
                 usernameRef={usernameRef} passwordRef={passwordRef}
