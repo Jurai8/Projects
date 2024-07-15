@@ -40,7 +40,7 @@ export default function AddWord ({ onClose, eventHandler, dbUpdate}) {
     )
 }
 
-export function Register ({handleSave, emailRef, usernameRef, passwordRef }) {
+export function Register ({handleSave, emailRef, passwordRef }) {
     return (
         <Box
             component="form"
@@ -65,7 +65,6 @@ export function Register ({handleSave, emailRef, usernameRef, passwordRef }) {
                 id='outlined-basic-username'
                 label="Username"
                 variant="outlined"
-                inputRef={usernameRef}
                 />
             </div>
             <div>
@@ -94,6 +93,9 @@ export function LogIn() {
             autoComplete="off"
             // onSubmit={}
             >
+            <div>
+                <h1>LogIn</h1>
+            </div>
             <div >
                 <TextField
                 id='outlined-basic-email'
