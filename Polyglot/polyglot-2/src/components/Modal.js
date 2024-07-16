@@ -40,7 +40,7 @@ export default function AddWord ({ onClose, eventHandler, dbUpdate}) {
     )
 }
 
-export function Register ({handleSave, emailRef, passwordRef }) {
+export function Register ({handleSave, emailRef, passwordRef, toggleSignIn}) {
     return (
         <Box
             component="form"
@@ -51,6 +51,7 @@ export function Register ({handleSave, emailRef, passwordRef }) {
             autoComplete="off"
             onSubmit={handleSave}
             >
+            <h1>Sign Up</h1>
             <div >
                 <TextField
                 id='outlined-basic-email'
@@ -78,11 +79,14 @@ export function Register ({handleSave, emailRef, passwordRef }) {
             <Button id="Confirm-word" variant="contained" type='submit'>
                 Sign up
             </Button>
+            <section>
+                <p onClick={toggleSignIn}>Log in</p>
+            </section>
         </Box>
     )
 }
 
-export function LogIn() {
+export function LogIn({toggleSignIn}) {
     return (
         <Box
             component="form"
@@ -93,9 +97,7 @@ export function LogIn() {
             autoComplete="off"
             // onSubmit={}
             >
-            <div>
-                <h1>LogIn</h1>
-            </div>
+            <h1>Log In</h1>
             <div >
                 <TextField
                 id='outlined-basic-email'
@@ -122,8 +124,11 @@ export function LogIn() {
                 />
             </div>
             <Button id="Confirm-word" variant="contained" type='submit'>
-                Sign up
+                Log in
             </Button>
+            <section>
+                <p onClick={toggleSignIn}>Sign up</p>
+            </section>
         </Box>
     )
 }

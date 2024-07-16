@@ -1,5 +1,5 @@
 import CssBaseline from '@mui/material/CssBaseline';
-import { Register } from '../components/Modal';
+import { Register, LogIn } from '../components/Modal';
 import React, { useRef, useState} from 'react';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -10,10 +10,14 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 export default function SignUp () {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [signIn, setSignIn] = useState(false);
 
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
+  const toggleSignIn = () => {
+    setSignIn(!signIn);
+  }
 
 
   const handleSave = async (e) => {
@@ -54,10 +58,14 @@ export default function SignUp () {
       <div>
           <CssBaseline />
           {/* conditional rendering for register and sign in */}
-          <Register 
+          {signIn ? 
+            <LogIn toggleSignIn={toggleSignIn}/> :
+            <Register 
               handleSave={handleSave} emailRef={emailRef}
-                passwordRef={passwordRef}
-            /> 
+              passwordRef={passwordRef} toggleSignIn={toggleSignIn}
+            />
+          }
+  
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {success && <p style={{ color: 'green' }}>{success}</p>}
       </div>
