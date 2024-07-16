@@ -8,7 +8,16 @@ import { firestore } from '../firebase';
 import { addDoc, collection } from "@firebase/firestore"
 
 /*!!!!!! 
-    How to create a vocabulary collection under each user? */
+    How to create a vocabulary collection under each user? 
+    
+    user collection
+        if (signed in uid === user A doc id)
+            allow access to user A doc
+        user A doc
+            vocab book (subcollection)
+        user B doc
+        ...
+*/
 
 
 // button leading to current page should be removed

@@ -86,7 +86,7 @@ export function Register ({handleSave, emailRef, passwordRef, toggleSignIn}) {
     )
 }
 
-export function LogIn({toggleSignIn}) {
+export function LogIn({toggleSignIn, handleLogin, emailRef, passwordRef}) {
     return (
         <Box
             component="form"
@@ -95,7 +95,7 @@ export function LogIn({toggleSignIn}) {
             }}
             noValidate
             autoComplete="off"
-            // onSubmit={}
+            onSubmit={handleLogin}
             >
             <h1>Log In</h1>
             <div >
@@ -104,7 +104,7 @@ export function LogIn({toggleSignIn}) {
                 placeholder="carlos@gmail.com"
                 label="Email"
                 variant="outlined"
-                //inputRef={}
+                inputRef={emailRef}
                 />
             </div>
             <div >
@@ -120,7 +120,7 @@ export function LogIn({toggleSignIn}) {
                 id='outlined-basic-password'
                 label="Password"
                 variant="outlined"
-                 //inputRef={}
+                inputRef={passwordRef}
                 />
             </div>
             <Button id="Confirm-word" variant="contained" type='submit'>

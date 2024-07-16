@@ -16,6 +16,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+// why are the firebase functions called with app as the arg?
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 export const firestore =  getFirestore(app);
