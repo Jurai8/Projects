@@ -2,14 +2,15 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Register, LogIn } from '../components/Modal';
 import React, { useRef, useState} from 'react';
 import { getAuth, createUserWithEmailAndPassword, 
-      signInWithEmailAndPassword, updateProfile} from "firebase/auth";
+      signInWithEmailAndPassword, updateProfile,
+    onAuthStateChanged} from "firebase/auth";
 import { addDoc, doc, setDoc } from "firebase/firestore"; 
 import { firestore } from '../firebase';
 
 
 
 
-// chnage state from register to sign in if user clicks a button
+// I'm not able to write to the database for some reason
 
 export default function SignUp () {
   const [error, setError] = useState(null);
@@ -27,6 +28,7 @@ export default function SignUp () {
   // store user in db
   async function storeUser(user) {
     const userDocRef = doc(firestore, 'Users', user.uid);
+    
     const userData = {
       displayName: user.displayName,
     };
@@ -90,8 +92,14 @@ export default function SignUp () {
               (err) => console.log("unable to create username")
             )
 
-            const user = auth.currentUser;
-            storeUser(user);
+            onAuthStateChanged(auth, (user) => {
+              if (user) {
+                storeUser(user);
+              } else {
+                console.log("No user is signed in.");
+              }
+            });
+
             setSuccess(`Congratulations ${auth.currentUser.displayName} !`);
             setError(null);
           } catch (error) {
