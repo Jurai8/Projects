@@ -40,7 +40,7 @@ export default function AddWord ({ onClose, eventHandler, dbUpdate}) {
     )
 }
 
-export function Register ({handleSave, emailRef, passwordRef, toggleSignIn}) {
+export function Register ({handleSave, emailRef, passwordRef, usernameRef,toggleSignIn}) {
     return (
         <Box
             component="form"
@@ -66,6 +66,7 @@ export function Register ({handleSave, emailRef, passwordRef, toggleSignIn}) {
                 id='outlined-basic-username'
                 label="Username"
                 variant="outlined"
+                inputRef={usernameRef}
                 />
             </div>
             <div>
@@ -105,14 +106,6 @@ export function LogIn({toggleSignIn, handleLogin, emailRef, passwordRef}) {
                 label="Email"
                 variant="outlined"
                 inputRef={emailRef}
-                />
-            </div>
-            <div >
-                <TextField
-                id='outlined-basic-username'
-                label="Username"
-                variant="outlined"
-                //inputRef={}
                 />
             </div>
             <div>
