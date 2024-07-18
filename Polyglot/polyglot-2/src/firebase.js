@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "@firebase/firestore";
-import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA7yhna5--zjgQHFuLTVvps4ZR82zoh_pM",
@@ -18,5 +17,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 // why are the firebase functions called with app as the arg?
 const analytics = getAnalytics(app);
-const auth = getAuth(app);
-export const firestore =  getFirestore(app);
+export const firestore = getFirestore(app);

@@ -44,7 +44,6 @@ export default function SignUp () {
 
   const handleLogin = async (e) => {
       e.preventDefault();
-
       const email = emailRef.current.value;
       const password = passwordRef.current.value;
 
@@ -92,6 +91,7 @@ export default function SignUp () {
               (err) => console.log("unable to create username")
             )
 
+            // await or make it a promise, check heft.js
             onAuthStateChanged(auth, (user) => {
               if (user) {
                 storeUser(user);

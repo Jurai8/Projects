@@ -5,7 +5,8 @@ import AddWord from '../components/Modal';
 import { Button } from '@mui/material';
 
 import { firestore } from '../firebase';
-import { addDoc, collection } from "@firebase/firestore"
+import { addDoc, doc, setDoc, collection } from "firebase/firestore"; 
+import { getAuth, onAuthStateChanged} from "firebase/auth";
 
 /*!!!!!! 
     How to create a vocabulary collection under each user? 
@@ -38,6 +39,38 @@ export default function Heft () {
         }
     }
 
+    const newCollection = async () => {
+        // get signed in user
+        const auth = getAuth();
+        let userid;
+        await new Promise((resolve, reject) => {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    resolve(user.uid);
+                } else {
+                    reject("Heft.js can't get signed in user");
+                }
+            });
+        }).then((uid) => {
+            userid = uid;
+        }).catch((error) => {
+            console.log(error);
+            return;
+        });
+    
+        if (!userid) {
+            console.log("promise finished. no user obtained");
+            return;
+        }
+        // new collection
+        const collection = doc(firestore, "Users", userid)
+        try {
+            await setDoc(collection, {random: 'Hey' } )
+        } catch (error) {
+            console.log(userid);
+            console.log("got uid but couldn't setDoc();")
+        }
+    }
 
     // <AddWord> will pop up as a modal when the user wants to enter a word
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -115,6 +148,11 @@ export default function Heft () {
             <div className='button-container'>
                 <Button variant="contained" onClick={openModal}>
                     New Word
+                </Button>
+            </div>
+            <div className='button-container'>
+                <Button variant="contained" onClick={newCollection}>                
+                    New collection
                 </Button>
             </div>
             {/*when the modal closes pass, input to vocab book */}
