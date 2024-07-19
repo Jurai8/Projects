@@ -42,33 +42,23 @@ export default function Heft () {
     const newCollection = async () => {
         // get signed in user
         const auth = getAuth();
-        let userid;
-        await new Promise((resolve, reject) => {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    resolve(user.uid);
-                } else {
-                    reject("Heft.js can't get signed in user");
-                }
-            });
-        }).then((uid) => {
-            userid = uid;
-        }).catch((error) => {
-            console.log(error);
-            return;
-        });
-    
-        if (!userid) {
-            console.log("promise finished. no user obtained");
-            return;
-        }
-        // new collection
-        const collection = doc(firestore, "Users", userid)
-        try {
-            await setDoc(collection, {random: 'Hey' } )
-        } catch (error) {
-            console.log(userid);
-            console.log("got uid but couldn't setDoc();")
+        const user = auth.currentUser;
+        if (user) {
+            const collectionRef = collection(firestore, "Users");
+            const data = {
+            author_uid: user.uid, // This must match the authenticated user's UID
+            title: "Charles",
+            content: "The goat"
+            };
+
+            try {
+            const docRef = await addDoc(collectionRef, data);
+            console.log('Document created successfully with ID:', docRef.id);
+            } catch (error) {
+            console.error('Error creating document:', error);
+            }
+        } else {
+            console.log('No user is signed in');
         }
     }
 
