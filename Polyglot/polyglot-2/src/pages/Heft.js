@@ -42,24 +42,27 @@ export default function Heft () {
     const newCollection = async () => {
         // get signed in user
         const auth = getAuth();
-        const user = auth.currentUser;
-        if (user) {
-            const collectionRef = collection(firestore, "Users");
-            const data = {
-            author_uid: user.uid, // This must match the authenticated user's UID
-            title: "Charles",
-            content: "The goat"
-            };
+        const collectionRef = collection(firestore, "Users");
 
-            try {
-            const docRef = await addDoc(collectionRef, data);
-            console.log('Document created successfully with ID:', docRef.id);
-            } catch (error) {
-            console.error('Error creating document:', error);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+               const data = {
+                    author_uid: user.uid,
+                    username: "Charles"
+                }
+
+                try {
+                    const docRef = await addDoc(collectionRef, data);
+                    console.log('Document created successfully with ID:', docRef.id);
+                } catch (error) {
+                    console.error('Error creating document:', error);
+                }
+            } else {
+                console.log("user not logged in")
             }
-        } else {
-            console.log('No user is signed in');
-        }
+        });
+        
     }
 
     // <AddWord> will pop up as a modal when the user wants to enter a word
