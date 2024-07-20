@@ -8,6 +8,10 @@ import { addDoc, doc, setDoc, collection } from "firebase/firestore";
 import { firestore } from '../firebase';
 
 
+/* if logged in user doesn't have a library ask them 
+    to create their first library
+*/
+
 export default function SignUp () {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);

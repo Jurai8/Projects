@@ -10,6 +10,10 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import { UserVocabLists } from './MyEventHandlers';
+
+// get the array from UserVocabLists
+// each index will be a row in the sidebar
 
 export default function Sidebar({ isSidebarOpen, toggleSidebar}) { 
     const SidebarList = (
