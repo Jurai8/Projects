@@ -66,7 +66,7 @@ export default function SignUp () {
     });
   }
 
-  const handleSave = async (e) => {
+  const handleSignIn = async (e) => {
       e.preventDefault();
 
       const email = emailRef.current.value;
@@ -96,7 +96,19 @@ export default function SignUp () {
             // await or make it a promise, check heft.js
             onAuthStateChanged(auth, async (user) => {
               if (user) {
-                await storeUser(user);
+                const userId = user.uid;
+                const userData = {
+                  Username: user.displayName
+                }
+                const userDocRef = doc(firestore, 'Users', userId);
+
+                try {
+                  await setDoc(userDocRef, userData);
+                  console.log("user doc created");
+                } catch (error) {
+                  console.error("could not create user doc")
+                }
+                
               } else {
                 console.log("No user is signed in.");
               }
@@ -125,7 +137,7 @@ export default function SignUp () {
             emailRef={emailRef} passwordRef={passwordRef}
             /> :
             <Register 
-              handleSave={handleSave} emailRef={emailRef}
+              handleSignIn={handleSignIn} emailRef={emailRef}
               passwordRef={passwordRef} toggleSignIn={toggleSignIn}
               usernameRef={usernameRef}
             />
