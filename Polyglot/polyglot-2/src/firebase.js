@@ -18,3 +18,6 @@ const app = initializeApp(firebaseConfig);
 // why are the firebase functions called with app as the arg?
 const analytics = getAnalytics(app);
 export const firestore = getFirestore(app);
+
+
+// users are allowed to read other users docs

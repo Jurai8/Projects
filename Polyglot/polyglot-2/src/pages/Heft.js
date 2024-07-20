@@ -5,8 +5,8 @@ import AddWord from '../components/Modal';
 import { Button } from '@mui/material';
 
 import { firestore } from '../firebase';
-import { addDoc, doc, setDoc, collection } from "firebase/firestore"; 
-import { getAuth, onAuthStateChanged} from "firebase/auth";
+import { addDoc, collection, query, where, getDocs } from "firebase/firestore"; 
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 /*!!!!!! 
     How to create a vocabulary collection under each user? 
@@ -23,40 +23,50 @@ import { getAuth, onAuthStateChanged} from "firebase/auth";
 
 // button leading to current page should be removed
 export default function Heft () {
-    const ref = collection(firestore, "Vocabulary");
 
     // pass this to confirm button
-    const dbUpdate = async () => {
-        try {
-            // update db
-            const wordPair = await updateRows();
-            addDoc(ref, {word: wordPair.word, 
-                translation: wordPair.translation})
-
-        } catch (error) {
-            alert("empty input");
-            console.error('Error caught:', error.message);
-        }
-    }
-
-    const newCollection = async () => {
-        // get signed in user
+    const updateVocab = async () => {
         const auth = getAuth();
-        const collectionRef = collection(firestore, "Users");
 
-
+        // get signed in user
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-               const data = {
-                    author_uid: user.uid,
-                    username: "Charles"
-                }
+                const docpath = query(collection(firestore, "Users"), 
+                where("author_uid", "==", user.uid));
 
+                // remove this later
+                console.log(user.uid);
                 try {
-                    const docRef = await addDoc(collectionRef, data);
-                    console.log('Document created successfully with ID:', docRef.id);
+                    const querySnapshot = await getDocs(docpath);
+                    if (querySnapshot.empty) {
+                        throw new Error("No matching documents found.");
+                    }
+                
+                    const doc = querySnapshot.docs[0];
+                    const subcollectionref = collection(doc.ref, "Vocablist 1");
+
+                    // update db
+                    try {
+                        const wordPair = await updateRows();
+                        try {
+                            await addDoc(subcollectionref, {
+                                word: wordPair.word,
+                                translation: wordPair.translation
+                            });
+                
+                            console.log("Vocab list has been updated");
+                        } catch (error) {
+                            console.error('Error caught while adding document:', error.message);
+                            alert("Error adding word to subcollection");
+                        }
+                    } catch (error) {
+                        console.error('Error caught while updating rows:', error.message);
+                        alert("Error updating rows");
+                    }
+
                 } catch (error) {
-                    console.error('Error creating document:', error);
+                    console.error('Error caught while fetching documents:', error.message);
+                    alert("Error fetching documents");
                 }
             } else {
                 console.log("user not logged in")
@@ -143,18 +153,13 @@ export default function Heft () {
                     New Word
                 </Button>
             </div>
-            <div className='button-container'>
-                <Button variant="contained" onClick={newCollection}>                
-                    New collection
-                </Button>
-            </div>
             {/*when the modal closes pass, input to vocab book */}
             {isModalOpen ? (
                 <AddWord 
                     onClose={closeModal} 
                     eventHandler={eventHandler}
                     // allow addword to update state of rows
-                    dbUpdate={dbUpdate}
+                    updateVocab={updateVocab}
                 /> 
             ) : <VocabBook rows={rows}/>
             }
