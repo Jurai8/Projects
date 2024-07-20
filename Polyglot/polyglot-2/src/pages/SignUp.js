@@ -4,7 +4,7 @@ import React, { useRef, useState} from 'react';
 import { getAuth, createUserWithEmailAndPassword, 
       signInWithEmailAndPassword, updateProfile,
     onAuthStateChanged} from "firebase/auth";
-import { addDoc, doc, setDoc } from "firebase/firestore"; 
+import { addDoc, doc, setDoc, collection } from "firebase/firestore"; 
 import { firestore } from '../firebase';
 
 
@@ -27,14 +27,15 @@ export default function SignUp () {
 
   // store user in db
   async function storeUser(user) {
-    const userDocRef = doc(firestore, 'Users', user.uid);
+    const  collectionRef =  collection(firestore, 'Users');
     
     const userData = {
+      author_uid: user.uid,
       displayName: user.displayName,
     };
 
     try {
-      await setDoc(userDocRef, userData);
+      await addDoc(collectionRef, userData);
       console.log('storeUser successful');
     } catch (error) {
       console.log('storeUser unsuccessful')
@@ -44,6 +45,7 @@ export default function SignUp () {
 
   const handleLogin = async (e) => {
       e.preventDefault();
+
       const email = emailRef.current.value;
       const password = passwordRef.current.value;
 
@@ -53,7 +55,7 @@ export default function SignUp () {
       // Signed in 
       const user = userCredential.user;
 
-      setSuccess(`Welcome ${user.email}`);
+      setSuccess(`Welcome ${user.displayName}`);
       setError(null)
     })
     .catch((error) => {
@@ -92,9 +94,9 @@ export default function SignUp () {
             )
 
             // await or make it a promise, check heft.js
-            onAuthStateChanged(auth, (user) => {
+            onAuthStateChanged(auth, async (user) => {
               if (user) {
-                storeUser(user);
+                await storeUser(user);
               } else {
                 console.log("No user is signed in.");
               }
