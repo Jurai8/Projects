@@ -8,10 +8,6 @@ import { addDoc, doc, setDoc, collection } from "firebase/firestore";
 import { firestore } from '../firebase';
 
 
-
-
-// I'm not able to write to the database for some reason
-
 export default function SignUp () {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -25,23 +21,6 @@ export default function SignUp () {
     setSignIn(!signIn);
   }
 
-  // store user in db
-  async function storeUser(user) {
-    const  collectionRef =  collection(firestore, 'Users');
-    
-    const userData = {
-      author_uid: user.uid,
-      displayName: user.displayName,
-    };
-
-    try {
-      await addDoc(collectionRef, userData);
-      console.log('storeUser successful');
-    } catch (error) {
-      console.log('storeUser unsuccessful')
-    }
-    
-  }
 
   const handleLogin = async (e) => {
       e.preventDefault();
@@ -69,6 +48,7 @@ export default function SignUp () {
   const handleSignIn = async (e) => {
       e.preventDefault();
 
+      // create a function to check input
       const email = emailRef.current.value;
       const password = passwordRef.current.value;
       const username = usernameRef.current.value;
@@ -93,7 +73,7 @@ export default function SignUp () {
               (err) => console.log("unable to create username")
             )
 
-            // await or make it a promise, check heft.js
+            // get logged in user
             onAuthStateChanged(auth, async (user) => {
               if (user) {
                 const userId = user.uid;

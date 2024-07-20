@@ -31,25 +31,16 @@ export default function Heft () {
         // get signed in user
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const docpath = query(collection(firestore, "Users"), 
-                where("author_uid", "==", user.uid));
+                const userId = user.uid;
 
-                // remove this later
-                console.log(user.uid);
                 try {
-                    const querySnapshot = await getDocs(docpath);
-                    if (querySnapshot.empty) {
-                        throw new Error("No matching documents found.");
-                    }
-                
-                    const doc = querySnapshot.docs[0];
-                    const subcollectionref = collection(doc.ref, "Vocablist 1");
-
-                    // update db
+                    const vocabListRef = collection(firestore,"Users", userId, "Vocablist 1")
+                    
+                    // update vocablist
                     try {
                         const wordPair = await updateRows();
                         try {
-                            await addDoc(subcollectionref, {
+                            await addDoc(vocabListRef, {
                                 word: wordPair.word,
                                 translation: wordPair.translation
                             });
@@ -65,8 +56,8 @@ export default function Heft () {
                     }
 
                 } catch (error) {
-                    console.error('Error caught while fetching documents:', error.message);
-                    alert("Error fetching documents");
+                    console.error('Error referencing subcollection:', error.message);
+                    alert("Error referencing subcollection");
                 }
             } else {
                 console.log("user not logged in")
@@ -133,7 +124,7 @@ export default function Heft () {
 
         return new Promise((resolve, reject) => {
             // if current row is empty...
-            if (newRow.word === '' || newRow.translation === '' || ! validateInput()) {
+            if (newRow.word.trim() === '' || newRow.translation.trim() === '' || ! validateInput()) {
                 reject(new Error("Validation error: input fields cannot be empty"));
             }else {
                 setRows([...rows, newRow]);
