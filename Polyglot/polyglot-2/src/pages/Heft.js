@@ -2,6 +2,7 @@ import '../App.css';
 import React, { useState } from 'react';
 import VocabBook from '../components/Table'
 import AddWord from '../components/Modal';
+import Sidebar from '../components/Sidebar';
 import { Button } from '@mui/material';
 
 import { firestore } from '../firebase';
@@ -23,6 +24,14 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 // button leading to current page should be removed
 export default function Heft () {
+
+    // state for sidebar
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const toggleSidebar = (newOpen) => () => {
+        setIsSidebarOpen(newOpen);
+    };
+
 
     // pass this to confirm button
     const updateVocab = async () => {
@@ -137,13 +146,26 @@ export default function Heft () {
     /* 1. add function to delete/edit words
         2. if I confirm on the empty modal it update's with the same word, how do i stop this. 
             Solution: don't let words with the same key be added?*/
+    
+    /* button: new collection
+        make user type in collection name and also add their first word */
     return (
         <div id='table-position'>
             <div className='button-container'>
                 <Button variant="contained" onClick={openModal}>
                     New Word
                 </Button>
+                <Button variant="contained" onClick={toggleSidebar(true)}>          
+                Collections 
+                </Button>
             </div>
+
+            
+            {isSidebarOpen &&
+             <Sidebar toggleSidebar={toggleSidebar} 
+             isSidebarOpen={isSidebarOpen}
+            />}
+
             {/*when the modal closes pass, input to vocab book */}
             {isModalOpen ? (
                 <AddWord 

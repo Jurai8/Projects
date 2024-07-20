@@ -7,17 +7,28 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { create } from '@mui/material/styles/createTransitions';
+import { collection, getDocs } from 'firebase/firestore';
+import { firestore } from '../firebase';
 
 
 export function createData(word, translation) {
   return {word, translation};
 }
 
-/*Problem: new rows aren't being created 
-  Solution: a function that creates new row arrays? - 
-   create a new element?
-  Or: reset the array?*/
+// get word and translation from user vocablist subcollection
+async function createRows() {
+  const rows = {};
+
+  // (Dyanamically!!) Query a reference to a subcollection
+  const querySnapshot = await getDocs(collection(
+    firestore, "Users", "Vocablist 1"
+  ));
+
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    console.log(doc.id, " => ", doc.data());
+  }); 
+}
 export default function VocabBook({ rows }) {
   return (
     <TableContainer id='table-container' component={Paper}>
