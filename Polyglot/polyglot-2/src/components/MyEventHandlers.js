@@ -12,26 +12,31 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 export function UserVocabLists() {
     // get the currently signed in user
     const auth = getAuth();
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const userId = user.uid;
-            const vocabListNames = [];
 
-            // path to subcollection
-            const querySnapshot = await getDocs(collection(
-                firestore, "Users", userId, "All_Vocab_Lists"
-            ));
+    return new Promise ((resolve, reject) => {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userId = user.uid;
+                const vocabListNames = [];
 
-            querySnapshot.forEach((doc) => {
-                // add each list name into an array
-                vocabListNames.push(doc.data()); 
-            });
+                // path to subcollection
+                const querySnapshot = await getDocs(collection(
+                    firestore, "Users", userId, "All_Vocab_Lists"
+                ));
 
-            return vocabListNames;
-        } else {
-            console.error("UserVocabList: User not logged in")
-        }
-    });
+                querySnapshot.forEach((doc) => {
+                    // add each list name into an array
+                    console.log(`Within querySnapshot: ${doc.id}`);
+                    vocabListNames.push(doc.id); 
+                });
+
+                console.log(`UserVocabLists: ${vocabListNames}`)
+                resolve(vocabListNames);
+            } else {
+                reject("UserVocabList: User not logged in");
+            }
+        });
+    })
 }
 
 /* say the user wants to view a specific vocab list

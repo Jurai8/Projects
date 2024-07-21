@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
@@ -15,11 +15,30 @@ import { UserVocabLists } from './MyEventHandlers';
 // get the array from UserVocabLists
 // each index will be a row in the sidebar
 
+
+
 export default function Sidebar({ isSidebarOpen, toggleSidebar}) { 
+    // get all vocab lists belonging to user
+    // State to hold vocab lists
+    const [rows, setRows] = useState([]);
+
+    // Fetch vocab lists on component mount
+    useEffect(() => {
+        UserVocabLists()
+        .then((vocabListNames) => {
+            console.log(`UseEffect: ${vocabListNames}`);
+            setRows(vocabListNames);
+        })
+        .catch((error) => {
+            console.error("Error fetching vocab lists:", error);
+        });
+    }, []);
+
+
     const SidebarList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleSidebar(false)}>
         <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+            {rows.map((text, index) => (
             <ListItem key={text} disablePadding>
                 <ListItemButton>
                 <ListItemIcon>

@@ -4,7 +4,6 @@ import VocabBook from '../components/Table'
 import AddWord from '../components/Modal';
 import Sidebar from '../components/Sidebar';
 import { Button } from '@mui/material';
-import { UserVocabLists } from '../components/MyEventHandlers';
 import { firestore } from '../firebase';
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -34,7 +33,7 @@ export default function Heft () {
 
 
     // pass this to confirm button
-    const updateVocab = async () => {
+    const updateVocab = () => {
         const auth = getAuth();
 
         // get signed in user
@@ -155,10 +154,7 @@ export default function Heft () {
                 <Button variant="contained" onClick={openModal}>
                     New Word
                 </Button>
-                <Button variant="contained" onClick={() => {
-                    toggleSidebar(true)
-                    UserVocabLists();
-                }}>          
+                <Button variant="contained" onClick={toggleSidebar(true)}>          
                     Collections 
                 </Button>
             </div>
