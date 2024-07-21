@@ -1,5 +1,5 @@
 import '../App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import VocabBook from '../components/Table'
 import AddWord from '../components/Modal';
 import Sidebar from '../components/Sidebar';
@@ -7,6 +7,7 @@ import { Button } from '@mui/material';
 import { firestore } from '../firebase';
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { DisplayVocabList } from '../components/MyEventHandlers';
 
 /*!!!!!! 
     How to create a vocabulary collection under each user? 
@@ -139,8 +140,25 @@ export default function Heft () {
                 resolve(newRow);
             }
         })
-       
     };
+
+    // manage state of which vocab book to show
+    // pass vocab to vocabBook
+    const [vocab, setVocab] = useState([])
+
+    // function to set state using vocab list name
+    const getListName = async (string) => {
+        // row = displayvocablist()
+        try {
+            const vocabList = await DisplayVocabList(string);
+            setVocab(vocabList);
+        } catch (error) {
+            console.error("unable to display vocab list")
+        }
+        
+    }
+
+
     
     /* 1. add function to delete/edit words
         2. if I confirm on the empty modal it update's with the same word, how do i stop this. 
@@ -162,7 +180,7 @@ export default function Heft () {
             
             {isSidebarOpen &&
              <Sidebar toggleSidebar={toggleSidebar} 
-             isSidebarOpen={isSidebarOpen}
+             isSidebarOpen={isSidebarOpen} getListName={getListName}
             />}
 
             {/*when the modal closes pass, input to vocab book */}
@@ -173,7 +191,7 @@ export default function Heft () {
                     // allow addword to update state of rows
                     updateVocab={updateVocab}
                 /> 
-            ) : <VocabBook rows={rows}/>
+            ) : <VocabBook vocab={vocab} rows={rows}/>
             }
         </div>
     )

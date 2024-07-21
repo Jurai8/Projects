@@ -2,7 +2,7 @@ import { firestore } from '../firebase';
 import { 
     setDoc, addDoc, collection, query, where, getDocs, listCollections, doc
 } from "firebase/firestore"; 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, curr} from "firebase/auth";
 // Signup.js looks terrible because of all the functions
 // this will be a mini library
 // export all functions that should be added here
@@ -26,11 +26,9 @@ export function UserVocabLists() {
 
                 querySnapshot.forEach((doc) => {
                     // add each list name into an array
-                    console.log(`Within querySnapshot: ${doc.id}`);
                     vocabListNames.push(doc.id); 
                 });
 
-                console.log(`UserVocabLists: ${vocabListNames}`)
                 resolve(vocabListNames);
             } else {
                 reject("UserVocabList: User not logged in");
@@ -82,32 +80,38 @@ export function CreateVocabList(name, word, translation) {
 }
 
 // string = vocablist name will be passed to this func, onclick event
-export function DisplayVocabList(collectionName) {
+// use this function when asking user which list they want to view
+// then pass rows to Table.js
+export async function DisplayVocabList(collectionName) {
     const auth = getAuth();
+    const user = auth.currentUser; 
+
+    console.log(`Collection name: ${collectionName}`)
     // pass an object (word and translation in one obj) into the array?
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const userId = user.uid;
-            const wordPair = [];
-            // path to subcollection
-            const querySnapshot = await getDocs(collection(
-                firestore, "Users", userId, collectionName
-            ));
+    if (user) {
+        const userId = user.uid;
+        const vocabulary = [];
+        // path to subcollection
+        const querySnapshot = await getDocs(collection(
+            firestore, "Users", userId, collectionName
+        ));
 
-            querySnapshot.forEach((doc) => {
-                // add each wordpair into the array
-                
-                /* 
-                arr.push({
-                    word: doc.data().word
-                    translation: doc.data.translation
-                });
-                */
+        querySnapshot.forEach((doc) => {
+            // add each wordpair into the array
+            console.log(`data: ${doc.data().word}`);
+
+            vocabulary.push({
+                word: doc.data().word,
+                translation: doc.data().translation
             });
+        });
 
-            console.log("successfully transferred vocab to array");
-        } else {
-            console.error("user not logged in");
-        }
-    });
+        console.log(vocabulary)
+       return vocabulary;
+    } else {
+        console.error("user not signed in");
+    }
 }
+
+
+// check password strenght + credentials for register

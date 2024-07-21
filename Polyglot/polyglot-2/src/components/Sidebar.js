@@ -16,13 +16,14 @@ import { UserVocabLists } from './MyEventHandlers';
 // each index will be a row in the sidebar
 
 
-
-export default function Sidebar({ isSidebarOpen, toggleSidebar}) { 
+// pass onclick function here
+export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName}) { 
     // get all vocab lists belonging to user
     // State to hold vocab lists
     const [rows, setRows] = useState([]);
 
     // Fetch vocab lists on component mount
+    // how to fetch before component mount???
     useEffect(() => {
         UserVocabLists()
         .then((vocabListNames) => {
@@ -32,6 +33,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar}) {
         .catch((error) => {
             console.error("Error fetching vocab lists:", error);
         });
+        // run useEffect only once after render
     }, []);
 
 
@@ -40,7 +42,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar}) {
         <List>
             {rows.map((text, index) => (
             <ListItem key={text} disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={() => getListName(text)}>
                 <ListItemIcon>
                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
