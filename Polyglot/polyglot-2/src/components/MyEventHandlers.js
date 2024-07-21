@@ -80,3 +80,34 @@ export function CreateVocabList(name, word, translation) {
         }
     });
 }
+
+// string = vocablist name will be passed to this func, onclick event
+export function DisplayVocabList(collectionName) {
+    const auth = getAuth();
+    // pass an object (word and translation in one obj) into the array?
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userId = user.uid;
+            const wordPair = [];
+            // path to subcollection
+            const querySnapshot = await getDocs(collection(
+                firestore, "Users", userId, collectionName
+            ));
+
+            querySnapshot.forEach((doc) => {
+                // add each wordpair into the array
+                
+                /* 
+                arr.push({
+                    word: doc.data().word
+                    translation: doc.data.translation
+                });
+                */
+            });
+
+            console.log("successfully transferred vocab to array");
+        } else {
+            console.error("user not logged in");
+        }
+    });
+}
