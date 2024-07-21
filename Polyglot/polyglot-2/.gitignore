@@ -23,5 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 
+#firebase config
+/src/firebase.js
 #Google credentials
 /server/charlies-project-2fcac-firebase-adminsdk-hggn1-b0c290d5fb.json
