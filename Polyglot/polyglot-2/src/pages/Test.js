@@ -1,9 +1,10 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import TextField from '@mui/material/TextField';
-import { collection, getDocs } from "firebase/firestore";
-import { firestore } from '../firebase';
+import { collection, getDocs,  } from "firebase/firestore";
+import { FetchVocab } from '../components/MyEventHandlers';
+
 
 // This is the vocab test
 
@@ -13,54 +14,31 @@ import { firestore } from '../firebase';
 // show words that they got incorrect
 
 // first hardcode
-let vocabList = [];
 
 export default function Test() {
-    const answer = useRef(null);
-    const [testWord, setTestWord] = useState(null);
-    let counter = useRef(0);
 
-    const nextWord = () => {
-        if (counter.current < vocabList.length - 1) {
-            counter.current++;
-            setTestWord(vocabList[counter.current].word);
-        } else {
-            alert("No more words");
-        }
-    }
 
-    /* this function needs to be passed to heft
-    create a button to begin the test*/
-    const word = async () => {
-        try {
-            const vocab = await getDocs(collection(firestore, "Vocabulary"));
+    const [word, setWord] = useState('');
+    const [count, setCount] = useState(0);
+    const vocabListRef = useRef([]);
 
-            // Using map to transform each document's data and return an array of results
-            vocabList.push(...vocab.docs.map(doc => doc.data()));
-            setTestWord(vocabList[0].word); 
-            alert("begin");
-        } catch (error) {
-            console.log('Error fetching words from db:', error);
-            throw error; // Propagate the error for handling elsewhere
-        }
-    }; 
+    // this needs to happen before the mount
+    useEffect(() => {
+        setWord(vocabListRef.current[count])
+    }, [count])
 
-    const compare = async (answer) => {
-        // Simulate a fetch call
-        return new Promise((resolve, reject) => {
-            // user needs to write the translation
-            if (answer === vocabList[counter.current].translation) {
-                resolve("correct answer");
-            } else {
-                reject(new Error('Incorrect answer'));
-            }
-        }
+    const initializeVocab = async () => {
+        const newWords = await FetchVocab();
+        vocabListRef.current = newWords;
+        console.log(vocabListRef.current);
+        setCount(0); // Reset count to 0 to start from the first word
+      };
 
-    )};
+      // checkAnswer
 
     return (
         <div>
-            <h1>Word: {testWord}</h1>
+            <h1> Word: {word}</h1>
             <Box
                 component="form"
                 sx={{
@@ -69,24 +47,13 @@ export default function Test() {
                 noValidate
                 autoComplete="off"
                 >
-                <TextField id="standard-basic" label="Standard" variant="standard" type='text' inputRef={answer} />
-                {/*display block + justify content right */}
-                <Button variant="contained" onClick={async () => {
-                    try {
-                      let result = await compare(answer.current.value);
-                       nextWord();
-                       alert(result);
-                    } catch (error) {
-                        nextWord();
-                        alert(error.message);
-                    }
-                }}>
+                <TextField id="standard-basic" label="Standard" variant="standard" type='text'/> {/*inputRef={answer} */ }
+                <Button variant="contained" 
+                onClick={() => setCount((prevCount) => prevCount + 1)}>
                     Confirm
                 </Button>
 
-                <Button variant="contained" onClick={async () => {
-                    await word();
-                }}>
+                <Button variant="contained" onClick={initializeVocab}>
                     Begin
                 </Button>
             </Box>

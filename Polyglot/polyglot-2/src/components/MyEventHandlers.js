@@ -113,5 +113,28 @@ export async function DisplayVocabList(collectionName) {
     }
 }
 
+export async function FetchVocab () {
+    const vocabList = [];
 
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+        const userId = user.uid;
+        // get vocab 
+        try {
+            const getVocabdocs = await getDocs(collection(firestore, "Users", userId, "Vocablist 1"));   
+
+            getVocabdocs.forEach((doc) => {
+                vocabList.push(doc.data().word);
+            });
+        } catch (error) {
+            console.error("could not get vocab for test");
+        }
+
+        return vocabList;
+    } else {
+        console.error("User not logged in");
+    }
+}
 // check password strenght + credentials for register
