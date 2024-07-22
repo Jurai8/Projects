@@ -1,8 +1,8 @@
 import { firestore } from '../firebase';
 import { 
-    setDoc, addDoc, collection, query, where, getDocs, listCollections, doc
+    setDoc, addDoc, collection, getDocs, doc
 } from "firebase/firestore"; 
-import { getAuth, onAuthStateChanged, curr} from "firebase/auth";
+import { getAuth, onAuthStateChanged,} from "firebase/auth";
 // Signup.js looks terrible because of all the functions
 // this will be a mini library
 // export all functions that should be added here
