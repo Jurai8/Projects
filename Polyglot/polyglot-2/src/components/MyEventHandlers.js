@@ -123,7 +123,7 @@ export async function FetchVocab () {
         const userId = user.uid;
         // get vocab 
         try {
-            const getVocabdocs = await getDocs(collection(firestore, "Users", userId, "Vocablist 1"));   
+            const getVocabdocs = await getDocs(collection(firestore, "Users", userId, "Vocablist 1")); 
 
             getVocabdocs.forEach((doc) => {
                 vocabList.push({
@@ -134,15 +134,16 @@ export async function FetchVocab () {
         } catch (error) {
             console.error("could not get vocab for test");
         }
-
+        
+        // how to return a randomized order of the array?
         return vocabList;
     } else {
         console.error("User not logged in");
     }
 }
-
-// edit word in vocab collection
-// delete word from collection
+// if they hover or click on the row, show these 2 options
+    // edit word in vocab collection
+    // delete word from collection
 // delete collection
 
 // hide words
@@ -150,4 +151,5 @@ export async function FetchVocab () {
         // dropdown = native/ translation
         // if translation hide translation column
         // if native hide native column
+
 // check password strenght + credentials for register
