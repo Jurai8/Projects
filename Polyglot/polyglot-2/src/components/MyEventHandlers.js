@@ -145,4 +145,9 @@ export async function FetchVocab () {
 // delete word from collection
 // delete collection
 
+// hide words
+    // button = hide
+        // dropdown = native/ translation
+        // if translation hide translation column
+        // if native hide native column
 // check password strenght + credentials for register
