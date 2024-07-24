@@ -140,4 +140,9 @@ export async function FetchVocab () {
         console.error("User not logged in");
     }
 }
+
+// edit word in vocab collection
+// delete word from collection
+// delete collection
+
 // check password strenght + credentials for register

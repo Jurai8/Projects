@@ -161,8 +161,6 @@ export default function Heft () {
 
     
     /* 1. add function to delete/edit words
-        2. if I confirm on the empty modal it update's with the same word, how do i stop this. 
-            Solution: don't let words with the same key be added?*/
     
     /* button: new collection
         make user type in collection name and also add their first word */

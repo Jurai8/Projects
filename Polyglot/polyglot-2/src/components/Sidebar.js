@@ -8,8 +8,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import AddIcon from '@mui/icons-material/Add';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import { UserVocabLists } from './MyEventHandlers';
 
 // get the array from UserVocabLists
@@ -40,11 +40,19 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName}) {
     const SidebarList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleSidebar(false)}>
         <List>
+            <ListItem key={"New"} disablePadding>
+                <ListItemButton /* call function to create new collection */>
+                <ListItemIcon>
+                    <AddIcon /> 
+                </ListItemIcon>
+                <ListItemText primary={"New Collection"} />
+                </ListItemButton>
+            </ListItem>
             {rows.map((text, index) => (
             <ListItem key={text} disablePadding>
                 <ListItemButton onClick={() => getListName(text)}>
                 <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                     <LibraryBooksIcon />
                 </ListItemIcon>
                 <ListItemText primary={text} />
                 </ListItemButton>

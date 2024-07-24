@@ -83,7 +83,7 @@ export default function Test() {
                         compare()
                         handleConfirmClick()
                     } else {
-                        return null
+                        return null;
                     }        
                 }}>
                     Confirm
