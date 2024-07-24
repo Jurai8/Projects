@@ -126,7 +126,10 @@ export async function FetchVocab () {
             const getVocabdocs = await getDocs(collection(firestore, "Users", userId, "Vocablist 1"));   
 
             getVocabdocs.forEach((doc) => {
-                vocabList.push(doc.data().word);
+                vocabList.push({
+                    native: doc.data().word,
+                    translation: doc.data().translation
+                });
             });
         } catch (error) {
             console.error("could not get vocab for test");

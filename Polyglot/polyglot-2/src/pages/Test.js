@@ -30,8 +30,11 @@ export default function Test() {
    
 
     useEffect(() => {
-        // when count changes show value at index "count"
-        setWord(vocabListRef.current[count])
+        // Ensure vocabListRef.current is not empty before trying to access it
+        if (vocabListRef.current.length > 0 && count < vocabListRef.current.length) {
+            // when count changes show value at index "count"
+            setWord(vocabListRef.current[count].native);
+          }
     }, [count])
 
     const initializeVocab = async () => {
@@ -52,7 +55,7 @@ export default function Test() {
     };
 
    const compare = () => {
-        if (vocabListRef.current[count] === input) {
+        if (vocabListRef.current[count].translation === input) {
             setScore((prevScore) => prevScore + 1 );
         }
         return;
