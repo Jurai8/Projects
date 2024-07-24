@@ -40,7 +40,7 @@ export default function AddWord ({ onClose, eventHandler, updateVocab}) {
     )
 }
 
-export function Register ({handleSignIn, emailRef, passwordRef, usernameRef,toggleSignIn}) {
+export function Register ({handleSignUp, emailRef, passwordRef, usernameRef,toggleSignIn}) {
     return (
         <Box
             component="form"
@@ -49,7 +49,7 @@ export function Register ({handleSignIn, emailRef, passwordRef, usernameRef,togg
             }}
             noValidate
             autoComplete="off"
-            onSubmit={handleSignIn}
+            onSubmit={handleSignUp}
             >
             <h1>Sign Up</h1>
             <div >

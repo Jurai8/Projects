@@ -25,7 +25,7 @@ export default function SignUp () {
     setSignIn(!signIn);
   }
 
-
+  // logout user when app closes etc
   const handleLogin = async (e) => {
       e.preventDefault();
 
@@ -49,7 +49,7 @@ export default function SignUp () {
     });
   }
 
-  const handleSignIn = async (e) => {
+  const handleSignUp = async (e) => {
       e.preventDefault();
 
       // create a function to check input
@@ -121,7 +121,7 @@ export default function SignUp () {
             emailRef={emailRef} passwordRef={passwordRef}
             /> :
             <Register 
-              handleSignIn={handleSignIn} emailRef={emailRef}
+              handleSignUp={handleSignUp} emailRef={emailRef}
               passwordRef={passwordRef} toggleSignIn={toggleSignIn}
               usernameRef={usernameRef}
             />
