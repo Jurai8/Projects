@@ -15,13 +15,17 @@ import { FetchVocab } from '../components/MyEventHandlers';
 // first hardcode
 
 export default function Test() {
-
-
+    // current word to be displayed
     const [word, setWord] = useState('');
+    // move through vocablist indices
     const [count, setCount] = useState(null);
+    // user answer
     const [input, setInput] = useState('');
+    // user score
     const [score, setScore] = useState(0);
+    // keep track of whether test has started or not
     const [begin, setBegin] = useState(false)
+    // vocab list to be tested against
     const vocabListRef = useRef([]);
    
 
