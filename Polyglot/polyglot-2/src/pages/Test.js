@@ -20,21 +20,15 @@ export default function Test() {
     const [word, setWord] = useState('');
     const [count, setCount] = useState(null);
     const [input, setInput] = useState('');
-    const [answers, setAnswers] = useState([]);
     const [score, setScore] = useState(0);
+    const [begin, setBegin] = useState(false)
     const vocabListRef = useRef([]);
    
 
     useEffect(() => {
-        // not wokrking
-        if (vocabListRef.current[count + 1] === null) {
-            setScore(calculateResults())
-            console.log("hello")
-        } else {
-            setWord(vocabListRef.current[count])
-        }
-
-    }, [count, answers])
+        // when count changes show value at index "count"
+        setWord(vocabListRef.current[count])
+    }, [count])
 
     const initializeVocab = async () => {
         const newWords = await FetchVocab();
@@ -48,26 +42,24 @@ export default function Test() {
     };
 
     const handleConfirmClick = () => {
-        setAnswers((prevAnswers) => [...prevAnswers, input]);
+        /* setAnswers((prevAnswers) => [...prevAnswers, input]); */
         setInput(''); // Clear the input field after adding to the array
         setCount((prevCount) => prevCount + 1);
     };
 
-   const calculateResults = () => {
-        let score = 0;
-        for (let i = 0; i < vocabListRef.length - 1; i++) {
-            if (vocabListRef[i] === answers[i]) {
-                score++;
-            }
+   const compare = () => {
+        if (vocabListRef.current[count] === input) {
+            setScore((prevScore) => prevScore + 1 );
         }
-        return score;
+        return;
     }
 
     return (
         <div>
-            {score === 0 ?  <h1> Word: {word}</h1> : 
-               <h1> Word: {score}</h1> }
-           
+            {count === (vocabListRef.current.length) ?
+                <h1> Score: {score} / 3</h1> : <h1> Word: {word} </h1>
+            }
+             
             <Box
                 component="form"
                 sx={{
@@ -79,12 +71,20 @@ export default function Test() {
                 <TextField id="standard-basic" label="Standard" variant="standard" type='text' onChange={handleInputChange}/> 
 
                 <Button variant="contained" 
-                onClick={handleConfirmClick}>
+                onClick={() => {
+                    if (begin) {
+                        compare()
+                        handleConfirmClick()
+                    } else {
+                        return null
+                    }        
+                }}>
                     Confirm
                 </Button>
 
                 <Button variant="contained" onClick={() => {
-                     initializeVocab()  
+                    setBegin(true)
+                    initializeVocab()  
                 }}>
                     Begin
                 </Button>
