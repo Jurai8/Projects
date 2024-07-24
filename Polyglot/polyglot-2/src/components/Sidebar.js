@@ -10,6 +10,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import AddIcon from '@mui/icons-material/Add';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { UserVocabLists } from './MyEventHandlers';
 
 // get the array from UserVocabLists
@@ -43,7 +44,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName}) {
             <ListItem key={"New"} disablePadding>
                 <ListItemButton /* call function to create new collection */>
                 <ListItemIcon>
-                    <AddIcon /> 
+                    <LibraryAddIcon /> 
                 </ListItemIcon>
                 <ListItemText primary={"New Collection"} />
                 </ListItemButton>
