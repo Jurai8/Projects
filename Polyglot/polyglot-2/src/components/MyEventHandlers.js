@@ -141,6 +141,7 @@ export async function FetchVocab () {
         console.error("User not logged in");
     }
 }
+// TODO: delete for now = move to bin
 // if they hover or click on the row, show these 2 options
     // edit word in vocab collection
     // delete word from collection
@@ -150,7 +151,7 @@ export async function DeleteCollection(collection) {
     const user =  auth.currentUser;
 
     if (user) {
-        
+
     } else {
         console.log("user not signed in")
     }
