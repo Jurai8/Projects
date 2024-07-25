@@ -145,7 +145,16 @@ export async function FetchVocab () {
     // edit word in vocab collection
     // delete word from collection
 // delete collection
+export async function DeleteCollection(collection) {
+    const auth = getAuth();
+    const user =  auth.currentUser;
 
+    if (user) {
+        
+    } else {
+        console.log("user not signed in")
+    }
+}
 // hide words
     // button = hide
         // dropdown = native/ translation

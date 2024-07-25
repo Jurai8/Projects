@@ -28,3 +28,5 @@ yarn-error.log*
 /src/firebase.js
 #Google credentials
 /server/charlies-project-2fcac-firebase-adminsdk-hggn1-b0c290d5fb.json
+
+server.js

@@ -10,24 +10,3 @@ admin.initializeApp({
 
 
 
-function createUser() {
-    admin.auth()
-      .createUser({
-        email: '',
-        emailVerified: false,
-        password: '',
-        userName: '',
-        photoURL: 'http://www.example.com/12345678/photo.png',
-        disabled: false,
-      })
-      .then((userRecord) => {
-        // See the UserRecord reference doc for the contents of userRecord.
-        console.log('Successfully created new user:', userRecord.uid);
-      })
-      .catch((error) => {
-        console.log('Error creating new user:', error);
-      });
-  }
-  
-  // Call the createUser function
-  createUser();
