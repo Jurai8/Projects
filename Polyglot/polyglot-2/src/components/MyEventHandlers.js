@@ -1,6 +1,6 @@
 import { firestore } from '../firebase';
 import { 
-    setDoc, addDoc, collection, getDocs, doc
+    setDoc, addDoc, collection, getDocs, doc, updateDoc, query, where
 } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged,} from "firebase/auth";
 // Signup.js looks terrible because of all the functions
@@ -58,7 +58,9 @@ export function CreateVocabList(name, word, translation) {
             try {
                 // create new vocab list and add doc
                 await addDoc(SpecificListRef, {
-                    word: word, translation: translation
+                    status: 'active',
+                    word: word, 
+                    translation: translation
                 }).catch(
                     (error) => console.error("unable to create new vocab list")
                 )
@@ -142,16 +144,66 @@ export async function FetchVocab () {
     }
 }
 // TODO: delete for now = move to bin
+    // should each doc have a doc id = the native word?
 // if they hover or click on the row, show these 2 options
     // edit word in vocab collection
-    // delete word from collection
-// delete collection
-export async function DeleteCollection(collection) {
+
+// "delete" word from collection
+export async function RemoveWord(collection, word, translation) {
+    // TODO: 
+        // edit this function if i decide to change docid = native word
     const auth = getAuth();
-    const user =  auth.currentUser;
+    const user = auth.currentUser;
+    // query in collection for docs that have the properties 
+        // word: word passed in arg
+        // translation: word passed in arg
+
+        const findDoc= query(collection(firestore, "Users", user.uid, collection), where("word", "==", word), 
+        where("translation", "==", translation));
+
+        try {
+            // Execute the query to get documents
+            const querySnapshot = await getDocs(findDoc);
+        
+            // Check if any documents were found
+            if (!querySnapshot.empty) {
+              // Get the first document in the query snapshot
+              const document = querySnapshot.docs[0];
+              const docRef = doc(firestore, "Users", user.uid, collection, document.id);
+        
+              // remove word by updating the status of the document
+              await updateDoc(docRef, {
+                status: "inactive"
+              });
+              console.log(`Document ${document.id} status updated successfully!`);
+            } else {
+              console.log("No documents found matching the criteria.");
+            }
+          } catch (error) {
+            console.error("Error setting status to inactive: ", error);
+          }
+}
+
+
+// "delete" collection
+// show option to delete with right click, on collection button within    collection drawer/ sidebar
+export async function DocStatusUpdate(collectionName, status) {
+    const auth = getAuth();
+    const user = auth.currentUser;
 
     if (user) {
+        // reference doc within All_Vocab_Lists,
+        const docRef =  doc("Users", user.uid, "All_Vocab_Lists", collectionName) // collectionName as doc
 
+        try {
+            // "delete" doc by changing status to inactive
+            await updateDoc(docRef, {
+              status: status
+            });
+            console.log("Document status updated successfully!");
+          } catch (error) {
+            console.error("Error setting status to inactive: ", error);
+          }
     } else {
         console.log("user not signed in")
     }
