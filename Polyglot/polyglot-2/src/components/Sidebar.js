@@ -90,6 +90,8 @@ export function TableRowWithMenu({ row }) {
     setAnchorEl(null);
   };
 
+  // use pagex/y or clienx/y to get coordinates of mouse during onclick event
+  // contextmenu will appear at those coordinates
   return (
     <TableRow
       key={row.word}
