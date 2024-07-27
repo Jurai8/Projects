@@ -13,6 +13,7 @@ import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { UserVocabLists } from './MyEventHandlers';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { TableRow, TableCell } from '@mui/material';
 
 // get the array from UserVocabLists
 // each index will be a row in the sidebar
@@ -76,40 +77,39 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName}) {
 
 
 // right click show menu
-export function BasicMenu() {
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
-  
-    return (
-      <div>
-        <Button
-          id="basic-button"
-          aria-controls={open ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={handleClick}
-        >
-          Dashboard
-        </Button>
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
-        >
-          <MenuItem onClick={handleClose}>Profile</MenuItem>
-          <MenuItem onClick={handleClose}>My account</MenuItem>
-          <MenuItem onClick={handleClose}>Logout</MenuItem>
-        </Menu>
-      </div>
-    );
-  }
+export function TableRowWithMenu({ row }) {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  return (
+    <TableRow
+      key={row.word}
+      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+      onClick={handleClick}
+    >
+      <TableCell component="th" scope="row">
+        {row.word}
+      </TableCell>
+      <TableCell align="right">{row.translation}</TableCell>
+      
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>Edit</MenuItem>
+        <MenuItem onClick={handleClose}>Delete</MenuItem>
+      </Menu>
+    </TableRow>
+  );
+}
+
