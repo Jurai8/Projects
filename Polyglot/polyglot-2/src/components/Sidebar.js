@@ -81,7 +81,8 @@ export function TableRowWithMenu({ row }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const handleClick = (event) => {
+  const handleContextMenu = (event) => {
+    event.preventDefault();
     setAnchorEl(event.currentTarget);
   };
 
@@ -93,7 +94,8 @@ export function TableRowWithMenu({ row }) {
     <TableRow
       key={row.word}
       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-      onClick={handleClick}
+      // on my mac it works when i tap with two fingers, but when i right click
+      onContextMenu={handleContextMenu}
     >
       <TableCell component="th" scope="row">
         {row.word}
@@ -106,6 +108,7 @@ export function TableRowWithMenu({ row }) {
         open={open}
         onClose={handleClose}
       >
+        {/*menu not closing */}
         <MenuItem onClick={handleClose}>Edit</MenuItem>
         <MenuItem onClick={handleClose}>Delete</MenuItem>
       </Menu>
