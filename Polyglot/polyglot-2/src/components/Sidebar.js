@@ -79,19 +79,23 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName}) {
 // right click show menu
 export function TableRowWithMenu({ row }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [menuPosition, setMenuPosition ] = useState({mouseX: null, mouseY: null });
   const open = Boolean(anchorEl);
 
   const handleContextMenu = (event) => {
     event.preventDefault();
+    setMenuPosition({
+      mouseX: event.clientX,
+      mouseY: event.clientY
+    });
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
+    setMenuPosition({ mouseX: null, mouseY: null });
   };
 
-  // use pagex/y or clienx/y to get coordinates of mouse during onclick event
-  // contextmenu will appear at those coordinates
   return (
     <TableRow
       key={row.word}
@@ -107,6 +111,12 @@ export function TableRowWithMenu({ row }) {
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          menuPosition.mouseY !== null && menuPosition.mouseX !== null
+            ? { top: menuPosition.mouseY, left: menuPosition.mouseX }
+            : undefined
+        }
         open={open}
         onClose={handleClose}
       >

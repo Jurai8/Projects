@@ -187,7 +187,7 @@ export async function RemoveWord(collection, word, translation) {
 
 // "delete" collection
 // show option to delete with right click, on collection button within    collection drawer/ sidebar
-export async function DocStatusUpdate(collectionName, status) {
+export async function RemoveCollection(collectionName, status) {
     const auth = getAuth();
     const user = auth.currentUser;
 
@@ -208,6 +208,10 @@ export async function DocStatusUpdate(collectionName, status) {
         console.log("user not signed in")
     }
 }
+
+export async function EditWord() {
+    
+} 
 // hide words
     // button = hide
         // dropdown = native/ translation
