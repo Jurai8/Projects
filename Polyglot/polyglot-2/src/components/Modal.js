@@ -74,6 +74,7 @@ export function Register ({handleSignUp, emailRef, passwordRef, usernameRef,togg
                 id='outlined-basic-password'
                 label="Password"
                 variant="outlined"
+                type='password'
                 inputRef={passwordRef}
                 />
             </div>
@@ -113,6 +114,7 @@ export function LogIn({toggleSignIn, handleLogin, emailRef, passwordRef}) {
                 id='outlined-basic-password'
                 label="Password"
                 variant="outlined"
+                type='password'
                 inputRef={passwordRef}
                 />
             </div>
