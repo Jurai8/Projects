@@ -2,12 +2,15 @@ import {
   BrowserRouter as Router, Routes, 
   Route 
 } from "react-router-dom"; 
+import { Button } from "@mui/material";
 import {useState, useEffect} from "react"
 import { getAuth, onAuthStateChanged} from "firebase/auth";
 import SignUp from "./SignUp.js";
+import { SignOut } from "../components/MyEventHandlers.js";
 import Heft from "./Heft.js";
 import MyButton from "../components/Button";
 import Test from "./Test.js"
+
 
 function App() {
   const [username, setUsername] = useState(null);
@@ -40,7 +43,16 @@ function App() {
           </Routes> 
         </Router> 
 
-        <h1 id="username"> {username ? username : "sign in"} </h1>
+        <section id="username"> {username  ?
+          <div style={{display: 'flex'}}>
+            <h1>{username}</h1>
+            <Button onClick={SignOut}>Sign out</Button>
+          </div> 
+          // TODO: 
+            // change to button
+            // onclick, route to signInpage
+          : "sign in"} 
+        </section>
     </div>
   );
 }

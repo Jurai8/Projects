@@ -1,4 +1,5 @@
 import CssBaseline from '@mui/material/CssBaseline';
+import { CheckPasswordStrength } from '../components/MyEventHandlers';
 import { Register, LogIn } from '../components/Modal';
 import React, { useRef, useState} from 'react';
 import { getAuth, createUserWithEmailAndPassword, 
@@ -66,6 +67,12 @@ export default function SignUp () {
           username.trim() !== '' &&
           password.trim() !== ''
         ) {
+
+          if (!CheckPasswordStrength(password).isValid) {
+            alert(CheckPasswordStrength(password).errors)
+            return false;
+          }
+
           const auth = getAuth();
           try {
             await createUserWithEmailAndPassword(auth, email, password).catch((err) =>
