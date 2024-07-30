@@ -20,7 +20,21 @@ export default function Heft () {
         setIsSidebarOpen(newOpen);
     };
 
+    // state for update vocab 
+        // render both text fields if the user wants to change both words
+        // render one text field if user only wants to edit one word
 
+    // Create a drop down menu within modal for new word
+        // the user can pick what type of word it is, e.g adjective, noun
+        /* save to db {
+            status:
+            word_type:
+            word:
+            translation: 
+        }*/
+
+
+    // TODO: Move updateVocab to MyEventHandler.js
     // pass this to confirm button
     const updateVocab = () => {
         const auth = getAuth();

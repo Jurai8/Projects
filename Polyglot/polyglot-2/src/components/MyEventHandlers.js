@@ -283,8 +283,28 @@ export async function RemoveCollection(collectionName, status) {
     }
 }
 
-export async function EditWord() {
-    
+export async function EditWord(vocabList, vocabDoc, newWord, newTranslation) {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (user) {
+        // reference doc with vocab
+        const docRef =  doc("Users", user.uid, vocabList, vocabDoc) 
+
+        try {
+            // update doc with user input
+            await updateDoc(docRef, {
+              word: newWord,
+              translation: newTranslation
+            });
+            console.log("vocab successfully updated");
+          } catch (error) {
+            console.error("error updating vocab", error);
+          }
+    } else {
+        console.log("user not signed in")
+    }
+
 } 
 // TODO:
     // hide words
