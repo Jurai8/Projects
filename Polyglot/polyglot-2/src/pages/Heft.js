@@ -127,6 +127,10 @@ export default function Heft () {
         if (e.target.name === "translation") {
             newTranslation(e);
         }
+
+        if (e.target.name === "any-word") {
+            // state handler to update input
+        }
     }
 
     // update rows in VocabBook

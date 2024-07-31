@@ -283,6 +283,9 @@ export async function RemoveCollection(collectionName, status) {
     }
 }
 
+
+// export to heft
+// heft will take in the variables
 export async function EditWord(vocabList, vocabDoc, newWord, newTranslation) {
     const auth = getAuth();
     const user = auth.currentUser;

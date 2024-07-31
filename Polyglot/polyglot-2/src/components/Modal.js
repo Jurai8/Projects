@@ -3,6 +3,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { EditWord } from './MyEventHandlers';
 
 
 export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit}) 
@@ -40,7 +41,11 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                 <div id='confirm-word'>
                     <Button variant="contained" onClick={() => {
                         // updateRows and db
-                        updateVocab();
+                        if (updateOrEdit) {
+                            updateVocab();
+                        } else {
+                            EditWord();
+                        }
                         onClose();
                     }}>
                         Confirm
