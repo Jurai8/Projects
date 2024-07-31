@@ -5,7 +5,8 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 
-export default function AddWord ({ onClose, eventHandler, updateVocab}) {
+export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit}) 
+    {
     return (
         <div className='overlay'>
             <Box 
@@ -17,14 +18,24 @@ export default function AddWord ({ onClose, eventHandler, updateVocab}) {
                 noValidate
                 autoComplete="off"
                 >
-                 {/* set the value with onChange */}
-                <TextField 
-                    id="outlined-basic-english" label="English" name="native" variant="outlined" onChange={eventHandler} 
-                />
-                <TextField 
-                    id="outlined-basic-german" label="German" name="translation" variant="outlined" 
-                    onChange={eventHandler}
-                 />
+                 
+                 { updateOrEdit ? 
+                 // if user adds new word
+                    <div>
+                        <TextField 
+                            id="outlined-basic-english" label="English" name="native" variant="outlined" onChange={eventHandler} 
+                        /> 
+                        <TextField 
+                            id="outlined-basic-german" label="German" name="translation" variant="outlined" 
+                            onChange={eventHandler}
+                        />
+                    </div>: 
+                 // if the want to edit an existing word
+                    <TextField 
+                        id="any-word" label="any-word" name="any-word" variant="outlined" 
+                        onChange={eventHandler}
+                    />
+                 }
     
                 <div id='confirm-word'>
                     <Button variant="contained" onClick={() => {

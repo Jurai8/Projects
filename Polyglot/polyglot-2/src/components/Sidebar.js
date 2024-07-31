@@ -77,7 +77,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName}) {
 
 
 // right click show menu
-export function TableRowWithMenu({ row }) {
+export function TableRowWithMenu({ row, whichModal, openModal }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuPosition, setMenuPosition ] = useState({mouseX: null, mouseY: null });
   const open = Boolean(anchorEl);
@@ -120,8 +120,13 @@ export function TableRowWithMenu({ row }) {
         open={open}
         onClose={handleClose}
       >
-        {/*menu not closing */}
-        <MenuItem onClick={handleClose}>Edit</MenuItem>
+        <MenuItem onClick={() => {
+          handleClose();
+          whichModal(false);
+          openModal();
+        }}>
+          Edit
+        </MenuItem>
         <MenuItem onClick={handleClose}>Delete</MenuItem>
       </Menu>
     </TableRow>

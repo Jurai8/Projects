@@ -160,7 +160,11 @@ export default function Heft () {
         
     }
 
+    const [updateOrEdit, setUpdateOrEdit] = useState(null);
 
+    const whichModal = (Boolean) => {
+        setUpdateOrEdit(Boolean)
+    }
     
     /* 1. add function to delete/edit words
     
@@ -169,7 +173,10 @@ export default function Heft () {
     return (
         <div id='table-position'>
             <div className='button-container'>
-                <Button variant="contained" onClick={openModal}>
+                <Button variant="contained" onClick={() => {
+                    openModal();
+                    whichModal(true);
+                }}>
                     New Word
                 </Button>
                 <Button variant="contained" onClick={toggleSidebar(true)}>          
@@ -188,10 +195,18 @@ export default function Heft () {
                 <AddWord 
                     onClose={closeModal} 
                     eventHandler={eventHandler}
+                    updateOrEdit={updateOrEdit}
                     // allow addword to update state of rows
                     updateVocab={updateVocab}
                 /> 
-            ) : <VocabBook vocab={vocab} rows={rows}/>
+            ) : <VocabBook 
+                    vocab={vocab} 
+                    // why am i passing rows when they come from the db
+                    rows={rows}
+                    // can i pass these two functions in one variable?
+                    openModal={openModal} 
+                    whichModal={whichModal}
+                />
             }
         </div>
     )

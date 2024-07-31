@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import { TableRowWithMenu } from './Sidebar';
 
 
-export default function VocabBook({ vocab }) {
+export default function VocabBook({ vocab, whichModal, openModal}) {
 
   return (
     <TableContainer id='table-container' component={Paper}>
@@ -24,7 +24,7 @@ export default function VocabBook({ vocab }) {
         </TableHead>
         <TableBody>
           {vocab.map((row) => (
-            <TableRowWithMenu key={row.word} row={row} />
+            <TableRowWithMenu key={row.word} row={row} whichModal={whichModal} openModal={openModal}/>
           ))}
         </TableBody>
       </Table>
