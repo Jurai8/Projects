@@ -102,6 +102,7 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
       // on my mac it works when i tap with two fingers, but when i right click
       onContextMenu={handleContextMenu}
+      onClick={console.log(row)}
     >
       <TableCell component="th" scope="row">
         {row.word}

@@ -153,10 +153,10 @@ export default function Heft () {
     const [vocab, setVocab] = useState([])
 
     // function to set state using vocab list name
-    const getListName = async (string) => {
+    const getListName = async (ListName) => {
         // row = displayvocablist()
         try {
-            const vocabList = await DisplayVocabList(string);
+            const vocabList = await DisplayVocabList(ListName);
             setVocab(vocabList);
         } catch (error) {
             console.error("unable to display vocab list")
