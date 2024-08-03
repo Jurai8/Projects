@@ -1,9 +1,10 @@
 import '../App.css';
-import * as React from 'react';
+import { useRef } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { EditWord } from './MyEventHandlers';
+import { HandleLogin, HandleSignUp } from './MyEventHandlers';
 
 
 export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit}) 
@@ -56,7 +57,11 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
     )
 }
 
-export function Register ({handleSignUp, emailRef, passwordRef, usernameRef,toggleSignIn}) {
+export function Register ({toggleSignIn, setError, setSuccess}) {
+    const emailRef = useRef(null);
+    const passwordRef = useRef(null);
+    const usernameRef = useRef(null);
+
     return (
         <Box
             component="form"
@@ -65,8 +70,16 @@ export function Register ({handleSignUp, emailRef, passwordRef, usernameRef,togg
             }}
             noValidate
             autoComplete="off"
-            onSubmit={handleSignUp}
-            >
+            onSubmit={ () => {
+                const message = HandleSignUp(emailRef.current.value, passwordRef.current.value, usernameRef.current.value)
+
+                if (message.success === null) {
+                    setError(message.error);
+                } else {
+                    setSuccess(message.success)
+                }
+            }
+            }>
             <h1>Sign Up</h1>
             <div >
                 <TextField
@@ -104,7 +117,23 @@ export function Register ({handleSignUp, emailRef, passwordRef, usernameRef,togg
     )
 }
 
-export function LogIn({toggleSignIn, handleLogin, emailRef, passwordRef}) {
+export function LogIn({toggleSignIn, setError, setSuccess}) {
+    const emailRef = useRef(null);
+    const passwordRef = useRef(null);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const message = await HandleLogin(emailRef.current.value, passwordRef.current.value)
+
+        console.log(message);
+
+        if (message.success === null) {
+            setError(message.error);
+        } else {
+            setSuccess(message.success)
+        }
+    }
+
     return (
         <Box
             component="form"
@@ -113,8 +142,8 @@ export function LogIn({toggleSignIn, handleLogin, emailRef, passwordRef}) {
             }}
             noValidate
             autoComplete="off"
-            onSubmit={handleLogin}
-            >
+            onSubmit={handleSubmit}
+        >
             <h1>Log In</h1>
             <div >
                 <TextField

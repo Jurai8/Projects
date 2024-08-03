@@ -1,8 +1,11 @@
+
+import { useState } from 'react';
 import { firestore } from '../firebase';
 import { 
     setDoc, addDoc, collection, getDocs, doc, updateDoc, query, where
 } from "firebase/firestore"; 
-import { getAuth, onAuthStateChanged, signOut} from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut,  createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword, updateProfile,} from "firebase/auth";
 // Signup.js looks terrible because of all the functions
 // this will be a mini library
 // export all functions that should be added here
@@ -309,6 +312,103 @@ export async function EditWord(vocabList, vocabDoc, newWord, newTranslation) {
     }
 
 } 
+
+
+export function HandleLogin(emailRef, passwordRef) {
+
+    const email = emailRef;
+    const password = passwordRef;
+
+    const auth = getAuth();
+    return signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            
+            return {
+                success: `Welcome ${user.displayName}`,
+                error: null
+            };
+        })
+        .catch((error) => {
+            return {
+                error: "Failed to login",
+                success: null
+            };
+        });
+
+}
+
+export async function HandleSignUp(emailRef, passwordRef, usernameRef){
+
+    const email = emailRef;
+    const password = passwordRef;
+    const username = usernameRef;
+
+    if (
+        email &&
+        password &&
+        username &&
+        // remove white spaces
+        email.trim() !== '' &&
+        username.trim() !== '' &&
+        password.trim() !== ''
+      ) {
+
+        if (!CheckPasswordStrength(password).isValid) {
+          alert(CheckPasswordStrength(password).errors)
+          return false;
+        }
+
+        const auth = getAuth();
+        try {
+          await createUserWithEmailAndPassword(auth, email, password).catch((err) =>
+            console.log(err)
+          );
+
+          
+          await updateProfile(auth.currentUser, { displayName: username }).catch(
+            (err) => console.log("unable to create username")
+          )
+
+          // get logged in user
+          onAuthStateChanged(auth, async (user) => {
+            if (user) {
+              const userId = user.uid;
+              const userData = {
+                Username: user.displayName
+              }
+              const userDocRef = doc(firestore, 'Users', userId);
+
+              try {
+                await setDoc(userDocRef, userData);
+                console.log("user doc created");
+              } catch (error) {
+                console.error("could not create user doc")
+              }
+              
+            } else {
+              console.log("No user is signed in.");
+            }
+          });
+
+          return {
+            success:`Hello ${username}`,
+            error: null
+          }
+            
+
+        } catch (error) {
+            return {
+                error: "Failed to create account",
+                success: null
+            };
+        }
+
+    } else {
+        console.warn('credentials are undefined or null');
+      }
+}
 // TODO:
     // hide words
         // button = hide
