@@ -57,7 +57,7 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
     )
 }
 
-export function Register ({toggleSignIn, setError, setSuccess}) {
+export function Register ({toggleSignIn, setError, setMessage}) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const usernameRef = useRef(null);
@@ -73,10 +73,13 @@ export function Register ({toggleSignIn, setError, setSuccess}) {
             onSubmit={ () => {
                 const message = HandleSignUp(emailRef.current.value, passwordRef.current.value, usernameRef.current.value)
 
+                // if there's an error
                 if (message.success === null) {
-                    setError(message.error);
+                    setError(true);
+                    setMessage(message.error);
                 } else {
-                    setSuccess(message.success)
+                    setError(false)
+                    setMessage(message.success)
                 }
             }
             }>
@@ -117,7 +120,7 @@ export function Register ({toggleSignIn, setError, setSuccess}) {
     )
 }
 
-export function LogIn({toggleSignIn, setError, setSuccess}) {
+export function LogIn({toggleSignIn, setError, setMessage}) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
 
@@ -125,12 +128,13 @@ export function LogIn({toggleSignIn, setError, setSuccess}) {
         e.preventDefault();
         const message = await HandleLogin(emailRef.current.value, passwordRef.current.value)
 
-        console.log(message);
-
+        // if there's an error
         if (message.success === null) {
-            setError(message.error);
+            setError(true);
+            setMessage(message.error);
         } else {
-            setSuccess(message.success)
+            setError(false);
+            setMessage(message.success);
         }
     }
 

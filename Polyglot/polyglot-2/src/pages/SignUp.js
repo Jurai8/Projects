@@ -9,8 +9,10 @@ import React, { useRef, useState} from 'react';
 */
 
 export default function SignUp () {
+  // use one state handler. set true/false
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  // message depends on error or success
+  const [message, setMessage] = useState(null);
 
   const [signIn, setSignIn] = useState(false);
 
@@ -26,17 +28,20 @@ export default function SignUp () {
             <LogIn 
               toggleSignIn={toggleSignIn} 
               setError={setError}
-              setSuccess={setSuccess}
+              setMessage={setMessage}
             /> :
             <Register 
               toggleSignIn={toggleSignIn} 
               setError={setError}
-              setSuccess={setSuccess}
+              setMessage={setMessage}
             />
           }
-  
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {success && <p style={{ color: 'green' }}>{success}</p>}
+          {error ?
+          // if there is an error
+          <p style={{ color: 'red' }}>{message}</p> 
+          // else success
+          : <p style={{ color: 'green' }}>{message}</p>
+          }
       </div>
   )
 }
