@@ -18,7 +18,8 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.0",
     "styled-components": "^6.1.11",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "server": "file:./server/server"
   },
   "scripts": {
     "start": "react-scripts start",

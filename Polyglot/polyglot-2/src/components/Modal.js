@@ -62,6 +62,20 @@ export function Register ({toggleSignIn, setError, setMessage}) {
     const passwordRef = useRef(null);
     const usernameRef = useRef(null);
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const message = await HandleSignUp(emailRef.current.value, passwordRef.current.value, usernameRef.current.value)
+
+        // if there's an error
+        if (message.success === null) {
+            setError(true);
+            setMessage(message.error);
+        } else {
+            setError(false);
+            setMessage(message.success);
+        }
+    }
+
     return (
         <Box
             component="form"
@@ -70,19 +84,8 @@ export function Register ({toggleSignIn, setError, setMessage}) {
             }}
             noValidate
             autoComplete="off"
-            onSubmit={ () => {
-                const message = HandleSignUp(emailRef.current.value, passwordRef.current.value, usernameRef.current.value)
-
-                // if there's an error
-                if (message.success === null) {
-                    setError(true);
-                    setMessage(message.error);
-                } else {
-                    setError(false)
-                    setMessage(message.success)
-                }
-            }
-            }>
+            onSubmit={handleSubmit}
+        >
             <h1>Sign Up</h1>
             <div >
                 <TextField

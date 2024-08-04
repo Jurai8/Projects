@@ -1,4 +1,5 @@
 
+
 import { useState } from 'react';
 import { firestore } from '../firebase';
 import { 
@@ -11,6 +12,19 @@ import { getAuth, onAuthStateChanged, signOut,  createUserWithEmailAndPassword,
 // export all functions that should be added here
 // import in files
     //e.g import {handleLogin, handleSave} from 'MyEventHandlers'
+
+async function checkUser(username, email) {
+    const res = await fetch('/api/check-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email }),
+      });
+  
+      const data = await res.json();
+      return data;
+}
 
 export function CheckPasswordStrength(password) {
     function hasNumber(userString) {
@@ -339,7 +353,7 @@ export function HandleLogin(emailRef, passwordRef) {
 
 }
 
-export async function HandleSignUp(emailRef, passwordRef, usernameRef){
+export async function HandleSignUp(emailRef, passwordRef, usernameRef) {
 
     const email = emailRef;
     const password = passwordRef;
@@ -355,9 +369,25 @@ export async function HandleSignUp(emailRef, passwordRef, usernameRef){
         password.trim() !== ''
       ) {
 
-        if (!CheckPasswordStrength(password).isValid) {
-          alert(CheckPasswordStrength(password).errors)
-          return false;
+        try {
+            // Check password strength
+            const passwordStrength = CheckPasswordStrength(password);
+            if (!passwordStrength.isValid) {
+                alert(passwordStrength.errors);
+                return false;
+            }
+
+            const res = await checkUser(username, email);
+            if (res.status === "error" ) {
+                alert(res.message);
+                return false;
+            } 
+            // Proceed with the rest of the logic if no errors
+        } catch (error) {
+            console.error("Issue checking for identity (async function)");
+            alert("could not create account");
+            return;
+            // Handle the error appropriately, e.g., display a user-friendly message
         }
 
         const auth = getAuth();
@@ -365,8 +395,7 @@ export async function HandleSignUp(emailRef, passwordRef, usernameRef){
           await createUserWithEmailAndPassword(auth, email, password).catch((err) =>
             console.log(err)
           );
-
-          
+       
           await updateProfile(auth.currentUser, { displayName: username }).catch(
             (err) => console.log("unable to create username")
           )
@@ -375,9 +404,12 @@ export async function HandleSignUp(emailRef, passwordRef, usernameRef){
           onAuthStateChanged(auth, async (user) => {
             if (user) {
               const userId = user.uid;
+              const email = user.email;
               const userData = {
-                Username: user.displayName
+                Username: user.displayName,
+                Email: email
               }
+              // docid = userid
               const userDocRef = doc(firestore, 'Users', userId);
 
               try {
