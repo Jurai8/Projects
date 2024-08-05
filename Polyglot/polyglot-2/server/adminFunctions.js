@@ -2,7 +2,7 @@
 const admin = require("firebase-admin");
 const db = admin.firestore();
 
-export async function checkForUser(username, email) {
+async function checkForUser(username, email) {
   // Check if email is being used
   const emailQuery = db.collection("cities").where("email", "==", email);
   const emailSnapshot = await emailQuery.get();
@@ -28,3 +28,5 @@ export async function checkForUser(username, email) {
     }
   }
 }
+
+module.exports = { checkForUser };

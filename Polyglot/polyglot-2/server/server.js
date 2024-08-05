@@ -1,6 +1,3 @@
-import { Storage } from "@google-cloud/storage";
-import { checkForUser } from "./adminFunctions";
-
 
 const express = require('express');
 const admin = require('firebase-admin');
@@ -12,13 +9,15 @@ if (!admin.apps.length) {
   });
 }
 
-admin.initializeApp({
+/* admin.initializeApp({
   databaseURL: "https://charlies-project-2fcac.firebaseio.com"
-});
+}); */
 
-const db = admin.firestore();
+const { checkForUser } = require('./adminFunctions');
+
+const db = admin.firestore(); 
 const app = express();
-const port = 3000;
+const port = 4000;
 
 app.use(express.json());
 

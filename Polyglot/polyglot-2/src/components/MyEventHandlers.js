@@ -385,8 +385,10 @@ export async function HandleSignUp(emailRef, passwordRef, usernameRef) {
             // Proceed with the rest of the logic if no errors
         } catch (error) {
             console.error("Issue checking for identity (async function)");
-            alert("could not create account");
-            return;
+            return {
+                error: "Failed to create account",
+                success: null
+            };;
             // Handle the error appropriately, e.g., display a user-friendly message
         }
 
