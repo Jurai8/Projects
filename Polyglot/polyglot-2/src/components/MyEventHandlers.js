@@ -15,7 +15,7 @@ import { getAuth, onAuthStateChanged, signOut,  createUserWithEmailAndPassword,
 
 async function checkUser(username, email) {
     try {
-        const res = await fetch('/api/check-user', {
+        const res = await fetch('/checkUser', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

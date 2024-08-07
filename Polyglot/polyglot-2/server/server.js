@@ -21,7 +21,7 @@ const port = 4000;
 
 app.use(express.json());
 
-app.post('/api/check-user', async (req, res) => {
+app.post('/checkUser', async (req, res) => {
   const { username, email } = req.body;
   console.log(username); 
   console.log(email); 

@@ -79,6 +79,8 @@ export function Register ({toggleSignIn, setError, setMessage}) {
     return (
         <Box
             component="form"
+            method='post'
+            action='/checkUser'
             sx={{
                 '& > :not(style)': { m: 1, width: '25ch' },
             }}
