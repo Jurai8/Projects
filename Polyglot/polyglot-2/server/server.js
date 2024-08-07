@@ -23,11 +23,14 @@ app.use(express.json());
 
 app.post('/api/check-user', async (req, res) => {
   const { username, email } = req.body;
+  console.log(username); 
+  console.log(email); 
+  
   try {
     const result = await checkForUser(username, email);
     res.json(result);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: "issue running checkForUser" });
   }
 });
 

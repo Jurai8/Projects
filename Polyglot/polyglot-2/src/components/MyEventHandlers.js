@@ -14,16 +14,21 @@ import { getAuth, onAuthStateChanged, signOut,  createUserWithEmailAndPassword,
     //e.g import {handleLogin, handleSave} from 'MyEventHandlers'
 
 async function checkUser(username, email) {
-    const res = await fetch('/api/check-user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email }),
-      });
-  
-      const data = await res.json();
-      return data;
+    try {
+        const res = await fetch('/api/check-user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, email }),
+          });
+          const data = await res.json();
+          
+          console.log("Request sent successfully")
+          return data;
+    } catch (error) {
+        console.log("Error sending request")
+    }
 }
 
 export function CheckPasswordStrength(password) {
