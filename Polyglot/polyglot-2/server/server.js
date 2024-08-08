@@ -17,25 +17,29 @@ const { checkForUser } = require('./adminFunctions');
 
 const db = admin.firestore(); 
 const app = express();
+
+
+const hostname = '127.0.0.1';
 const port = 4000;
 
 app.use(express.json());
 
 app.post('/checkUser', async (req, res) => {
   const { username, email } = req.body;
-  console.log(username); 
-  console.log(email); 
+  console.log("Username: ", "+", username); 
+  console.log("Email: ","+",email); 
   
   try {
-    const result = await checkForUser(username, email);
+    // const result = await checkForUser(username, email);
+    res.send("Hello");
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: "issue running checkForUser" });
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
+app.listen(port, hostname, () => {
+  console.log(`Server listening at http://${hostname}:${port}/`);
 });
 
 
