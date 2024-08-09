@@ -26,5 +26,5 @@ yarn-error.log*
 
 #firebase config
 /src/firebase.js
-#Google credentials
+# ignore the backend
 /server/

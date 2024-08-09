@@ -448,6 +448,10 @@ export async function HandleSignUp(emailRef, passwordRef, usernameRef) {
         console.warn('credentials are undefined or null');
       }
 }
+
+
+// fuction if Vocab_Lists? == false, return false.
+
 // TODO:
     // hide words
         // button = hide

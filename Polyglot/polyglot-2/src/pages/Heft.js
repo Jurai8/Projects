@@ -9,6 +9,14 @@ import { addDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { DisplayVocabList } from '../components/MyEventHandlers';
 
+/* TODO: 
+    if user has no vocab list
+        display modal 
+        values: Name of list, first word pair
+        create new vocab list
+        add vocab list name to "All_Vocab_List" collection
+*/
+
 
 // button leading to current page should be removed
 export default function Heft () {
