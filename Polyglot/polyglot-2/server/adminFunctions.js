@@ -4,11 +4,11 @@ const db = admin.firestore();
 
 async function checkForUser(username, email) {
   // Check if email is being used
-  const emailQuery = db.collection("cities").where("email", "==", email);
+  const emailQuery = db.collection("Users").where("email", "==", email);
   const emailSnapshot = await emailQuery.get();
 
   // Check if username is being used
-  const usernameQuery = db.collection("cities").where("Username", "==", username);
+  const usernameQuery = db.collection("Users").where("Username", "==", username);
   const usernameSnapshot = await usernameQuery.get();
 
   if (!emailSnapshot.empty) {

@@ -30,8 +30,7 @@ app.post('/checkUser', async (req, res) => {
   console.log("Email: ","+",email); 
   
   try {
-    // const result = await checkForUser(username, email);
-    res.send("Hello");
+    const result = await checkForUser(username, email);
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: "issue running checkForUser" });
