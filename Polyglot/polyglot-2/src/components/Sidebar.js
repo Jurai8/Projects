@@ -20,7 +20,7 @@ import { TableRow, TableCell } from '@mui/material';
 
 
 // pass onclick function here
-export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName}) { 
+export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, toggleNewCollectionModal }) { 
     // get all vocab lists belonging to user
     // State to hold vocab lists
     const [rows, setRows] = useState([]);
@@ -48,7 +48,10 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName}) {
                 <ListItemIcon>
                     <LibraryAddIcon /> 
                 </ListItemIcon>
-                <ListItemText primary={"New Collection"} />
+                <ListItemText primary={"New Collection"} 
+                  // set state handler true, for create vocab collection function in heft
+                  onClick={() => {toggleNewCollectionModal(true)}}
+                 />
                 </ListItemButton>
             </ListItem>
             {rows.map((text, index) => (

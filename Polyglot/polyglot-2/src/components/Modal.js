@@ -5,6 +5,8 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { EditWord } from './MyEventHandlers';
 import { HandleLogin, HandleSignUp } from './MyEventHandlers';
+import { Vocab } from './Learner';
+import { getAuth } from 'firebase/auth';
 
 
 export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit}) 
@@ -178,6 +180,87 @@ export function LogIn({toggleSignIn, setError, setMessage}) {
             <section>
                 <p onClick={toggleSignIn}>Sign up</p>
             </section>
+        </Box>
+    )
+}
+
+// pass user if possible
+export function NewCollection({ toggleNewCollectionModal }) {
+    // get signed in user
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    const vocab = new Vocab(user);
+
+
+    const collectionNameRef = useRef(null);
+    const nativeRef = useRef(null);
+    const translationRef = useRef(null);
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            console.log(user.email);
+            await vocab.CreateVocabList(
+                collectionNameRef.current.value, nativeRef.current.value, translationRef.current.value
+            );
+            alert("Collection creation successful!");
+        } catch (error) {
+            alert("could not create new collection");
+        }
+        // if there's an error
+        /* if (message.success === null) {
+            setError(true);
+            setMessage(message.error);
+        } else {
+            setError(false);
+            setMessage(message.success);
+        } */
+        toggleNewCollectionModal(false);
+    }
+
+    return (
+        <Box
+            component="form"
+            sx={{
+                '& > :not(style)': { m: 1, width: '25ch' },
+            }}
+            noValidate
+            autoComplete="off"
+            onSubmit={handleSubmit}
+        >
+            <h1>New Collection</h1>
+            <div >
+                <TextField
+                id='vocab-collection-name'
+                placeholder="Familiy"
+                label='vocab-collection-name'
+                variant='outlined'
+                inputRef={collectionNameRef}
+                />
+            </div>
+            <div >
+                <TextField
+                id='native'
+                placeholder="native"
+                label="native"
+                variant="outlined"
+                inputRef={nativeRef}
+                />
+            </div>
+            <div >
+                <TextField
+                id='translation'
+                placeholder="translation"
+                label="translation"
+                variant="outlined"
+                inputRef={translationRef}
+                />
+            </div>
+            <Button id="Confirm-word" variant="contained" type='submit'>
+                Create collection
+            </Button>
         </Box>
     )
 }

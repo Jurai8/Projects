@@ -3,6 +3,7 @@ import React, { useState, useEffect} from 'react';
 import VocabBook from '../components/Table'
 import AddWord from '../components/Modal';
 import Sidebar from '../components/Sidebar';
+import { NewCollection } from '../components/Modal';
 import { Button } from '@mui/material';
 import { firestore } from '../firebase';
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore"; 
@@ -21,6 +22,11 @@ import { DisplayVocabList } from '../components/MyEventHandlers';
 // button leading to current page should be removed
 export default function Heft () {
 
+    const [newVocabCollection, setNewVocabCollection] = useState(false);
+
+    const toggleNewCollectionModal = (bool) => {
+        setNewVocabCollection(bool);
+    }
     // state for sidebar
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -200,7 +206,14 @@ export default function Heft () {
             {isSidebarOpen &&
              <Sidebar toggleSidebar={toggleSidebar} 
              isSidebarOpen={isSidebarOpen} getListName={getListName}
+             toggleNewCollectionModal={toggleNewCollectionModal}
             />}
+
+            {newVocabCollection && 
+                <NewCollection 
+                    toggleNewCollectionModal={toggleNewCollectionModal}
+                />
+            }
 
             {/*when the modal closes pass, input to vocab book */}
             {isModalOpen ? (
