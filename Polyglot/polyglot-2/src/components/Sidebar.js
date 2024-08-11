@@ -37,8 +37,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
       console.log("user not authenticated, function: Sidebar")
     }
 
-    // Fetch vocab lists on component mount
-    // how to fetch before component mount???
+    // PROBLEM: useEffect runs twice !!!
     useEffect(() => {
       const fetchVocabLists = async () => {
         try {
@@ -52,7 +51,6 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
       };
 
       fetchVocabLists();
-        // run useEffect only once after render
     },[]);
 
 
