@@ -105,34 +105,6 @@ export function SignOut() {
 }
 
 
-export function UserVocabLists() {
-    // get the currently signed in user
-    const auth = getAuth();
-
-    return new Promise ((resolve, reject) => {
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const userId = user.uid;
-                const vocabListNames = [];
-
-                // path to subcollection
-                const querySnapshot = await getDocs(collection(
-                    firestore, "Users", userId, "All_Vocab_Lists"
-                ));
-
-                querySnapshot.forEach((doc) => {
-                    // add each list name into an array
-                    vocabListNames.push(doc.id); 
-                });
-
-                resolve(vocabListNames);
-            } else {
-                reject("UserVocabList: User not logged in");
-            }
-        });
-    })
-}
-
 /* say the user wants to view a specific vocab list
    onclick event, take the string of the button they clicked on
    copy that string onto the user path
@@ -140,42 +112,6 @@ export function UserVocabLists() {
 */
 
 // in the future: set a limit to the number of lists per user
-export function CreateVocabList(name, word, translation) {
-
-    const auth = getAuth();
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const userId = user.uid;
-            // path to new vocab list
-            const SpecificListRef = doc(firestore, "User", userId, name);
-            // path to collection of vocal list names
-            const AllVocabListNamesPath = doc(firestore, "User", userId, "All_Vocab_Lists");
-
-            try {
-                // create new vocab list and add doc
-                await addDoc(SpecificListRef, {
-                    status: 'active',
-                    word: word, 
-                    translation: translation
-                }).catch(
-                    (error) => console.error("unable to create new vocab list")
-                )
-
-                /* add new vocab list name to collection of vocab list names */
-                await setDoc(AllVocabListNamesPath, name, {
-                    ListName: name
-                }).catch(
-                    (error) => console.error("unable to save list name to collection of names")
-                )
-            } catch (error) {
-                console.error("could not create new list or save list name to collection of names")
-            }
-
-        } else {
-            console.error("CreateVocabList: User not logged in")
-        }
-    });
-}
 
 // string = vocablist name will be passed to this func, onclick event
 // use this function when asking user which list they want to view

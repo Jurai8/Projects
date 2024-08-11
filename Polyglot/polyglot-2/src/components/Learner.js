@@ -72,35 +72,30 @@ export class Vocab {
         }
     }
 
-    // formerly called Display vocablists
-    async getAllVocabLists(collectionName) {
-        // REMOVE
-        console.log(`Collection name: ${collectionName}`)
-        // pass an object (word and translation in one obj) into the array?
+    async getAllVocabLists() {
         if (this.user) {
             const userId = this.user.uid;
             // path to subcollection
-            const querySnapshot = await getDocs(collection(
-                firestore, "Users", userId, collectionName
-            ));
-
-            querySnapshot.forEach((doc) => {
-                // add each wordpair into the array
-                console.log(`data: ${doc.data().word}`);
-
-                this.allVocabLists.push({
-                    word: doc.data().word,
-                    translation: doc.data().translation
+            try {
+                // path to subcollection
+                const querySnapshot = await getDocs(collection(
+                    firestore, "Users", userId, "All_Vocab_Lists"
+                ));
+    
+                querySnapshot.forEach((doc) => {
+                    // add each list name into an array
+                    this.allVocabLists.push(doc.id); 
                 });
-            });
 
-            // REMOVE
-            console.log(this.allVocabLists)
-
-        return this.allVocabLists;
+                return this.allVocabLists;
+            } catch (error) {
+                console.error("Could not get names of vocab lists", error);
+            }
+        
         } else {
-            console.error("user not signed in");
+            console.log("user not logged in");
         }
+        
     }
     // get allvocablists
         // if return null 

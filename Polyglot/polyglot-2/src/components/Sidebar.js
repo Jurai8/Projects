@@ -10,10 +10,11 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import { UserVocabLists } from './MyEventHandlers';
+import { Vocab } from './Learner';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { TableRow, TableCell } from '@mui/material';
+import { getAuth } from 'firebase/auth';
 
 // get the array from UserVocabLists
 // each index will be a row in the sidebar
@@ -25,26 +26,41 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
     // State to hold vocab lists
     const [rows, setRows] = useState([]);
 
+    const auth = getAuth();
+    const user = auth.currentUser;
+    let vocab;
+
+    if (user != null) {
+      vocab = new Vocab(user);
+
+    } else {
+      console.log("user not authenticated, function: Sidebar")
+    }
+
     // Fetch vocab lists on component mount
     // how to fetch before component mount???
     useEffect(() => {
-        UserVocabLists()
-        .then((vocabListNames) => {
+      const fetchVocabLists = async () => {
+        try {
+            console.log("Fetching vocab lists...");
+            const vocabListNames = await vocab.getAllVocabLists();
             console.log(`UseEffect: ${vocabListNames}`);
             setRows(vocabListNames);
-        })
-        .catch((error) => {
+        } catch (error) {
             console.error("Error fetching vocab lists:", error);
-        });
+        }
+      };
+
+      fetchVocabLists();
         // run useEffect only once after render
-    }, []);
+    },[]);
 
 
     const SidebarList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleSidebar(false)}>
         <List>
             <ListItem key={"New"} disablePadding>
-                <ListItemButton /* call function to create new collection */>
+                <ListItemButton>
                 <ListItemIcon>
                     <LibraryAddIcon /> 
                 </ListItemIcon>
