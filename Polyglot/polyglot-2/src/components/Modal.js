@@ -189,8 +189,13 @@ export function NewCollection({ toggleNewCollectionModal }) {
     // get signed in user
     const auth = getAuth();
     const user = auth.currentUser;
+    let vocab;
 
-    const vocab = new Vocab(user);
+    if (user != null) {
+        vocab = new Vocab(user);
+    } else {
+        console.log("user not signed in")
+    }
 
 
     const collectionNameRef = useRef(null);
@@ -202,10 +207,10 @@ export function NewCollection({ toggleNewCollectionModal }) {
         e.preventDefault();
         try {
             console.log(user.email);
-            await vocab.CreateVocabList(
+            const result = await vocab.CreateVocabList(
                 collectionNameRef.current.value, nativeRef.current.value, translationRef.current.value
             );
-            alert("Collection creation successful!");
+            alert(result);
         } catch (error) {
             alert("could not create new collection");
         }

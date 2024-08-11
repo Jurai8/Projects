@@ -38,10 +38,11 @@ export class Vocab {
         // does it work i put this.uid?
         if (this.user) {
             const userId = this.user.uid;
+            console.log(userId);
             // path to new vocab list
-            const SpecificListRef = doc(firestore, "User", userId, name);
-            // path to collection of vocal list names
-            const AllVocabListNamesPath = doc(firestore, "User", userId, "All_Vocab_Lists");
+            const SpecificListRef = collection(firestore, "Users", userId, name);
+            // path to collection of vocab list names
+            const AllVocabListNamesPath = doc(firestore, "Users", userId, "All_Vocab_Lists", name);
 
             try {
                 // create new vocab list and add doc
@@ -50,17 +51,20 @@ export class Vocab {
                     word: word, 
                     translation: translation
                 }).catch(
-                    (error) => console.error("unable to create new vocab list")
+                    (error) => console.error("unable to create new vocab list: ", error)
                 )
 
-                /* add new vocab list name to collection of vocab list names */
-                await setDoc(AllVocabListNamesPath, name, {
-                    ListName: name
+                // add new vocab list name to collection of vocab list names 
+                await setDoc(AllVocabListNamesPath, {
+                    ListName: name, // doc id = name, so this field probably doesn't need to be here
+                    status: 'active'
                 }).catch(
-                    (error) => console.error("unable to save list name to collection of names")
+                    (error) => console.error("unable to save list name to collection of names: ", error)
                 )
+
+                return `successfully created ${name} collection`;
             } catch (error) {
-                console.error("could not create new list or save list name to collection of names")
+                console.error("could not create new list or save list name to collection of names: ", error)
             }
 
         } else {
