@@ -3,6 +3,8 @@ import Button from '@mui/material/Button';
 import React, { useRef, useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import { FetchVocab } from '../components/MyEventHandlers';
+import { Test } from '../components/Learner';
+import { getAuth } from 'firebase/auth';
 
 
 // This is the vocab test
@@ -14,7 +16,7 @@ import { FetchVocab } from '../components/MyEventHandlers';
 
 // first hardcode
 
-export default function Test() {
+export default function TestLearner() {
     // current word to be displayed
     const [word, setWord] = useState('');
     // move through vocablist indices
@@ -27,7 +29,11 @@ export default function Test() {
     const [begin, setBegin] = useState(false)
     // vocab list to be tested against
     const vocabListRef = useRef([]);
-   
+
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    const Testobj = new Test(user);
 
     useEffect(() => {
         // Ensure vocabListRef.current is not empty before trying to access it
@@ -38,7 +44,7 @@ export default function Test() {
     }, [count])
 
     const initializeVocab = async () => {
-        const newWords = await FetchVocab();
+        const newWords = await Testobj.getVocab();
         vocabListRef.current = newWords;
         // Reset count to 0 to start from the first word
         setCount(0)

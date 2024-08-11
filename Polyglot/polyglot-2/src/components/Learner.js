@@ -23,6 +23,17 @@ export class Learner {
         return this.username;
     }
 
+
+    // handle login
+
+    // handle sign up
+
+    // handle sign out
+
+    // check password strength
+
+    // check for existing user
+
 }
 
 export class Vocab {
@@ -97,7 +108,58 @@ export class Vocab {
         }
         
     }
+
+    // remove collection
+
+    // remove word
+
+    // edit word
+
+
     // get allvocablists
         // if return null 
         // tell user to create a new list
+}
+
+
+export class Test {
+    // constructor
+    constructor(user) {
+        this.user = user;
+        // array of words to be tested on
+        this.vocab = [];
+        this.score = 0;
+    }
+
+    // fetchvocab()
+    async getVocab() {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+            const userId = user.uid;
+            // get vocab 
+            try {
+                const getVocabdocs = await getDocs(collection(firestore, "Users", userId, "Vocablist 1")); 
+
+                getVocabdocs.forEach((doc) => {
+                    this.vocab.push({
+                        native: doc.data().word,
+                        translation: doc.data().translation
+                    });
+                });
+            } catch (error) {
+                console.error("could not get vocab for test");
+            }
+            
+            // how to return a randomized order of the array?
+            return this.vocab;
+        } else {
+            console.error("User not logged in");
+        }
+        }
+
+    // getscore
+
+    // set score?
 }

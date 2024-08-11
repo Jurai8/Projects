@@ -9,7 +9,7 @@ import SignUp from "./SignUp.js";
 import { SignOut } from "../components/MyEventHandlers.js";
 import Heft from "./Heft.js";
 import MyButton from "../components/Button";
-import Test from "./Test.js"
+import TestLearner from "./Test.js"
 
 
 function App() {
@@ -39,7 +39,7 @@ function App() {
             <Route path="/signup" element={<SignUp />} /> 
             <Route path="/" element={<Home />} /> 
             <Route path="/heft" element={<Heft />} />
-            <Route path="/test" element={<Test />} /> 
+            <Route path="/test" element={<TestLearner />} /> 
           </Routes> 
         </Router> 
 

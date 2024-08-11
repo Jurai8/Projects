@@ -101,11 +101,18 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
 
   const handleContextMenu = (event) => {
     event.preventDefault();
-    setMenuPosition({
-      mouseX: event.clientX,
-      mouseY: event.clientY
-    });
-    setAnchorEl(event.currentTarget);
+    
+    if (event.currentTarget.classList.contains('Row')) {
+      event.preventDefault();
+      setMenuPosition({
+        mouseX: event.clientX,
+        mouseY: event.clientY
+      });
+      setAnchorEl(event.currentTarget);
+    } else {
+      setAnchorEl(null);
+      setMenuPosition(null);
+    }
   };
 
   const handleClose = () => {
@@ -116,8 +123,8 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
   return (
     <TableRow
       key={row.word}
+      className='Row'
       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-      // on my mac it works when i tap with two fingers, but when i right click
       onContextMenu={handleContextMenu}
       onClick={console.log(row)}
     >
