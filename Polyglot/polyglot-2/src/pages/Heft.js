@@ -228,7 +228,7 @@ export default function Heft () {
                 /> 
             ) : <VocabBook 
                     vocab={vocab} 
-                    // why am i passing rows when they come from the db
+                    // why am i passing rows when they come from the db ???
                     rows={rows}
                     // can i pass these two functions in one variable?
                     openModal={openModal} 
