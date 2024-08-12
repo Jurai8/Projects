@@ -33,21 +33,21 @@ export default function TestLearner() {
     const auth = getAuth();
     const user = auth.currentUser;
 
-    const Testobj = new Test(user);
+    const vocabTest = new Test(user);
 
     useEffect(() => {
         // Ensure vocabListRef.current is not empty before trying to access it
-        if (vocabListRef.current.length > 0 && count < vocabListRef.current.length) {
+        if (vocabTest.verifyWordSet(vocabListRef.current, count)) {
             // when count changes show value at index "count"
             setWord(vocabListRef.current[count].native);
-          }
+        }
     }, [count])
 
     const initializeVocab = async () => {
-        const newWords = await Testobj.getVocab();
+        const newWords = await vocabTest.getVocab();
         vocabListRef.current = newWords;
         // Reset count to 0 to start from the first word
-        setCount(0)
+        setCount(0);
     };
 
     const handleInputChange = (event) => {
@@ -55,17 +55,13 @@ export default function TestLearner() {
     };
 
     const handleConfirmClick = () => {
-        /* setAnswers((prevAnswers) => [...prevAnswers, input]); */
         setInput(''); // Clear the input field after adding to the array
         setCount((prevCount) => prevCount + 1);
     };
 
    const compare = () => {
-        if (vocabListRef.current[count].translation === input) {
-            setScore((prevScore) => prevScore + 1 );
-        }
-        return;
-    }
+        vocabTest.checkAnswer(vocabListRef.current[count].translation, input)
+   }
 
     return (
         <div>

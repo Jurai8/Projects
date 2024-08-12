@@ -1,6 +1,6 @@
 import { firestore } from '../firebase';
 import { 
-    setDoc, addDoc, collection, getDocs, doc, updateDoc, query, where
+    setDoc, addDoc, collection, getDocs, getDoc, doc, updateDoc, query, where
 } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged, signOut,  createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, updateProfile,} from "firebase/auth";
@@ -52,28 +52,54 @@ export class Vocab {
             console.log(userId);
             // path to new vocab list
             const SpecificListRef = collection(firestore, "Users", userId, name);
+
+            const pathToUserDoc = doc(firestore, "Users", userId);
+
+            const docSnap = await getDoc(pathToUserDoc);
             // path to collection of vocab list names
             const AllVocabListNamesPath = doc(firestore, "Users", userId, "All_Vocab_Lists", name);
 
             try {
                 // create new vocab list and add doc
                 await addDoc(SpecificListRef, {
-                    status: 'active',
+                    status: 'include', // "deleted" for delete
                     word: word, 
                     translation: translation
-                }).catch(
-                    (error) => console.error("unable to create new vocab list: ", error)
-                )
+                }).catch((error) => {
+                    console.error("unable to create new vocab list: ", error)
+                    return;
+                })
 
                 // add new vocab list name to collection of vocab list names 
                 await setDoc(AllVocabListNamesPath, {
                     ListName: name, // doc id = name, so this field probably doesn't need to be here
                     status: 'active'
-                }).catch(
-                    (error) => console.error("unable to save list name to collection of names: ", error)
-                )
+                }).catch((error) => {
+                    console.error("Unable to save list name to All_Vocab_Lists: ", error);
+                    return; // Stop execution if setDoc fails
+                });
+
+                // update number of docs
+                if (docSnap.exists()) {
+                    // Retrieve the current number of vocab lists
+                    let currentNumberOfVocabLists = docSnap.data().VocabLists || 0; // Default to 0 if undefined
+                
+                    // Increment the number of vocab lists
+                    const numberOfVocabLists = currentNumberOfVocabLists + 1;
+                
+                    // Update the document with the new number of vocab lists
+                    await updateDoc(pathToUserDoc, {
+                        VocabLists: numberOfVocabLists,
+                    }).catch((error) => {
+                        console.error("unable to update number of vocablists: ", error)
+                    });
+                } else {
+                    console.log("user doc does not exist");
+                    return;
+                }
 
                 return `successfully created ${name} collection`;
+
             } catch (error) {
                 console.error("could not create new list or save list name to collection of names: ", error)
             }
@@ -107,6 +133,15 @@ export class Vocab {
             console.log("user not logged in");
         }
         
+    }
+
+    // updateVocab() in Heft.js
+    addWord(vocabList, wordPair) {
+        if (this.user) {
+
+        } else {
+            console.log("user not signed in")
+        }
     }
 
     // remove collection
@@ -157,9 +192,32 @@ export class Test {
         } else {
             console.error("User not logged in");
         }
+    }
+
+    checkAnswer(currentWord, currentAnswer) {
+        if (currentWord === currentAnswer) {
+            this.score++;
+        } else {
+            return false;
+        }
+    }
+
+    verifyWordSet(vocabList, count) {
+        if (vocabList.length > 0 && count < vocabList.length) {
+            return true;
         }
 
+        if (!vocabList === null) {
+            return true;
+        }
+
+        return false;
+    }
+
     // getscore
+    getScore() {
+        return this.score;
+    }
 
     // set score?
 }

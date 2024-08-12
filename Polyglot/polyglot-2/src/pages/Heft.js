@@ -63,6 +63,7 @@ export default function Heft () {
                     
                     // update vocablist
                     try {
+                        // This can't be copied to learner.js
                         const wordPair = await updateRows();
                         try {
                             await addDoc(vocabListRef, {
@@ -72,11 +73,11 @@ export default function Heft () {
                 
                             console.log("Vocab list has been updated");
                         } catch (error) {
-                            console.error('Error caught while adding document:', error.message);
+                            console.error('Error caught while adding document:', error);
                             alert("Error adding word to subcollection");
                         }
                     } catch (error) {
-                        console.error('Error caught while updating rows:', error.message);
+                        console.error('Error caught while updating rows:', error);
                         alert("Error updating rows");
                     }
 
@@ -148,6 +149,7 @@ export default function Heft () {
     }
 
     // update rows in VocabBook
+    // what is the function even being used for???
     const updateRows = () => {
         const newRow = { word: input.native, translation: input.translation };  
 
