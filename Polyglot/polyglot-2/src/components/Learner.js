@@ -136,9 +136,37 @@ export class Vocab {
     }
 
     // updateVocab() in Heft.js
-    addWord(vocabList, wordPair) {
+    // TODO: How to get the current list that the user is in?
+    async addWord(vocabList, wordPair) {
         if (this.user) {
+            const userId = this.user.uid;
+                try {
+                    const vocabListRef = collection(firestore, "Users", userId, vocabList)
+                    
+                    // update vocablist
+                    try {
+                        // check if input is valid
+                        // validateWordPair(wordPair.native, wordPair.translation) - class that checks input?
+                        try {
+                            await addDoc(vocabListRef, {
+                                word: wordPair.word,
+                                translation: wordPair.translation
+                            });
+                
+                            console.log("Vocab list has been updated");
+                        } catch (error) {
+                            console.error('Error caught while adding document:', error);
+                            alert("Error adding word to subcollection");
+                        }
+                    } catch (error) {
+                        console.error('Error caught while updating rows:', error);
+                        alert("Error updating rows");
+                    }
 
+                } catch (error) {
+                    console.error('Error referencing subcollection:', error.message);
+                    alert("Error referencing subcollection");
+                }
         } else {
             console.log("user not signed in")
         }
@@ -220,4 +248,7 @@ export class Test {
     }
 
     // set score?
+
+
+
 }
