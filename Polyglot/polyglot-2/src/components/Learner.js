@@ -138,43 +138,97 @@ export class Vocab {
     // updateVocab() in Heft.js
     // TODO: How to get the current list that the user is in?
     async addWord(vocabList, wordPair) {
-        if (this.user) {
-            const userId = this.user.uid;
-                try {
-                    const vocabListRef = collection(firestore, "Users", userId, vocabList)
-                    
-                    // update vocablist
-                    try {
-                        // check if input is valid
-                        // validateWordPair(wordPair.native, wordPair.translation) - class that checks input?
-                        try {
-                            await addDoc(vocabListRef, {
-                                word: wordPair.word,
-                                translation: wordPair.translation
-                            });
-                
-                            console.log("Vocab list has been updated");
-                        } catch (error) {
-                            console.error('Error caught while adding document:', error);
-                            alert("Error adding word to subcollection");
-                        }
-                    } catch (error) {
-                        console.error('Error caught while updating rows:', error);
-                        alert("Error updating rows");
-                    }
+        const userId = this.user.uid;
+        const listname = vocabList;
+        const newWord = wordPair;
+        // check input 
+        console.log(newWord);
+        const error = this.checkInput(newWord)
+        // it should return null, if not, end the program
+        if (error.code != null) {
+            alert(error.message);
+            return false;
+        }
 
-                } catch (error) {
-                    console.error('Error referencing subcollection:', error.message);
-                    alert("Error referencing subcollection");
-                }
-        } else {
-            console.log("user not signed in")
+        try {
+            const vocabListRef = collection(firestore, "Users", userId, listname)
+            
+        // update vocablist
+            try {
+                await addDoc(vocabListRef, {
+                    status: "include",
+                    word: newWord.native,
+                    translation: newWord.translation
+                });
+
+                console.log("Vocab list has been updated");
+            } catch (error) {
+                console.error('Error caught while adding document:', error);
+                throw new Error("Error adding word to subcollection"); 
+            }
+
+        } catch (error) {
+            console.error('Error referencing subcollection:', error.message);
+            throw new Error("Error referencing subcollection");
         }
     }
 
+   // check if the input is valid (no extra spaces, special chars etc)
+        // check if the word already exists in the db
+    checkInput(word, collection) {
+        
+        if (!word || typeof word.native !== 'string' || typeof word.translation !== 'string') {
+            return {
+                code: 4,
+                message: "Invalid input object"
+            };
+        }
+
+        const native = word.native;
+        const translation = word.translation;
+        const alpha = /^[a-zA-Z]+$/;
+        const error = {
+            code: null,
+            message: ""
+
+        }
+
+        // string should only contain alphabet
+        // what about "-"?
+        // I only want to make sure there aren't any numbers/special chars 
+        if (!alpha.test(native) || !alpha.test(translation)) {
+            error.code = 1;
+            error.message = "Input should only contain alphabetical characters"
+            return error;
+        }
+
+        // if input is empty
+        if (native === '') {
+            error.code = 2;
+            error.message = "There is no word to be translated"
+            return error;
+        }
+
+        if (translation === '') {
+            error.code = 3;
+            error.message = "There is no translation"
+            return error;
+        }
+        
+        // check if word exists in db
+        // for now only allow one word and one translation
+
+
+        return error;
+    }
+
     // remove collection
+        // find collection
+        // change status to "inactive"
 
     // remove word
+        // find the word
+        // change status to "exclude"
 
     // edit word
 

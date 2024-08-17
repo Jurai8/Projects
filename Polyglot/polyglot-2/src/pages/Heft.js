@@ -60,6 +60,21 @@ export default function Heft () {
     // manage state of which vocab book to show
     // pass vocab to vocabBook
     const [vocab, setVocab] = useState([]);
+    // name of vocablist that is being accessed by user
+    const [currList, setCurrList] = useState("");
+
+    // <AddWord> will pop up as a modal when the user wants to enter a word
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => {
+        setIsModalOpen(true);
+        // clear current input
+        setInput('');
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
 
     // Create a drop down menu within modal for new word
@@ -72,9 +87,20 @@ export default function Heft () {
         }*/
 
 
-    // TODO: Move updateVocab to MyEventHandler.js
     // pass this to confirm button
     const updateVocab = () => {
+        // if the input is not a string
+        if (!input || typeof input.native !== 'string' || typeof input.translation !== 'string') {
+            alert('Both fields must be filled out.');
+            return;
+        }
+    
+        // If the input strings are empty or only contain whitespace
+        if (input.native.trim() === '' || input.translation.trim() === '') {
+            alert('Both fields must be filled out.');
+            return;
+        }
+
         const auth = getAuth();
         
         // get signed in user
@@ -83,13 +109,9 @@ export default function Heft () {
                 const words = new Vocab(user)
 
                 try {
-                    // update row of words added into vocab book
-                    const validateInput = () => {
-                        return input.native !== '' && input.translation !== '';
-                    };
-                    // const vocabListRef = collection(firestore,"Users", userId, "Vocablist 1")
-                    // get name of vocablist + update vocablist
-                    await words.addWord(vocablist, input);
+                    // name of vocab list + the new word
+                    await words.addWord(currList, input);
+
                     console.log("Word has been added to list");
                     alert("Word has been added to list");
 
@@ -104,20 +126,7 @@ export default function Heft () {
         
     }
 
-    // <AddWord> will pop up as a modal when the user wants to enter a word
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    // Modal
-    const openModal = () => {
-        setIsModalOpen(true);
-        // clear current input
-        setInput('');
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
-
+   
 
     const eventHandler = (e) => {
         if (e.target.name === "native") {
@@ -132,22 +141,23 @@ export default function Heft () {
         }
     }
 
-    // update rows in VocabBook
-    // what is the function even being used for???
-
     // TODO: replace this with some method from learner.js
     // function to set state using vocab list name
     const getListName = async (ListName) => {
         // row = displayvocablist()
         try {
             const vocabList = await DisplayVocabList(ListName);
+            // set all the vocab within the specific list
             setVocab(vocabList);
+            // set name of current vocab list
+            setCurrList(ListName);
         } catch (error) {
             console.error("unable to display vocab list")
         }
         
     }
 
+    // lol what's the diff between uodate and edit
     const [updateOrEdit, setUpdateOrEdit] = useState(null);
 
     const whichModal = (Boolean) => {
