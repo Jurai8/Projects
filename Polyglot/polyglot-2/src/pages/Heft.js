@@ -116,8 +116,7 @@ export default function Heft () {
                     alert("Word has been added to list");
 
                 } catch (error) {
-                    console.error('Error caught while adding word to vocablist:', error);
-                        alert("Could not add word to collection");
+                    console.error("Error caught while adding word to vocablist", error);
                 }
             } else {
                 console.log("user not logged in")

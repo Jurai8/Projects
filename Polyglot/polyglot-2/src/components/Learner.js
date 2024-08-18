@@ -143,47 +143,60 @@ export class Vocab {
         const newWord = wordPair;
         // check input 
         console.log(newWord);
-        const error = this.checkInput(newWord)
+
+        const error = this.checkInput(newWord,listname);
         // it should return null, if not, end the program
         if (error.code != null) {
             alert(error.message);
             return false;
         }
 
+        const query1 = query(
+            collection(firestore, "Users", userId, listname),
+            where("word", "==", newWord.native)
+        );
+        
+        const query2 = query(
+            collection(firestore, "Users", userId, listname),
+            where("translation", "==", newWord.translation)
+        );
+
         try {
+            // check if word/translation already exists in collection
+            const nativeSnapshot = await getDocs(query1);
+            const translationSnapshot = await getDocs(query2);
+    
+            if (!nativeSnapshot.empty) {
+                alert("This word already exists within this collection");
+                throw new Error("This word already exists within this collection"); 
+            }
+    
+            if (!translationSnapshot.empty) {
+                alert("This translation already exists within this collection");
+                throw new Error("This translation already exists within this collection"); 
+            }
+            // add word / update vocab list
             const vocabListRef = collection(firestore, "Users", userId, listname)
             
-        // update vocablist
-            try {
-                await addDoc(vocabListRef, {
-                    status: "include",
-                    word: newWord.native,
-                    translation: newWord.translation
-                });
-
-                console.log("Vocab list has been updated");
-            } catch (error) {
+            await addDoc(vocabListRef, {
+                status: "include",
+                word: newWord.native,
+                translation: newWord.translation
+            }).catch((error) => {
                 console.error('Error caught while adding document:', error);
                 throw new Error("Error adding word to subcollection"); 
-            }
+            });
 
+            return true;
         } catch (error) {
-            console.error('Error referencing subcollection:', error.message);
-            throw new Error("Error referencing subcollection");
-        }
+            console.error("issue with user input", error);
+            throw new Error("issue with user input");   
+        }        
     }
 
    // check if the input is valid (no extra spaces, special chars etc)
         // check if the word already exists in the db
-    checkInput(word, collection) {
-        
-        if (!word || typeof word.native !== 'string' || typeof word.translation !== 'string') {
-            return {
-                code: 4,
-                message: "Invalid input object"
-            };
-        }
-
+    checkInput(word) {
         const native = word.native;
         const translation = word.translation;
         const alpha = /^[a-zA-Z]+$/;
@@ -214,10 +227,6 @@ export class Vocab {
             error.message = "There is no translation"
             return error;
         }
-        
-        // check if word exists in db
-        // for now only allow one word and one translation
-
 
         return error;
     }
