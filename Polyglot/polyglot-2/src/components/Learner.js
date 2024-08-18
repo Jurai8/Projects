@@ -229,12 +229,30 @@ export class Vocab {
     async deleteCollection(listName) {
         const uid = this.user.uid;
         const vocabListRef = doc(firestore, "Users", uid, "All_Vocab_Lists", listName)
+        const pathToUserDoc = doc(firestore, "Users", uid);
+        const docSnap = await getDoc(pathToUserDoc);
 
         await updateDoc(vocabListRef, {
             status: "inactive"
         }).catch((error) => {
             alert(`Could not delete ${listName}`)
         })  
+
+        // update number of docs
+        if (docSnap.exists()) {
+            // Retrieve the current number of vocab lists
+            const currentNumberOfVocabLists = docSnap.data().VocabLists;
+        
+            // Decrement the number of vocab lists
+            const numberOfVocabLists = currentNumberOfVocabLists - 1;
+        
+            // Update the document with the new number of vocab lists
+            await updateDoc(pathToUserDoc, {
+                VocabLists: numberOfVocabLists,
+            }).catch((error) => {
+                console.error("unable to decrease number of vocablists: ", error)
+            });
+        }
     }
 
     // remove word
@@ -260,7 +278,7 @@ export class Vocab {
             console.log('No documents found');
         }
     }
-    
+
     // edit word
 
 
