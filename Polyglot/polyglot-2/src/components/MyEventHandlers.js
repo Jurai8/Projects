@@ -147,6 +147,7 @@ export async function DisplayVocabList(collectionName) {
     }
 }
 
+// for the vocabtest
 export async function FetchVocab () {
     const vocabList = [];
 

@@ -110,29 +110,23 @@ export class Vocab {
     }
 
     async getAllVocabLists() {
-        if (this.user) {
-            const userId = this.user.uid;
+        const userId = this.user.uid;
+        
+        try {
             // path to subcollection
-            try {
-                // path to subcollection
-                const querySnapshot = await getDocs(collection(
-                    firestore, "Users", userId, "All_Vocab_Lists"
-                ));
-    
-                querySnapshot.forEach((doc) => {
-                    // add each list name into an array
-                    this.allVocabLists.push(doc.id); 
-                });
+            const querySnapshot = await getDocs(collection(
+                firestore, "Users", userId, "All_Vocab_Lists"
+            ));
 
-                return this.allVocabLists;
-            } catch (error) {
-                console.error("Could not get names of vocab lists", error);
-            }
-        
-        } else {
-            console.log("user not logged in");
+            querySnapshot.forEach((doc) => {
+                // add each list name into an array
+                this.allVocabLists.push(doc.id); 
+            });
+
+            return this.allVocabLists;
+        } catch (error) {
+            console.error("Could not get names of vocab lists", error);
         }
-        
     }
 
     // updateVocab() in Heft.js

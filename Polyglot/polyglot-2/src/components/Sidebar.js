@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
@@ -28,30 +28,34 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
 
     const auth = getAuth();
     const user = auth.currentUser;
-    let vocab;
 
-    if (user != null) {
-      vocab = new Vocab(user);
+    const vocab = useMemo(() => {
+      if (user) {
+        return new Vocab(user);
+      } else {
+        console.log("user not authenticated, function: Sidebar");
+        return null;
+      }
+    }, [user]);
 
-    } else {
-      console.log("user not authenticated, function: Sidebar")
-    }
-
-    // PROBLEM: useEffect runs twice !!!
     useEffect(() => {
-      const fetchVocabLists = async () => {
-        try {
+      if (vocab) {
+        const fetchVocabLists = async () => {
+          try {
             console.log("Fetching vocab lists...");
             const vocabListNames = await vocab.getAllVocabLists();
             console.log(`UseEffect: ${vocabListNames}`);
-            setRows(vocabListNames);
-        } catch (error) {
+            if (vocabListNames.length > 0) {
+              setRows(prevRows => [...new Set([...prevRows, ...vocabListNames])]); // Set removes duplicates
+            }
+          } catch (error) {
             console.error("Error fetching vocab lists:", error);
-        }
-      };
-
-      fetchVocabLists();
-    },[]);
+          }
+        };
+    
+        fetchVocabLists();
+      }
+    }, [vocab]);
 
 
     const SidebarList = (
