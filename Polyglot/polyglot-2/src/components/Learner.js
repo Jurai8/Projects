@@ -111,7 +111,7 @@ export class Vocab {
 
     async getAllVocabLists() {
         const userId = this.user.uid;
-        
+
         try {
             // path to subcollection
             const querySnapshot = await getDocs(collection(
@@ -305,7 +305,6 @@ export class Test {
     }
 
     // set score?
-
-
-
 }
+
+// create class to check input?

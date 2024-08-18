@@ -170,12 +170,15 @@ export default function Heft () {
     return (
         <div id='table-position'>
             <div className='button-container'>
-                <Button variant="contained" onClick={() => {
+                {/* only display button when showing a list */}
+                {currList !== "" &&
+                 <Button variant="contained" onClick={() => {
                     openModal();
                     whichModal(true);
                 }}>
                     New Word
                 </Button>
+                }
                 <Button variant="contained" onClick={toggleSidebar(true)}>          
                     Collections 
                 </Button>
