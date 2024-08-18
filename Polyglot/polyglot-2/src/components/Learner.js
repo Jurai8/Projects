@@ -1,6 +1,7 @@
 import { firestore } from '../firebase';
 import { 
-    setDoc, addDoc, collection, getDocs, getDoc, doc, updateDoc, query, where
+    setDoc, addDoc, collection, getDocs, getDoc, doc, updateDoc, query, where,
+    deleteDoc
 } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged, signOut,  createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, updateProfile,} from "firebase/auth";
@@ -225,14 +226,41 @@ export class Vocab {
         return error;
     }
 
-    // remove collection
-        // find collection
-        // change status to "inactive"
+    async deleteCollection(listName) {
+        const uid = this.user.uid;
+        const vocabListRef = doc(firestore, "Users", uid, "All_Vocab_Lists", listName)
+
+        await updateDoc(vocabListRef, {
+            status: "inactive"
+        }).catch((error) => {
+            alert(`Could not delete ${listName}`)
+        })  
+    }
 
     // remove word
-        // find the word
-        // change status to "exclude"
+    async deleteWord(wordPair) {
+        // query db to find doc that contains word AND translation
+        const q = query(collection(firestore, "Users"),
+         where("word", "==", wordPair.natve), 
+         where("translation", "==", wordPair.translation)
+        );
+        const querySnapshot = await getDocs(q);
 
+        if (!querySnapshot.empty) {
+            const doc = querySnapshot.docs[0];
+            // get the doc id
+            const docId = doc.id;
+            // delete doc
+            await deleteDoc(doc(firestore, "Users", docId)).catch((error) => {
+                console.error("could not delete doc");
+                alert("Could not delete word");
+                throw new Error("could not delete doc"); 
+            })
+        } else {
+            console.log('No documents found');
+        }
+    }
+    
     // edit word
 
 
