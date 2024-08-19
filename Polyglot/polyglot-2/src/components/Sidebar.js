@@ -104,9 +104,7 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
   const open = Boolean(anchorEl);
 
   const handleContextMenu = (event) => {
-    event.preventDefault();
-    
-    if (event.currentTarget.classList.contains('Row')) {
+    if (event.currentTarget.classList.contains("MuiTableRow-root Row css-34nofg-MuiTableRow-root")) {
       event.preventDefault();
       setMenuPosition({
         mouseX: event.clientX,
@@ -129,8 +127,12 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
       key={row.word}
       className='Row'
       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-      onContextMenu={handleContextMenu}
-      onClick={console.log(row)}
+      onClick={(e) => {
+        console.log(row); 
+        console.log(menuPosition); 
+        console.log(e.currentTarget);
+      }}
+      onContextMenu={(e) => {handleContextMenu(e);}}
     >
       <TableCell component="th" scope="row">
         {row.word}
@@ -144,7 +146,7 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
         anchorPosition={
           menuPosition.mouseY !== null && menuPosition.mouseX !== null
             ? { top: menuPosition.mouseY, left: menuPosition.mouseX }
-            : undefined
+            : null
         }
         open={open}
         onClose={handleClose}
