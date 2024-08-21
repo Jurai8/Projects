@@ -105,31 +105,35 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
 
   const handleContextMenu = (event) => {
     event.preventDefault();
-  
-    if (event.currentTarget.contains(event.target) && event.currentTarget.classList.contains('Row')) {
+
+    if (event.target.closest('.Row')) {
       setMenuPosition({
         mouseX: event.clientX,
         mouseY: event.clientY
       });
 
-      console.log("If statement = true: ", menuPosition,  "current target: ", event.currentTarget, "Target: ", event.target);
-
+      console.log("True: ",menuPosition, event.currentTarget)
       setAnchorEl(event.currentTarget);
-
-      console.log("Anchorel: ", anchorEl);
     } else {
-      
-      console.log("if statement = false: ", menuPosition, "current target: ", event.currentTarget, "Target: ", event.target);
+      console.log("False: ",menuPosition, event.currentTarget)
 
-      console.log("Pre Anchorel: ", anchorEl);
       setAnchorEl(null);
-
-      console.log("post Anchorel: ", anchorEl);
       setMenuPosition({ mouseX: null, mouseY: null });
     }
+
   };
 
+  useEffect(() => {
+    if (menuPosition.mouseX !== null && menuPosition.mouseY !== null) {
+      console.log("Menu opened:", menuPosition, anchorEl);
+    } else {
+      console.log("Menu closed:", menuPosition, anchorEl);
+    }
+  }, [menuPosition, anchorEl]);
+
+
   const handleClose = () => {
+    console.log("closing");
     setAnchorEl(null);
     setMenuPosition({ mouseX: null, mouseY: null });
   };
