@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
+import Backdrop from '@mui/material/Backdrop';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
@@ -106,14 +107,18 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
   const handleContextMenu = (event) => {
     event.preventDefault();
 
+    console.log("event.target:", event.target);
+    console.log("event.currentTarget:", event.currentTarget);
+
     if (event.target.closest('.Row')) {
-      setMenuPosition({
+      const newPosition = {
         mouseX: event.clientX,
         mouseY: event.clientY
-      });
+      };
 
-      console.log("True: ",menuPosition, event.currentTarget)
+      setMenuPosition(newPosition);
       setAnchorEl(event.currentTarget);
+      console.log("True: ",menuPosition, event.currentTarget)
     } else {
       console.log("False: ",menuPosition, event.currentTarget)
 
@@ -161,6 +166,8 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
         }
         open={open}
         onClose={handleClose}
+        BackdropProps={{ invisible: true }}
+    
       >
         <MenuItem onClick={() => {
           handleClose();
