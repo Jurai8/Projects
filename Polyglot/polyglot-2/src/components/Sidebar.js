@@ -99,12 +99,18 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
 
 
 // right click show menu
+// TODO: the menu needs to show up when ever i right click on the row
+//        currently, i opens on the first click then closes on the second
 export function TableRowWithMenu({ row, whichModal, openModal }) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [menuPosition, setMenuPosition ] = useState({mouseX: null, mouseY: null });
+  const [menuPosition, setMenuPosition ] = useState({
+    mouseX: null, mouseY: null 
+  });
+  const [wordpair, setWordpair] = useState({word: null, translation: null});
+
   const open = Boolean(anchorEl);
 
-  const handleContextMenu = (event) => {
+  const handleContextMenu = (wordpair, event) => {
     event.preventDefault();
 
     console.log("event.target:", event.target);
@@ -118,9 +124,8 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
 
       setMenuPosition(newPosition);
       setAnchorEl(event.currentTarget);
-      console.log("True: ",menuPosition, event.currentTarget)
+      setWordpair({word: wordpair.word, translation: wordpair.translation});
     } else {
-      console.log("False: ",menuPosition, event.currentTarget)
 
       setAnchorEl(null);
       setMenuPosition({ mouseX: null, mouseY: null });
@@ -130,7 +135,7 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
 
   useEffect(() => {
     if (menuPosition.mouseX !== null && menuPosition.mouseY !== null) {
-      console.log("Menu opened:", menuPosition, anchorEl);
+      console.log("Menu opened:", menuPosition, anchorEl, "Wordpair: ", wordpair);
     } else {
       console.log("Menu closed:", menuPosition, anchorEl);
     }
@@ -148,7 +153,7 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
       key={row.word}
       className='Row'
       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-      onContextMenu={handleContextMenu}
+      onContextMenu={(e) => {handleContextMenu(row, e)}}
     >
       <TableCell component="th" scope="row">
         {row.word}
@@ -171,8 +176,10 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
       >
         <MenuItem onClick={() => {
           handleClose();
-          whichModal(false);
+          // whichModal(false);
           openModal();
+          // call edit word method
+          // args = string (native/translation) send as obj ? + new word
         }}>
           Edit
         </MenuItem>

@@ -189,6 +189,30 @@ export class Vocab {
         }        
     }
 
+    async editWord(original, translation, newWord) {
+        // newWord will be an obj with trans and native
+        // check which property is null. the property with the value will be updated in db
+        const uid = this.user.uid;
+        const native = newWord.native 
+        const trans =  newWord.translation
+
+        if (original === null && translation === null) {
+            return {
+                message: "empty input"
+            }
+        }
+
+        if (native != null) {
+            // check input this.checkInput
+            
+        }
+
+        if (trans != null) {
+            // check input
+
+        }
+    }
+
    // check if the input is valid (no extra spaces, special chars etc)
         // check if the word already exists in the db
     checkInput(word) {
