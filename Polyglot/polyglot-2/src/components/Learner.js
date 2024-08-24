@@ -139,7 +139,7 @@ export class Vocab {
         // check input 
         console.log(newWord);
 
-        const error = this.checkInput(newWord,listname);
+        const error = this.checkInput(newWord);
         // it should return null, if not, end the program
         if (error.code != null) {
             alert(error.message);
@@ -189,27 +189,75 @@ export class Vocab {
         }        
     }
 
-    async editWord(original, translation, newWord) {
+    // Note:
+        // use a switch statement
+        // check for 3 cases (1,2,3 ?)
+        // if case 1, update native
+        //... if case 3 update both word
+    async editWord(collection, oldPair, newPair) {
         // newWord will be an obj with trans and native
-        // check which property is null. the property with the value will be updated in db
+        // check which property is null. the property with a value will be updated in db
         const uid = this.user.uid;
-        const native = newWord.native 
-        const trans =  newWord.translation
+        // currently the user can only update one word at a time
+        const native = newPair.native 
+        const trans =  newPair.translation
 
-        if (original === null && translation === null) {
+        // either original or translation should have a valeu to find the doc
+        if (oldPair.original === null && oldPair.translation === null) {
             return {
                 message: "empty input"
             }
         }
 
+        // it should return null, if not, end the program
+
         if (native != null) {
             // check input this.checkInput
-            
+            const q = query(
+                collection(firestore, "Users", uid, collection),
+                where("word", "==", oldPair.original)
+            );
+
+            // get the doc that contains the word
+            const nativeSnapshot = await getDocs(q);
+            // get the id of the doc
+            const wordref = nativeSnapshot[0].docId;
+            // reference the doc
+            const docRef = doc(firestore, "User", uid, collection, wordref);
+
+            // update with user input
+            await updateDoc(docRef, {
+                word: native
+            }).catch((error) => {
+                alert("Could not update word");
+                console.error(error);
+            })
+        } else {
+            throw new Error("Invalid input");
         }
 
         if (trans != null) {
             // check input
+            const q = query(
+                collection(firestore, "Users", uid, collection),
+                where("translation", "==", trans)
+            );
 
+            const transSnapshot = await getDocs(q);
+            // get the id of the doc
+            const wordref = transSnapshot[0].docId;
+            // reference the doc
+            const docRef = doc(firestore, "User", uid, collection, wordref);
+
+            // update with user input
+            await updateDoc(docRef, {
+                translation: trans
+            }).catch((error) => {
+                alert("Could not update translation");
+                console.error(error);
+            })
+        } else {
+            throw new Error("Invalid input");
         }
     }
 
@@ -378,3 +426,25 @@ export class Test {
 }
 
 // create class to check input?
+// each method is a different case for checking the input
+class Input {
+
+    constructor(wordPair) {
+        this.native = wordPair.native;
+        this.trans = wordPair.translation;
+    }
+
+    addWord() {
+
+    }
+
+    // when changing a word in vocab list
+    updateWord() {
+
+    }
+
+    // user create account
+    checkPassowrd() {
+
+    }
+}
