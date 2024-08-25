@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 
-export default function MenuListComposition() {
+export default function MenuListComposition(handleWhichWord) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
@@ -18,7 +18,10 @@ export default function MenuListComposition() {
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleClose = (event) => {
+  const handleClose = (event, value) => {
+    console.log("Target: ", value);
+    // replace with function
+    handleWhichWord(value);
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
@@ -67,6 +70,7 @@ export default function MenuListComposition() {
           placement="bottom-start"
           transition
           disablePortal
+          style={{ zIndex: 1300 }}
         >
           {({ TransitionProps, placement }) => (
             <Grow
@@ -76,19 +80,31 @@ export default function MenuListComposition() {
                   placement === 'bottom-start' ? 'left top' : 'left bottom',
               }}
             >
-              <Paper>
+              <Paper 
+                variant="elevation"
+                elevation={12}
+                style={{ backgroundColor: '#fff' }}
+              >
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList
                     autoFocusItem={open}
                     id="composition-menu"
                     aria-labelledby="composition-button"
-                    variant="elevation"
-                    elevation={12}
                     onKeyDown={handleListKeyDown}
                   >
-                    <MenuItem onClick={handleClose}>Native</MenuItem>
-                    <MenuItem onClick={handleClose}>Translation</MenuItem>
-                    <MenuItem onClick={handleClose}>
+                    <MenuItem onClick={(event) => 
+                        handleClose(event, "native")
+                    }>
+                        Native
+                    </MenuItem>
+                    <MenuItem onClick={(event) => 
+                        handleClose(event, "translation")
+                    }>
+                        Translation
+                    </MenuItem>
+                    <MenuItem onClick={(event) => 
+                        handleClose(event, "nt")
+                    }>
                         Native & Translation
                     </MenuItem>
                   </MenuList>
