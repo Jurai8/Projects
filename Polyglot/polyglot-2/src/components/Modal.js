@@ -7,7 +7,7 @@ import { EditWord } from './MyEventHandlers';
 import { HandleLogin, HandleSignUp } from './MyEventHandlers';
 import { Vocab } from './Learner';
 import { getAuth } from 'firebase/auth';
-
+import MenuListComposition from './Menu';
 
 export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit}) 
     {
@@ -35,10 +35,13 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                         />
                     </div>: 
                  // if the want to edit an existing word
+                 <div>
+                    <MenuListComposition/>
                     <TextField 
                         id="any-word" label="any-word" name="any-word" variant="outlined" 
                         onChange={eventHandler}
                     />
+                 </div>
                  }
     
                 <div id='confirm-word'>

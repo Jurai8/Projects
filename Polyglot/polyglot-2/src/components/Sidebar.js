@@ -106,9 +106,25 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
   const [menuPosition, setMenuPosition ] = useState({
     mouseX: null, mouseY: null 
   });
-  const [wordpair, setWordpair] = useState({word: null, translation: null});
+  const [wordpair, setWordpair] = useState({
+    word: null, 
+    translation: null, 
+    event: 0
+  });
 
   const open = Boolean(anchorEl);
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+  let updateWord;
+
+  if (user) {
+    updateWord = new Vocab(user);
+
+  } else {
+    alert("user not authenticated")
+    console.log("User not signed in")
+  }
 
   const handleContextMenu = (wordpair, event) => {
     event.preventDefault();
@@ -155,10 +171,12 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
       onContextMenu={(e) => {handleContextMenu(row, e)}}
     >
-      <TableCell component="th" scope="row">
+      <TableCell component="th" className="native" scope="row">
         {row.word}
       </TableCell>
-      <TableCell align="right">{row.translation}</TableCell>
+      <TableCell align="right" className="trans">
+        {row.translation}
+      </TableCell>
       
       <Menu
         id="basic-menu"
@@ -179,6 +197,7 @@ export function TableRowWithMenu({ row, whichModal, openModal }) {
           // whichModal(false);
           openModal();
           // call edit word method
+
           // args = string (native/translation) send as obj ? + new word
         }}>
           Edit
