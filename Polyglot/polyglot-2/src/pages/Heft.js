@@ -21,7 +21,8 @@ import { Vocab } from '../components/Learner';
 
 
 // button leading to current page should be removed
-export default function Heft () {
+export default function Heft ({ handleWhichWord }) {
+    const func = handleWhichWord;
 
     const [newVocabCollection, setNewVocabCollection] = useState(false);
 
@@ -78,14 +79,7 @@ export default function Heft () {
 
     // when updating word user will pick which word to update
     // translation, native or both. this keeps track of what they click
-    const [updateWhichWord, setUpdateWhichWord] = useState("");
-    //ERROR: To many rerenders?
-    const handleWhichWord = (value) => {
-        if (value === 0 || value === null) {
-            return;
-          }
-        setUpdateWhichWord(value);
-    }
+    
     // Create a drop down menu within modal for new word
         // the user can pick what type of word it is, e.g adjective, noun
         /* save to db {
@@ -213,7 +207,7 @@ export default function Heft () {
                     eventHandler={eventHandler}
                     updateOrEdit={updateOrEdit}
                     // allow addword to update state of rows
-                    handleWhichWord={handleWhichWord()}
+                    handleWhichWord={func}
                     updateVocab={updateVocab}
                 /> 
             ) : <VocabBook 

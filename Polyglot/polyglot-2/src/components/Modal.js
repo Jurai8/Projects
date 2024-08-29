@@ -37,7 +37,7 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                  // if the want to edit an existing word
                  <div>
                     <MenuListComposition
-                        handleWhichWord={handleWhichWord()}
+                        handleWhichWord={handleWhichWord}
                     />
                     <TextField 
                         id="any-word" label="any-word" name="any-word" variant="outlined" 

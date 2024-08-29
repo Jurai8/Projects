@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 
-export default function MenuListComposition(handleWhichWord) {
+export default function MenuListComposition({ handleWhichWord }) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
 
