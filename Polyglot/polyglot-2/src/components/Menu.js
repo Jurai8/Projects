@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Grow from '@mui/material/Grow';
@@ -11,17 +11,21 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 
 export default function MenuListComposition({ handleWhichWord }) {
-  const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef(null);
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null);
+
+  const [wordToUpdate, setWordToUpdate] = useState("which word")
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
 
+  // state shows prev value 
+  // will useEffect solve this?
   const handleClose = (event, value) => {
     console.log("Target: ", value);
     // replace with function
-    handleWhichWord(value);
+    setWordToUpdate(handleWhichWord(value));
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
@@ -39,8 +43,8 @@ export default function MenuListComposition({ handleWhichWord }) {
   }
 
   // return focus to the button when we transitioned from !open -> open
-  const prevOpen = React.useRef(open);
-  React.useEffect(() => {
+  const prevOpen = useRef(open);
+  useEffect(() => {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
@@ -61,7 +65,7 @@ export default function MenuListComposition({ handleWhichWord }) {
           onClick={handleToggle}
           endIcon={<KeyboardArrowDownIcon />}
         >
-          Dashboard
+          {wordToUpdate}
         </Button>
         <Popper
           open={open}

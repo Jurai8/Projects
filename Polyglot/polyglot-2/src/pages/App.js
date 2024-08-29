@@ -22,6 +22,7 @@ function App() {
             return;
           }
         setUpdateWhichWord(value);
+        return updateWhichWord;
     }
   const auth = getAuth();
 
