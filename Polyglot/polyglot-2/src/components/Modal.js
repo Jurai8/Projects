@@ -11,21 +11,47 @@ import MenuListComposition from './Menu';
 
 export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit }) {
 
-    const [wordToUpdate, setWordToUpdate] = useState("which word");
+    //TODO
+        // need to pass the new word/ pair
+        // pass the case
+
+    const [wordToUpdate, setWordToUpdate] = useState({ wordType:
+         "which word", case: 0 });
 
     const handleClose = (event, value) => {
         console.log("Target: ", value);
+        let cases;
     
         setWordToUpdate(() => {
           if (value === null || value === undefined) {
-            return "which word";
+            return {
+                wordType: "which word"
+            };
           }
-
+          
+          // if they click outside the menu
           if (event.currentTarget.value === null || event.currentTarget.value === undefined) {
-            return "which word";
+            return {
+                wordType: "which word"
+            };
           }
 
-          return value;
+          if (value === "both") {
+            cases = 3;
+            console.log(value, cases)
+          } else if (value === "translation") {
+            cases = 2;
+            console.log(value, cases);
+          } else if (value === "native") {
+            cases = 1;
+            console.log(value, cases)
+          }
+
+
+          return {
+            wordType: value,
+            case: cases
+          };
         });
       };
 

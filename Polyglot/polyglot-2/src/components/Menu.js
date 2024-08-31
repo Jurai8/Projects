@@ -71,7 +71,7 @@ export default function MenuListComposition({ wordToUpdate, handleClose }) {
           onClick={handleToggle}
           endIcon={<KeyboardArrowDownIcon />}
         >
-          {wordToUpdate}
+          {wordToUpdate.wordType}
         </Button>
         <Popper
           open={open}
@@ -105,7 +105,7 @@ export default function MenuListComposition({ wordToUpdate, handleClose }) {
                     onKeyDown={handleListKeyDown}
                   >
                     <MenuItem onClick={(event) => {
-                       handleClose(event, "Native");
+                       handleClose(event, "native");
                        setOpen(false);
                     }}>
                         Native

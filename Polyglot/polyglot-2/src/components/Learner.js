@@ -189,19 +189,15 @@ export class Vocab {
         }        
     }
 
-    // Note:
-        // use a switch statement
-        // check for 3 cases (1,2,3 ?)
-        // if case 1, update native
-        //... if case 3 update both word
-    async editWord(collection, oldPair, newPair) {
-        // newWord will be an obj with trans and native
+    async editWord(collection, oldPair, newWord) {
         // check which property is null. the property with a value will be updated in db
         const uid = this.user.uid;
         // currently the user can only update one word at a time
-        const native = newPair.native; 
-        const trans =  newPair.translation;
-        const event = newPair.event; // different cases
+        const native = newWord.native; 
+        const trans =  newWord.translation;
+        const event = newWord.event; // different cases
+
+
 
         // either original or translation should have a valeu to find the doc
         if (oldPair.original === null && oldPair.translation === null) {
