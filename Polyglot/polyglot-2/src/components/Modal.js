@@ -1,5 +1,5 @@
 import '../App.css';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -9,8 +9,27 @@ import { Vocab } from './Learner';
 import { getAuth } from 'firebase/auth';
 import MenuListComposition from './Menu';
 
-export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit }) 
-    {
+export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit }) {
+
+    const [wordToUpdate, setWordToUpdate] = useState("which word");
+
+    const handleClose = (event, value) => {
+        console.log("Target: ", value);
+    
+        setWordToUpdate(() => {
+          if (value === null || value === undefined) {
+            return "which word";
+          }
+
+          if (event.currentTarget.value === null || event.currentTarget.value === undefined) {
+            return "which word";
+          }
+
+          return value;
+        });
+      };
+
+
     return (
         <div className='overlay'>
             <Box 
@@ -36,7 +55,8 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                     </div>: 
                  // if the want to edit an existing word
                  <div>
-                    <MenuListComposition/>
+                    <MenuListComposition handleClose={handleClose}
+                    wordToUpdate={wordToUpdate}/>
                     <TextField 
                         id="any-word" label="any-word" name="any-word" variant="outlined" 
                         onChange={eventHandler}
@@ -50,6 +70,8 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                         if (updateOrEdit) {
                             updateVocab();
                         } else {
+                            // replace with method from learner
+                                // function(whichword);
                             EditWord();
                         }
                         onClose();
