@@ -21,8 +21,7 @@ import { Vocab } from '../components/Learner';
 
 
 // button leading to current page should be removed
-export default function Heft ({ handleWhichWord }) {
-    const func = handleWhichWord;
+export default function Heft () {
 
     const [newVocabCollection, setNewVocabCollection] = useState(false);
 
@@ -207,7 +206,6 @@ export default function Heft ({ handleWhichWord }) {
                     eventHandler={eventHandler}
                     updateOrEdit={updateOrEdit}
                     // allow addword to update state of rows
-                    handleWhichWord={func}
                     updateVocab={updateVocab}
                 /> 
             ) : <VocabBook 

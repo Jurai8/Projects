@@ -15,15 +15,6 @@ import TestLearner from "./Test.js"
 function App() {
   const [username, setUsername] = useState(null);
 
-  const [updateWhichWord, setUpdateWhichWord] = useState("");
-    //ERROR: To many rerenders?
-    const handleWhichWord = (value) => {
-        if (value === 0 || value === null) {
-            return;
-          }
-        setUpdateWhichWord(value);
-        return updateWhichWord;
-    }
   const auth = getAuth();
 
   useEffect(() => {
@@ -48,7 +39,7 @@ function App() {
           <Routes> 
             <Route path="/signup" element={<SignUp />} /> 
             <Route path="/" element={<Home />} /> 
-            <Route path="/heft" element={<Heft handleWhichWord={handleWhichWord} />} />
+            <Route path="/heft" element={<Heft />} />
             <Route path="/test" element={<TestLearner />} /> 
           </Routes> 
         </Router> 

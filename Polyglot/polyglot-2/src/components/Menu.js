@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 
-export default function MenuListComposition({ handleWhichWord }) {
+export default function MenuListComposition() {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
 
@@ -24,14 +24,21 @@ export default function MenuListComposition({ handleWhichWord }) {
   // will useEffect solve this?
   const handleClose = (event, value) => {
     console.log("Target: ", value);
-    // replace with function
-    setWordToUpdate(handleWhichWord(value));
+
+    setWordToUpdate(() => {
+      if (value === null || value === undefined) {
+        return "which word";
+      }
+      return value;
+    });
+
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
 
     setOpen(false);
   };
+
 
   function handleListKeyDown(event) {
     if (event.key === 'Tab') {
@@ -107,7 +114,7 @@ export default function MenuListComposition({ handleWhichWord }) {
                         Translation
                     </MenuItem>
                     <MenuItem onClick={(event) => 
-                        handleClose(event, "nt")
+                        handleClose(event, "both")
                     }>
                         Native & Translation
                     </MenuItem>
