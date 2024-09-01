@@ -15,14 +15,22 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
         // need to pass the new word/ pair
         // pass the case
 
-    const [wordToUpdate, setWordToUpdate] = useState({ wordType:
-         "which word", case: 0 });
+    const [newWord, setNewWord] = useState({
+        wordType: "which word", 
+        native: "", 
+        translation: "", 
+        case: 0, 
+    })
+
+    const handleInputChange = (e) => {
+        setNewWord(e.target.value);
+      };
 
     const handleClose = (event, value) => {
         console.log("Target: ", value);
         let cases;
     
-        setWordToUpdate(() => {
+        setNewWord(() => {
           if (value === null || value === undefined) {
             return {
                 wordType: "which word"
@@ -38,7 +46,7 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
 
           if (value === "both") {
             cases = 3;
-            console.log(value, cases)
+            return 
           } else if (value === "translation") {
             cases = 2;
             console.log(value, cases);
@@ -82,7 +90,7 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                  // if the want to edit an existing word
                  <div>
                     <MenuListComposition handleClose={handleClose}
-                    wordToUpdate={wordToUpdate}/>
+                    newWord={newWord}/>
                     <TextField 
                         id="any-word" label="any-word" name="any-word" variant="outlined" 
                         onChange={eventHandler}

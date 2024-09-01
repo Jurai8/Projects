@@ -54,8 +54,14 @@ export default function Heft () {
             ...prevInput,
             translation: e.target.value
         }));
-
     };
+
+    const [newWord, setNewWord] = useState({
+        wordType: "which word", 
+        native: "", 
+        translation: "", 
+        case: 0, 
+    })
 
     // manage state of which vocab book to show
     // pass vocab to vocabBook
@@ -127,18 +133,38 @@ export default function Heft () {
         
     }
 
-   
-
+    // TODO:
+        // finish. how should i strucuture 4 diff cases
+        // case 3 where user wants to update both will render "native" + "translation"
+        // which would be the exact same as adding a new word
     const eventHandler = (e) => {
         if (e.target.name === "native") {
             newNative(e);
+            setNewWord({native: e})
         } 
         if (e.target.name === "translation") {
             newTranslation(e);
+            setNewWord({translation: e})
         }
 
         if (e.target.name === "any-word") {
             // state handler to update input
+            switch(newWord) { 
+                // update native
+                case newWord.case === 1:
+                  // code block
+                  break;
+                // update translation
+                case newWord.case === 2:
+                  setNewWord({translation: e})
+                  break;
+                // update both
+                case newWord.case === 3:
+                  break;
+                default:
+                  // code block
+              } 
+            
         }
     }
 

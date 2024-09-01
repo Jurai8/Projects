@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 
-export default function MenuListComposition({ wordToUpdate, handleClose }) {
+export default function MenuListComposition({ newWord , handleClose }) {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
 
@@ -71,7 +71,7 @@ export default function MenuListComposition({ wordToUpdate, handleClose }) {
           onClick={handleToggle}
           endIcon={<KeyboardArrowDownIcon />}
         >
-          {wordToUpdate.wordType}
+          {newWord.wordType}
         </Button>
         <Popper
           open={open}
