@@ -3,67 +3,14 @@ import { useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { EditWord } from './MyEventHandlers';
 import { HandleLogin, HandleSignUp } from './MyEventHandlers';
 import { Vocab } from './Learner';
 import { getAuth } from 'firebase/auth';
 import MenuListComposition from './Menu';
 
-export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit }) {
-
-    //TODO
-        // need to pass the new word/ pair
-        // pass the case
-
-    const [newWord, setNewWord] = useState({
-        wordType: "which word", 
-        native: "", 
-        translation: "", 
-        case: 0, 
-    })
-
-    const handleInputChange = (e) => {
-        setNewWord(e.target.value);
-      };
-
-    const handleClose = (event, value) => {
-        console.log("Target: ", value);
-        let cases;
-    
-        setNewWord(() => {
-          if (value === null || value === undefined) {
-            return {
-                wordType: "which word"
-            };
-          }
-          
-          // if they click outside the menu
-          if (event.currentTarget.value === null || event.currentTarget.value === undefined) {
-            return {
-                wordType: "which word"
-            };
-          }
-
-          if (value === "both") {
-            cases = 3;
-            return 
-          } else if (value === "translation") {
-            cases = 2;
-            console.log(value, cases);
-          } else if (value === "native") {
-            cases = 1;
-            console.log(value, cases)
-          }
-
-
-          return {
-            wordType: value,
-            case: cases
-          };
-        });
-      };
-
-
+export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit, newWord, closeUpdateWord, originalWord, currList}) {
+    //TODO: use newWord for adding a word to vocab book
+    // Test update word
     return (
         <div className='overlay'>
             <Box 
@@ -89,7 +36,7 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                     </div>: 
                  // if the want to edit an existing word
                  <div>
-                    <MenuListComposition handleClose={handleClose}
+                    <MenuListComposition closeUpdateWord={closeUpdateWord}
                     newWord={newWord}/>
                     <TextField 
                         id="any-word" label="any-word" name="any-word" variant="outlined" 
@@ -103,10 +50,10 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                         // updateRows and db
                         if (updateOrEdit) {
                             updateVocab();
+                            //handleclose
                         } else {
                             // replace with method from learner
-                                // function(whichword);
-                            EditWord();
+                                // editWord(currList, originalWord, newWord);
                         }
                         onClose();
                     }}>

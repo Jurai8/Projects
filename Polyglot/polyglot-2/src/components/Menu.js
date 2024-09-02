@@ -10,34 +10,13 @@ import Stack from '@mui/material/Stack';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 
-export default function MenuListComposition({ newWord , handleClose }) {
+export default function MenuListComposition({ newWord , closeUpdateWord }) {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
-
- /*
-  const handleClose = (event, value) => {
-    console.log("Target: ", value);
-
-    setWordToUpdate(() => {
-      if (value === null || value === undefined) {
-        return "which word";
-      }
-      return value;
-    });
-
-
-
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
-
-    setOpen(false);
-  };
-*/
 
   function handleListKeyDown(event) {
     if (event.key === 'Tab') {
@@ -96,7 +75,7 @@ export default function MenuListComposition({ newWord , handleClose }) {
                 style={{ backgroundColor: '#fff' }}
               >
                 <ClickAwayListener onClickAway={() => {
-                       handleClose();
+                       closeUpdateWord();
                        setOpen(false)}}>
                   <MenuList
                     autoFocusItem={open}
@@ -105,19 +84,19 @@ export default function MenuListComposition({ newWord , handleClose }) {
                     onKeyDown={handleListKeyDown}
                   >
                     <MenuItem onClick={(event) => {
-                       handleClose(event, "native");
+                       closeUpdateWord(event, "native");
                        setOpen(false);
                     }}>
                         Native
                     </MenuItem>
                     <MenuItem onClick={(event) => {
-                       handleClose(event, "translation");
+                       closeUpdateWord(event, "translation");
                        setOpen(false);
                     }}>
                         Translation
                     </MenuItem>
                     <MenuItem onClick={(event) => {
-                       handleClose(event, "both");
+                       closeUpdateWord(event, "both");
                        setOpen(false);
                     }}>
                         Native & Translation

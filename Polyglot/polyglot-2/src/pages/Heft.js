@@ -63,6 +63,17 @@ export default function Heft () {
         case: 0, 
     })
 
+    const [originalWord, setOriginalWord] = useState({
+        native: "", 
+        translation: ""
+    });
+
+    const getOriginalWord = (wordpair) => {
+        setOriginalWord({
+            native: wordpair.native,
+            translation: wordpair.translation
+        })
+    }
     // manage state of which vocab book to show
     // pass vocab to vocabBook
     const [vocab, setVocab] = useState([]);
@@ -138,7 +149,37 @@ export default function Heft () {
         // case 3 where user wants to update both will render "native" + "translation"
         // which would be the exact same as adding a new word
     const eventHandler = (e) => {
-        if (e.target.name === "native") {
+
+        if (e.target.name === "any-word") {
+            // state handler to update input
+            // update existing word
+            switch(newWord) { 
+                // update native
+                case newWord.case === 1:
+                    setNewWord({native: e})
+                    break;
+                // update translation
+                case newWord.case === 2:
+                    setNewWord({translation: e})
+                    break;
+                // update both
+                case newWord.case === 3:
+                    if (e.target.name === "native") {
+                        setNewWord({native: e})
+                    } 
+                    if (e.target.name === "translation") {
+                        setNewWord({translation: e})
+                    }
+                    break;
+                default:
+                  // code block
+            } 
+            // make sure for case three, the following if statement for add word isn't executed (they use the same modal)
+            return;
+        }
+
+         // add new word
+         if (e.target.name === "native") {
             newNative(e);
             setNewWord({native: e})
         } 
@@ -146,27 +187,48 @@ export default function Heft () {
             newTranslation(e);
             setNewWord({translation: e})
         }
-
-        if (e.target.name === "any-word") {
-            // state handler to update input
-            switch(newWord) { 
-                // update native
-                case newWord.case === 1:
-                  // code block
-                  break;
-                // update translation
-                case newWord.case === 2:
-                  setNewWord({translation: e})
-                  break;
-                // update both
-                case newWord.case === 3:
-                  break;
-                default:
-                  // code block
-              } 
-            
-        }
     }
+
+    // modal for update word
+    const closeUpdateWord = (event, value) => {
+        console.log("Target: ", value);
+    
+        setNewWord(() => {
+          if (value === null || value === undefined) {
+            return {
+                wordType: "which word"
+            };
+          }
+          
+          // if they click outside the menu
+          if (event.currentTarget.value === null || event.currentTarget.value === undefined) {
+            return {
+                wordType: "which word"
+            };
+          }
+
+          if (value === "both") {
+            return {
+                wordType: value,
+                case: 3
+            }
+          } else if (value === "translation") {
+            return {
+                wordType: value,
+                case: 2
+            }
+          } else if (value === "native") {
+            return {
+                wordType: value,
+                case: 1
+            }
+          }
+
+          // change
+          return "nothing worked";
+        });
+      };
+
 
     // TODO: replace this with some method from learner.js
     // function to set state using vocab list name
@@ -233,9 +295,14 @@ export default function Heft () {
                     updateOrEdit={updateOrEdit}
                     // allow addword to update state of rows
                     updateVocab={updateVocab}
+                    closeUpdateWord={closeUpdateWord}
+                    newWord={newWord}
+                    originalWord={originalWord}
+                    currList={currList}
                 /> 
             ) : <VocabBook 
                     vocab={vocab} 
+                    getOriginalWord={getOriginalWord}
                     // can i pass these two functions in one variable?
                     openModal={openModal} 
                     whichModal={whichModal}

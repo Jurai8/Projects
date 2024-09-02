@@ -198,7 +198,7 @@ export class Vocab {
         const event = newWord.event; // different cases
 
 
-
+        // Maybe reconsider this !!!!!
         // either original or translation should have a valeu to find the doc
         if (oldPair.original === null && oldPair.translation === null) {
             return {
