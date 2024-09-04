@@ -8,9 +8,10 @@ import { Vocab } from './Learner';
 import { getAuth } from 'firebase/auth';
 import MenuListComposition from './Menu';
 
-export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit, newWord, closeUpdateWord, originalWord, currList}) {
+export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit, newWord, closeUpdateWord, editVocab}) {
     //TODO: use newWord for adding a word to vocab book
     // Test update word
+
     return (
         <div className='overlay'>
             <Box 
@@ -50,11 +51,11 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                         // updateRows and db
                         if (updateOrEdit) {
                             updateVocab();
-                            //handleclose
                         } else {
                             // replace with method from learner
-                                // editWord(currList, originalWord, newWord);
+                            editVocab();
                         }
+                        // if it works it works ig
                         onClose();
                     }}>
                         Confirm

@@ -144,10 +144,30 @@ export default function Heft () {
         
     }
 
-    // TODO:
-        // finish. how should i strucuture 4 diff cases
-        // case 3 where user wants to update both will render "native" + "translation"
-        // which would be the exact same as adding a new word
+    const editVocab = () => {
+        // check input
+        const auth = getAuth();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const vocab = new Vocab(user)
+
+                try {
+                    // name of vocab list + the new word
+                    await vocab.editWord(currList, originalWord, newWord);
+
+                    alert("Successfully edited word");
+
+                } catch (error) {
+                    console.error("Error caught while editing word", error);
+                }
+            } else {
+                console.log("user not logged in");
+            }
+        });
+    }
+
+
     const eventHandler = (e) => {
 
         if (e.target.name === "any-word") {
@@ -293,12 +313,10 @@ export default function Heft () {
                     onClose={closeModal} 
                     eventHandler={eventHandler}
                     updateOrEdit={updateOrEdit}
-                    // allow addword to update state of rows
                     updateVocab={updateVocab}
                     closeUpdateWord={closeUpdateWord}
                     newWord={newWord}
-                    originalWord={originalWord}
-                    currList={currList}
+                    editVocab={editVocab}
                 /> 
             ) : <VocabBook 
                     vocab={vocab} 

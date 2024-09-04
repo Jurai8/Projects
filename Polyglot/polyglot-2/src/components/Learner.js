@@ -200,7 +200,7 @@ export class Vocab {
 
         // Maybe reconsider this !!!!!
         // either original or translation should have a valeu to find the doc
-        if (oldPair.original === null && oldPair.translation === null) {
+        if (oldPair.word === null || oldPair.translation === null) {
             return {
                 message: "empty input"
             }
@@ -216,7 +216,7 @@ export class Vocab {
                     // check input this.checkInput
                     const q = query(
                         collection(firestore, "Users", uid, collection),
-                        where("word", "==", oldPair.original)
+                        where("word", "==", oldPair.word)
                     );
         
                     // get the doc that contains the word
