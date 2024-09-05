@@ -195,24 +195,29 @@ export class Vocab {
         // currently the user can only update one word at a time
         const native = newWord.native; 
         const trans =  newWord.translation;
-        const event = newWord.event; // different cases
+        const event = newWord.case; // different cases
 
 
         // Maybe reconsider this !!!!!
         // either original or translation should have a valeu to find the doc
         if (oldPair.word === null || oldPair.translation === null) {
             return {
-                message: "empty input"
+                message: "Could not get original words"
             }
+        }
+
+        // create an alert or something
+        if (!event) {
+            throw new Error('event is undefined');
         }
 
         // it should return null, if not, end the program
 
-
         switch (event) {
             // event 1 = update native
             case 1:
-                if (native != null) {
+                console.log("native: ", native);
+                if (!native) {
                     // check input this.checkInput
                     const q = query(
                         collection(firestore, "Users", uid, collection),
@@ -225,7 +230,7 @@ export class Vocab {
                     const wordref = nativeSnapshot[0].docId;
                     // reference the doc
                     const docRef = doc(firestore, "User", uid, collection, wordref);
-        
+
                     // update with user input
                     await updateDoc(docRef, {
                         word: native
@@ -295,8 +300,6 @@ export class Vocab {
             default:
                 break;
         }
-
-
         
     }
 

@@ -153,6 +153,7 @@ export default function Heft () {
                 const vocab = new Vocab(user)
 
                 try {
+                    console.log("before calling editWord: ", newWord.native)
                     // name of vocab list + the new word
                     await vocab.editWord(currList, originalWord, newWord);
 
@@ -173,22 +174,37 @@ export default function Heft () {
         if (e.target.name === "any-word") {
             // state handler to update input
             // update existing word
-            switch(newWord) { 
+            switch(newWord.case) { 
                 // update native
-                case newWord.case === 1:
-                    setNewWord({native: e})
+
+                // issue with collecting input
+                case 1:
+                    console.log("case 1");
+                    setNewWord(prevNewWord => ({ 
+                        ...prevNewWord,   
+                        native: e        
+                    }));
                     break;
                 // update translation
-                case newWord.case === 2:
-                    setNewWord({translation: e})
+                case 2:
+                    setNewWord(prevNewWord => ({ 
+                        ...prevNewWord,   
+                        translation: e         
+                    }));
                     break;
                 // update both
-                case newWord.case === 3:
+                case 3:
                     if (e.target.name === "native") {
-                        setNewWord({native: e})
+                        setNewWord(prevNewWord => ({ 
+                            ...prevNewWord,   
+                            native: e         
+                        }));
                     } 
                     if (e.target.name === "translation") {
-                        setNewWord({translation: e})
+                        setNewWord(prevNewWord => ({ 
+                            ...prevNewWord,   
+                            translation: e         
+                        }));
                     }
                     break;
                 default:
