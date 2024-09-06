@@ -189,21 +189,22 @@ export class Vocab {
         }        
     }
 
-    async editWord(collection, oldPair, newWord) {
+    async editWord(collectionName, oldPair, newWord) {
         // check which property is null. the property with a value will be updated in db
         const uid = this.user.uid;
         // currently the user can only update one word at a time
-        const native = newWord.native; 
-        const trans =  newWord.translation;
+        const newNative = newWord.native; 
+        const oldNative = oldPair.native; 
+        const newTrans =  newWord.translation;
+        const oldTrans = oldPair.translation
         const event = newWord.case; // different cases
 
+        console.log(oldPair);
 
         // Maybe reconsider this !!!!!
         // either original or translation should have a valeu to find the doc
-        if (oldPair.word === null || oldPair.translation === null) {
-            return {
-                message: "Could not get original words"
-            }
+        if (!oldTrans || !oldNative) {
+            throw new Error("Could not get original word pair");
         }
 
         // create an alert or something
@@ -211,55 +212,73 @@ export class Vocab {
             throw new Error('event is undefined');
         }
 
-        // it should return null, if not, end the program
 
         switch (event) {
             // event 1 = update native
             case 1:
-                console.log("native: ", native);
-                if (!native) {
+                console.log("learner.js native: ", newNative);
+                console.log("oldpair.word: ", oldNative);
+                if (newNative) {
                     // check input this.checkInput
                     const q = query(
-                        collection(firestore, "Users", uid, collection),
-                        where("word", "==", oldPair.word)
+                        collection(firestore, "Users", uid, collectionName),
+                        where("word", "==", oldNative)
                     );
-        
+
                     // get the doc that contains the word
-                    const nativeSnapshot = await getDocs(q);
-                    // get the id of the doc
-                    const wordref = nativeSnapshot[0].docId;
-                    // reference the doc
-                    const docRef = doc(firestore, "User", uid, collection, wordref);
+                    const nativeSnapshot = await getDocs(q).catch((err)=> {
+                        console.error(err);
+                        throw new Error(err);
+                    });
+
+                    // it works !!! make it look nice then implement for other cases. 
+                    // when successful the page should refresh?
+
+                    let docRef;
+
+                    if (!nativeSnapshot.empty) { // Check if the snapshot contains any documents
+                        const firstDoc = nativeSnapshot.docs[0]; // Access the first document
+                        const wordref = firstDoc.id; // Get the document ID
+                    
+                        console.log("doc id: ", wordref);
+                    
+                        // Reference the doc
+                        docRef = doc(firestore, "Users", uid, collectionName, wordref);
+                    
+                        // Now you can use docRef for further operations
+                    } else {
+                        console.log("No matching documents found");
+                    }
 
                     // update with user input
                     await updateDoc(docRef, {
-                        word: native
+                        word: newNative
                     }).catch((error) => {
                         alert("Could not update word");
                         console.error(error);
                     })
                 } else {
-                    throw new Error("Invalid input");
+                    throw new Error("case 1: Invalid input");
                 }
                 break;
             // event 2 = update translation
             case 2:
-                if (trans != null) {
+                if (newTrans != null) {
                     // check input
                     const q = query(
-                        collection(firestore, "Users", uid, collection),
-                        where("translation", "==", trans)
+                        collection(firestore, "Users", uid, collectionName),
+                        where("translation", "==", oldTrans)
                     );
         
                     const transSnapshot = await getDocs(q);
                     // get the id of the doc
                     const wordref = transSnapshot[0].docId;
                     // reference the doc
-                    const docRef = doc(firestore, "User", uid, collection, wordref);
+                    const docRef = doc(firestore, "User", uid, collectionName, wordref);
         
                     // update with user input
                     await updateDoc(docRef, {
-                        translation: trans
+                        translation: newTrans
                     }).catch((error) => {
                         alert("Could not update translation");
                         console.error(error);
@@ -270,24 +289,24 @@ export class Vocab {
                 break;
             // event 3 = update native and translation 
             case 3:
-                if (trans != null && native != null) {
+                if (newTrans != null || newNative != null) {
                     // check input
                     const q = query(
-                        collection(firestore, "Users", uid, collection),
-                        where("translation", "==", trans),
-                        where("word", "==", native)
+                        collection(firestore, "Users", uid, collectionName),
+                        where("translation", "==", oldTrans),
+                        where("word", "==", oldNative)
                     );
         
                     const wordPairSnapshot = await getDocs(q);
                     // get the id of the doc
                     const wordPairRef = wordPairSnapshot[0].docId;
                     // reference the doc
-                    const docRef = doc(firestore, "User", uid, collection, wordPairRef);
+                    const docRef = doc(firestore, "User", uid, collectionName, wordPairRef);
         
                     // update with user input
                     await updateDoc(docRef, {
-                        translation: trans,
-                        word: native
+                        translation: newTrans,
+                        word: newNative
                     }).catch((error) => {
                         alert("Could not update word set");
                         console.error(error);

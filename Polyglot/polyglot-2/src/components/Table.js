@@ -43,7 +43,7 @@ function TableRowWithMenu({ row, whichModal, openModal, getOriginalWord}) {
     mouseX: null, mouseY: null 
   });
   const [wordpair, setWordpair] = useState({
-    word: null, 
+    native: null, 
     translation: null, 
     event: 0
   });
@@ -62,7 +62,7 @@ function TableRowWithMenu({ row, whichModal, openModal, getOriginalWord}) {
     console.log("User not signed in")
   }
 
-  const handleContextMenu = (wordpair, event) => {
+  const handleContextMenu = (row, event) => {
     event.preventDefault();
 
     console.log("event.target:", event.target);
@@ -76,7 +76,8 @@ function TableRowWithMenu({ row, whichModal, openModal, getOriginalWord}) {
 
       setMenuPosition(newPosition);
       setAnchorEl(event.currentTarget);
-      setWordpair({word: wordpair.word, translation: wordpair.translation});
+      // why am i trying to setwordpair, with it's own values?
+      setWordpair({native: row.word, translation: row.translation});
     } else {
 
       setAnchorEl(null);

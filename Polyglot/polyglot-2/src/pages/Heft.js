@@ -182,14 +182,15 @@ export default function Heft () {
                     console.log("case 1");
                     setNewWord(prevNewWord => ({ 
                         ...prevNewWord,   
-                        native: e        
+                        native: e.target.value        
                     }));
+                    
                     break;
                 // update translation
                 case 2:
                     setNewWord(prevNewWord => ({ 
                         ...prevNewWord,   
-                        translation: e         
+                        translation: e.target.value        
                     }));
                     break;
                 // update both
@@ -197,18 +198,17 @@ export default function Heft () {
                     if (e.target.name === "native") {
                         setNewWord(prevNewWord => ({ 
                             ...prevNewWord,   
-                            native: e         
+                            native: e.target.value         
                         }));
                     } 
                     if (e.target.name === "translation") {
                         setNewWord(prevNewWord => ({ 
                             ...prevNewWord,   
-                            translation: e         
+                            translation: e.target.value         
                         }));
                     }
                     break;
                 default:
-                  // code block
             } 
             // make sure for case three, the following if statement for add word isn't executed (they use the same modal)
             return;
