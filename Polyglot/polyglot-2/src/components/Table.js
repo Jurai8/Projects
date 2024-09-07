@@ -14,7 +14,7 @@ import { Vocab } from './Learner';
 
 
 
-export default function VocabBook({ vocab, whichModal, openModal, getOriginalWord}) {
+export default function VocabBook({ vocab, openModal, getOriginalWord}) {
 
   return (
     <TableContainer id='table-container' component={Paper}>
@@ -28,7 +28,7 @@ export default function VocabBook({ vocab, whichModal, openModal, getOriginalWor
         </TableHead>
         <TableBody>
           {vocab.map((row) => (
-            <TableRowWithMenu key={row.word} row={row} whichModal={whichModal} openModal={openModal} getOriginalWord={getOriginalWord}/>
+            <TableRowWithMenu key={row.word} row={row} openModal={openModal} getOriginalWord={getOriginalWord}/>
           ))}
         </TableBody>
       </Table>
@@ -37,7 +37,7 @@ export default function VocabBook({ vocab, whichModal, openModal, getOriginalWor
 }
 
 // TODO: Make it so that the menu shows up upon hover
-function TableRowWithMenu({ row, whichModal, openModal, getOriginalWord}) {
+function TableRowWithMenu({ row, openModal, getOriginalWord}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuPosition, setMenuPosition ] = useState({
     mouseX: null, mouseY: null 
@@ -132,10 +132,9 @@ function TableRowWithMenu({ row, whichModal, openModal, getOriginalWord}) {
       >
         <MenuItem onClick={() => {
           handleClose();
-          // whichModal(false);
+          // replace
           openModal();
           // call edit word method
-
           // args = string (native/translation) send as obj ? + new word
         }}>
           Edit

@@ -82,6 +82,11 @@ export default function Heft () {
 
     // <AddWord> will pop up as a modal when the user wants to enter a word
     const [isModalOpen, setIsModalOpen] = useState(false);
+    // Add two props with bool values ?
+        /* {
+            AddWord: false;
+            EditWord: false;
+        } */
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -282,12 +287,6 @@ export default function Heft () {
         
     }
 
-    // lol what's the diff between uodate and edit
-    const [updateOrEdit, setUpdateOrEdit] = useState(null);
-
-    const whichModal = (Boolean) => {
-        setUpdateOrEdit(Boolean)
-    }
     
     /* 1. add function to delete/edit words
     
@@ -300,7 +299,6 @@ export default function Heft () {
                 {currList !== "" &&
                  <Button variant="contained" onClick={() => {
                     openModal();
-                    whichModal(true);
                 }}>
                     New Word
                 </Button>
@@ -323,12 +321,24 @@ export default function Heft () {
                 />
             }
 
-            {/*when the modal closes pass, input to vocab book */}
+            {/*when the modal closes, pass input to vocab book */}
             {isModalOpen ? (
+                // Another if statement
+                // Addword or editword?
+
+                // the reason the vocab book isn't in the background is because of the conditional rendering
+
+                /* 
+                TODO:
+                take vocabook out of the conditional rendering. Addword will just apper ontop of it. Create another conditional rendering statement for the EditWord component.
+
+                Create and Pass an open/close modal handler for editword to Vocabook Or Add two props to openmodal to control both modals (can this work?)
+                 */
+
+        
                 <AddWord 
                     onClose={closeModal} 
                     eventHandler={eventHandler}
-                    updateOrEdit={updateOrEdit}
                     updateVocab={updateVocab}
                     closeUpdateWord={closeUpdateWord}
                     newWord={newWord}
@@ -337,9 +347,8 @@ export default function Heft () {
             ) : <VocabBook 
                     vocab={vocab} 
                     getOriginalWord={getOriginalWord}
-                    // can i pass these two functions in one variable?
+                    // replace
                     openModal={openModal} 
-                    whichModal={whichModal}
                 />
             }
         </div>

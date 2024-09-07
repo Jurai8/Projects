@@ -8,7 +8,7 @@ import { Vocab } from './Learner';
 import { getAuth } from 'firebase/auth';
 import MenuListComposition from './Menu';
 
-export default function AddWord ({ onClose, eventHandler, updateVocab,      updateOrEdit, newWord, closeUpdateWord, editVocab}) {
+export default function AddWord ({ onClose, eventHandler, updateVocab, newWord}) {
     //TODO: use newWord for adding a word to vocab book
     // Test update word
 
@@ -22,11 +22,52 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                 }}
                 noValidate
                 autoComplete="off"
+            >
+                <div>
+                    <TextField 
+                        id="outlined-basic-english" label="English" name="native" variant="outlined" onChange={eventHandler} 
+                    /> 
+                    <TextField 
+                        id="outlined-basic-german" label="German" name="translation" variant="outlined" 
+                        onChange={eventHandler}
+                    />
+                </div>
+    
+                <div id='confirm-word'>
+                    <Button variant="contained" onClick={() => {
+                        // updateRows and db
+                        updateVocab();
+                        // if it works it works ig
+                        onClose();
+                    }}>
+                        Confirm
+                    </Button>
+                </div>
+            </Box>
+        </div>
+    )
+}
+
+export function EditWord({onClose, eventHandler, newWord, closeUpdateWord, editVocab}) {
+
+    return (
+        <div className='overlay'>
+            <Box 
+                className='new-word-modal'
+                component="form"
+                sx={{
+                    '& > :not(style)': { m: 1, width: '25ch' },
+                }}
+                noValidate
+                autoComplete="off"
                 >
                  
-                 { updateOrEdit ? 
-                 // if user adds new word
+                 { newWord ? 
+
+                    // When user wants to update both word
                     <div>
+                        <MenuListComposition closeUpdateWord={closeUpdateWord}
+                        newWord={newWord}/>
                         <TextField 
                             id="outlined-basic-english" label="English" name="native" variant="outlined" onChange={eventHandler} 
                         /> 
@@ -35,27 +76,21 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                             onChange={eventHandler}
                         />
                     </div>: 
-                 // if the want to edit an existing word
-                 <div>
-                    <MenuListComposition closeUpdateWord={closeUpdateWord}
-                    newWord={newWord}/>
-                    <TextField 
-                        id="any-word" label={newWord.wordType} name="any-word" variant="outlined" 
-                        onChange={eventHandler}
-                    />
-                 </div>
+
+                    // when user wants to update one word
+                    <div>  
+                        <MenuListComposition closeUpdateWord={closeUpdateWord}
+                        newWord={newWord}/>
+                        <TextField 
+                            id="any-word" label={newWord.wordType} name="any-word" variant="outlined" 
+                            onChange={eventHandler}
+                        />
+                    </div>
                  }
     
                 <div id='confirm-word'>
                     <Button variant="contained" onClick={() => {
-                        // updateRows and db
-                        if (updateOrEdit) {
-                            updateVocab();
-                        } else {
-                            // replace with method from learner
-                            editVocab();
-                        }
-                        // if it works it works ig
+                        editVocab();
                         onClose();
                     }}>
                         Confirm
