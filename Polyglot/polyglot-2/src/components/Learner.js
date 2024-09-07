@@ -196,7 +196,7 @@ export class Vocab {
         const newNative = newWord.native; 
         const oldNative = oldPair.native; 
         const newTrans =  newWord.translation;
-        const oldTrans = oldPair.translation
+        const oldTrans = oldPair.translation;
         const event = newWord.case; // different cases
 
         console.log(oldPair);
@@ -216,10 +216,9 @@ export class Vocab {
         switch (event) {
             // event 1 = update native
             case 1:
-                console.log("learner.js native: ", newNative);
-                console.log("oldpair.word: ", oldNative);
                 if (newNative) {
                     // check input this.checkInput
+
                     const q = query(
                         collection(firestore, "Users", uid, collectionName),
                         where("word", "==", oldNative)
@@ -231,58 +230,70 @@ export class Vocab {
                         throw new Error(err);
                     });
 
-                    // it works !!! make it look nice then implement for other cases. 
                     // when successful the page should refresh?
 
-                    let docRef;
-
-                    if (!nativeSnapshot.empty) { // Check if the snapshot contains any documents
-                        const firstDoc = nativeSnapshot.docs[0]; // Access the first document
-                        const wordref = firstDoc.id; // Get the document ID
-                    
-                        console.log("doc id: ", wordref);
+                    if (!nativeSnapshot.empty) { 
+                        
+                        const firstDoc = nativeSnapshot.docs[0];
+                        const wordref = firstDoc.id; 
                     
                         // Reference the doc
-                        docRef = doc(firestore, "Users", uid, collectionName, wordref);
+                        const docRef = doc(firestore, "Users", uid, collectionName, wordref);
                     
-                        // Now you can use docRef for further operations
+                        // update with user input
+                        await updateDoc(docRef, {
+                            word: newNative
+                        }).catch((error) => {
+                            alert("Could not update word");
+                            console.error(error);
+                        })
                     } else {
-                        console.log("No matching documents found");
+                        throw new Error("Case 1: No matching documents found");
                     }
 
-                    // update with user input
-                    await updateDoc(docRef, {
-                        word: newNative
-                    }).catch((error) => {
-                        alert("Could not update word");
-                        console.error(error);
-                    })
                 } else {
                     throw new Error("case 1: Invalid input");
                 }
                 break;
             // event 2 = update translation
             case 2:
-                if (newTrans != null) {
+                console.log("case 2...");
+                console.log(newTrans);
+                console.log("old:", oldTrans);
+                console.log(collectionName)
+                console.log(uid)
+                if (newTrans) {
                     // check input
                     const q = query(
                         collection(firestore, "Users", uid, collectionName),
                         where("translation", "==", oldTrans)
                     );
         
-                    const transSnapshot = await getDocs(q);
-                    // get the id of the doc
-                    const wordref = transSnapshot[0].docId;
-                    // reference the doc
-                    const docRef = doc(firestore, "User", uid, collectionName, wordref);
-        
-                    // update with user input
-                    await updateDoc(docRef, {
-                        translation: newTrans
-                    }).catch((error) => {
-                        alert("Could not update translation");
-                        console.error(error);
-                    })
+                    const transSnapshot = await getDocs(q).catch((err)=> {
+                        console.error(err);
+                        throw new Error(err);
+                    });
+                    
+                    if (!transSnapshot.empty) {
+                        const ogDoc = transSnapshot.docs[0]
+
+                        // get the id of the doc
+                        const wordRef = ogDoc.id;
+
+                         // reference the doc
+                        const docRef = doc(firestore, "Users", uid,collectionName, wordRef);
+
+                        // update with user input
+                        await updateDoc(docRef, {
+                            translation: newTrans
+                        }).catch((error) => {
+                            alert("Could not update translation");
+                            console.error(error);
+                        })
+                    } else {
+                        throw new Error("Case 2: No matching documents found");
+                    }
+                   
                 } else {
                     throw new Error("Invalid input");
                 }
