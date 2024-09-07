@@ -300,7 +300,7 @@ export class Vocab {
                 break;
             // event 3 = update native and translation 
             case 3:
-                if (newTrans != null || newNative != null) {
+                if (newTrans && newNative) {
                     // check input
                     const q = query(
                         collection(firestore, "Users", uid, collectionName),
@@ -308,20 +308,32 @@ export class Vocab {
                         where("word", "==", oldNative)
                     );
         
-                    const wordPairSnapshot = await getDocs(q);
-                    // get the id of the doc
-                    const wordPairRef = wordPairSnapshot[0].docId;
-                    // reference the doc
-                    const docRef = doc(firestore, "User", uid, collectionName, wordPairRef);
-        
-                    // update with user input
-                    await updateDoc(docRef, {
-                        translation: newTrans,
-                        word: newNative
-                    }).catch((error) => {
-                        alert("Could not update word set");
-                        console.error(error);
-                    })
+                    const wordPairSnapshot = await getDocs(q).catch((err)=> {
+                        throw new Error(err);
+                    });
+
+                    if (!wordPairSnapshot.empty) {
+                        
+                        const wordPairRef = wordPairSnapshot.docs[0];
+
+                        // get the id of the doc
+                        const docid = wordPairRef.id;
+
+                        // reference the doc
+                        const docRef = doc(firestore, "Users", uid, collectionName, docid);
+
+                        // update with user input
+                        await updateDoc(docRef, {
+                            translation: newTrans,
+                            word: newNative
+                        }).catch((error) => {
+                            alert("Could not update word set");
+                            console.error(error);
+                        })
+                    } else {
+                        throw new Error("Case 3: No matching documents found");
+                    }
+                    
                 } else {
                     throw new Error("Invalid input");
                 }

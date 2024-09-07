@@ -40,7 +40,7 @@ export default function AddWord ({ onClose, eventHandler, updateVocab,      upda
                     <MenuListComposition closeUpdateWord={closeUpdateWord}
                     newWord={newWord}/>
                     <TextField 
-                        id="any-word" label="any-word" name="any-word" variant="outlined" 
+                        id="any-word" label={newWord.wordType} name="any-word" variant="outlined" 
                         onChange={eventHandler}
                     />
                  </div>
