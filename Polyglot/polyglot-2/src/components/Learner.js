@@ -406,13 +406,15 @@ export class Vocab {
         }
     }
 
-    // remove word
-    async deleteWord(wordPair) {
+    //* remove word
+    async deleteWord(collectionName, wordPair) {
+        const uid = this.user.uid;
         // query db to find doc that contains word AND translation
-        const q = query(collection(firestore, "Users"),
+        const q = query(collection(firestore, "Users", uid, collectionName),
          where("word", "==", wordPair.natve), 
          where("translation", "==", wordPair.translation)
         );
+
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
