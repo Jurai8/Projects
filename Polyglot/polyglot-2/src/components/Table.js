@@ -131,9 +131,10 @@ function TableRowWithMenu({ row, openModal, getOriginalWord}) {
     
       >
         <MenuItem onClick={() => {
+          const number = 2;
           handleClose();
           // replace
-          openModal();
+          openModal(number);
           // call edit word method
           // args = string (native/translation) send as obj ? + new word
         }}>

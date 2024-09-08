@@ -257,11 +257,6 @@ export class Vocab {
                 break;
             // event 2 = update translation
             case 2:
-                console.log("case 2...");
-                console.log(newTrans);
-                console.log("old:", oldTrans);
-                console.log(collectionName)
-                console.log(uid)
                 if (newTrans) {
                     // check input
                     const q = query(
@@ -307,7 +302,7 @@ export class Vocab {
                         where("translation", "==", oldTrans),
                         where("word", "==", oldNative)
                     );
-        
+
                     const wordPairSnapshot = await getDocs(q).catch((err)=> {
                         throw new Error(err);
                     });
@@ -454,6 +449,7 @@ export class Test {
     }
 
     // fetchvocab()
+    // TODO: add variables for collection name
     async getVocab() {
         const auth = getAuth();
         const user = auth.currentUser;
@@ -462,7 +458,7 @@ export class Test {
             const userId = user.uid;
             // get vocab 
             try {
-                const getVocabdocs = await getDocs(collection(firestore, "Users", userId, "Vocablist 1")); 
+                const getVocabdocs = await getDocs(collection(firestore, "Users", userId, "Family")); 
 
                 getVocabdocs.forEach((doc) => {
                     this.vocab.push({
@@ -474,7 +470,7 @@ export class Test {
                 console.error("could not get vocab for test");
             }
             
-            // how to return a randomized order of the array?
+            // how to return a randomized order of the array ?
             return this.vocab;
         } else {
             console.error("User not logged in");

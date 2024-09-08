@@ -8,7 +8,7 @@ import { Vocab } from './Learner';
 import { getAuth } from 'firebase/auth';
 import MenuListComposition from './Menu';
 
-export default function AddWord ({ onClose, eventHandler, updateVocab, newWord}) {
+export default function AddWord ({ closeModal, eventHandler, updateVocab, newWord}) {
     //TODO: use newWord for adding a word to vocab book
     // Test update word
 
@@ -38,7 +38,7 @@ export default function AddWord ({ onClose, eventHandler, updateVocab, newWord})
                         // updateRows and db
                         updateVocab();
                         // if it works it works ig
-                        onClose();
+                        closeModal(1);
                     }}>
                         Confirm
                     </Button>
@@ -48,7 +48,7 @@ export default function AddWord ({ onClose, eventHandler, updateVocab, newWord})
     )
 }
 
-export function EditWord({onClose, eventHandler, newWord, closeUpdateWord, editVocab}) {
+export function EditWord({closeModal, eventHandler, newWord, closeUpdateWord, editVocab}) {
 
     return (
         <div className='overlay'>
@@ -62,17 +62,17 @@ export function EditWord({onClose, eventHandler, newWord, closeUpdateWord, editV
                 autoComplete="off"
                 >
                  
-                 { newWord ? 
+                 { newWord.wordType === 'both' ? 
 
-                    // When user wants to update both word
+                    // When user wants to update both words
                     <div>
                         <MenuListComposition closeUpdateWord={closeUpdateWord}
                         newWord={newWord}/>
                         <TextField 
-                            id="outlined-basic-english" label="English" name="native" variant="outlined" onChange={eventHandler} 
+                            id="editNative" label="English" name="any-word" variant="outlined" onChange={eventHandler} 
                         /> 
                         <TextField 
-                            id="outlined-basic-german" label="German" name="translation" variant="outlined" 
+                            id="editTrans" label="German" name="any-word" variant="outlined" 
                             onChange={eventHandler}
                         />
                     </div>: 
@@ -91,7 +91,7 @@ export function EditWord({onClose, eventHandler, newWord, closeUpdateWord, editV
                 <div id='confirm-word'>
                     <Button variant="contained" onClick={() => {
                         editVocab();
-                        onClose();
+                        closeModal(2);
                     }}>
                         Confirm
                     </Button>

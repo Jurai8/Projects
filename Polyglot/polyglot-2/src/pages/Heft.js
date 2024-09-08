@@ -1,7 +1,7 @@
 import '../App.css';
 import React, { useState, useEffect} from 'react';
 import VocabBook from '../components/Table'
-import AddWord from '../components/Modal';
+import AddWord, { EditWord } from '../components/Modal';
 import Sidebar from '../components/Sidebar';
 import { NewCollection } from '../components/Modal';
 import { Button } from '@mui/material';
@@ -80,36 +80,41 @@ export default function Heft () {
     // name of vocablist that is being accessed by user
     const [currList, setCurrList] = useState("");
 
-    // <AddWord> will pop up as a modal when the user wants to enter a word
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    // Add two props with bool values ?
-        /* {
-            AddWord: false;
-            EditWord: false;
-        } */
+    // control both edit/add word modals 
+    const [isModalOpen, setIsModalOpen] = useState({addWord: false, editWord: false});
 
-    const openModal = () => {
-        setIsModalOpen(true);
+    const openModal = (number) => {
+        if (number !== 2 && number !== 1) {
+            alert("Error");
+            return;
+        }
+        
+        if (number === 2) {
+            setIsModalOpen({addWord: false, editWord: true});
+        }
+
+        if (number === 1) {
+            setIsModalOpen({addWord: true, editWord: false});
+        }
         // clear current input
         setInput('');
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
+    const closeModal = (number) => {
+        if (number !== 2 && number !== 1) {
+            alert("Error");
+            return;
+        }
+
+        if (number === 2) {
+            setIsModalOpen({addWord: false, editWord: false});
+        }
+
+        if (number === 1) {
+            setIsModalOpen({addWord: false, editWord: false});
+        }
     };
-
-    // when updating word user will pick which word to update
-    // translation, native or both. this keeps track of what they click
     
-    // Create a drop down menu within modal for new word
-        // the user can pick what type of word it is, e.g adjective, noun
-        /* save to db {
-            status:
-            word_type:
-            word:
-            translation: 
-        }*/
-
 
     // pass this to confirm button
     const updateVocab = () => {
@@ -200,13 +205,13 @@ export default function Heft () {
                     break;
                 // update both
                 case 3:
-                    if (e.target.name === "native") {
+                    if (e.target.id === "editNative") {
                         setNewWord(prevNewWord => ({ 
                             ...prevNewWord,   
                             native: e.target.value         
                         }));
                     } 
-                    if (e.target.name === "translation") {
+                    if (e.target.id === "editTrans") {
                         setNewWord(prevNewWord => ({ 
                             ...prevNewWord,   
                             translation: e.target.value         
@@ -298,7 +303,7 @@ export default function Heft () {
                 {/* only display button when showing a list */}
                 {currList !== "" &&
                  <Button variant="contained" onClick={() => {
-                    openModal();
+                    openModal(1);
                 }}>
                     New Word
                 </Button>
@@ -321,36 +326,32 @@ export default function Heft () {
                 />
             }
 
-            {/*when the modal closes, pass input to vocab book */}
-            {isModalOpen ? (
-                // Another if statement
-                // Addword or editword?
-
-                // the reason the vocab book isn't in the background is because of the conditional rendering
-
-                /* 
-                TODO:
-                take vocabook out of the conditional rendering. Addword will just apper ontop of it. Create another conditional rendering statement for the EditWord component.
-
-                Create and Pass an open/close modal handler for editword to Vocabook Or Add two props to openmodal to control both modals (can this work?)
-                 */
-
-        
+            {isModalOpen.addWord &&
+               
                 <AddWord 
-                    onClose={closeModal} 
+                    closeModal={closeModal} 
                     eventHandler={eventHandler}
                     updateVocab={updateVocab}
+                    newWord={newWord}
+                /> 
+            }
+
+            {isModalOpen.editWord &&
+                <EditWord 
+                    eventHandler={eventHandler}
                     closeUpdateWord={closeUpdateWord}
+                    closeModal={closeModal}
                     newWord={newWord}
                     editVocab={editVocab}
-                /> 
-            ) : <VocabBook 
-                    vocab={vocab} 
-                    getOriginalWord={getOriginalWord}
-                    // replace
-                    openModal={openModal} 
+
                 />
             }
+                <VocabBook 
+                    vocab={vocab} 
+                    getOriginalWord={getOriginalWord}
+                    // triggers EditWord
+                    openModal={openModal} 
+                />
         </div>
     )
 }
