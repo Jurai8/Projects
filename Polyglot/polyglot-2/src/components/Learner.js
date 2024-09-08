@@ -445,6 +445,7 @@ export class Vocab {
 
 
 export class Test {
+
     // constructor
     constructor(user) {
         this.user = user;
@@ -462,7 +463,7 @@ export class Test {
             const userId = user.uid;
             // get vocab 
             try {
-                const getVocabdocs = await getDocs(collection(firestore, "Users", userId, "Vocablist 1")); 
+                const getVocabdocs = await getDocs(collection(firestore, "Users", userId, "Family")); 
 
                 getVocabdocs.forEach((doc) => {
                     this.vocab.push({
@@ -482,11 +483,15 @@ export class Test {
     }
 
     checkAnswer(currentWord, currentAnswer) {
+        console.log(currentWord,currentAnswer,currentWord === currentAnswer)
         if (currentWord === currentAnswer) {
-            this.score++;
+            this.score = this.score + 1;
+            console.log(this.score)
+            return true;
         } else {
             return false;
         }
+        
     }
 
     verifyWordSet(vocabList, count) {
