@@ -9,6 +9,7 @@ import { firestore } from '../firebase';
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { DisplayVocabList } from '../components/MyEventHandlers';
+import { DeleteWord } from '../components/Modal';
 import { Vocab } from '../components/Learner';
 
 /* TODO: 
@@ -115,6 +116,15 @@ export default function Heft () {
         }
     };
     
+    const [deleteVocabModal, setDeleteVocabModal] = useState(false);
+
+    const openDeleteVocab = () => {
+        setDeleteVocabModal(true);
+    }
+
+    const closeDeleteVocab = () => [
+        setDeleteVocabModal(false)
+    ]
 
     // pass this to confirm button
     const updateVocab = () => {
@@ -155,7 +165,7 @@ export default function Heft () {
     }
 
     const editVocab = () => {
-        // check input
+        // ! check input
         const auth = getAuth();
 
         onAuthStateChanged(auth, async (user) => {
@@ -177,6 +187,29 @@ export default function Heft () {
             }
         });
     }
+
+    // * delete vocab 
+    const deleteVocab = () => {
+        const auth = getAuth();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const vocab = new Vocab(user)
+
+                try {
+                    // name of vocab list + og word
+                    await vocab.deleteWord(currList, originalWord);
+
+                    alert("Successfully deleted word");
+
+                } catch (error) {
+                    console.error("Error caught while deleting word", error);
+                }
+            } else {
+                console.log("user not logged in");
+            }
+        });
+    } 
 
 
     const eventHandler = (e) => {
@@ -291,9 +324,6 @@ export default function Heft () {
         }
         
     }
-
-    
-    /* 1. add function to delete/edit words
     
     /* button: new collection
         make user type in collection name and also add their first word */
@@ -346,11 +376,21 @@ export default function Heft () {
 
                 />
             }
+
+            {/*Modal for delete vocab */
+                deleteVocabModal && 
+                <DeleteWord 
+                    deleteVocab={deleteVocab} 
+                    closeDeleteVocab={closeDeleteVocab}
+                />
+            }
+
                 <VocabBook 
                     vocab={vocab} 
                     getOriginalWord={getOriginalWord}
                     // triggers EditWord
-                    openModal={openModal} 
+                    openModal={openModal}
+                    openDeleteVocab={openDeleteVocab}
                 />
         </div>
     )

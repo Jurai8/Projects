@@ -14,7 +14,7 @@ import { Vocab } from './Learner';
 
 
 
-export default function VocabBook({ vocab, openModal, getOriginalWord}) {
+export default function VocabBook({ vocab, openModal, getOriginalWord, openDeleteVocab}) {
 
   return (
     <TableContainer id='table-container' component={Paper}>
@@ -28,7 +28,8 @@ export default function VocabBook({ vocab, openModal, getOriginalWord}) {
         </TableHead>
         <TableBody>
           {vocab.map((row) => (
-            <TableRowWithMenu key={row.word} row={row} openModal={openModal} getOriginalWord={getOriginalWord}/>
+            <TableRowWithMenu key={row.word} row={row} openModal={openModal} getOriginalWord={getOriginalWord} openDeleteVocab={openDeleteVocab}
+            />
           ))}
         </TableBody>
       </Table>
@@ -37,7 +38,7 @@ export default function VocabBook({ vocab, openModal, getOriginalWord}) {
 }
 
 // TODO: Make it so that the menu shows up upon hover
-function TableRowWithMenu({ row, openModal, getOriginalWord}) {
+function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuPosition, setMenuPosition ] = useState({
     mouseX: null, mouseY: null 
@@ -133,14 +134,16 @@ function TableRowWithMenu({ row, openModal, getOriginalWord}) {
         <MenuItem onClick={() => {
           const number = 2;
           handleClose();
-          // replace
           openModal(number);
-          // call edit word method
-          // args = string (native/translation) send as obj ? + new word
         }}>
           Edit
         </MenuItem>
-        <MenuItem onClick={handleClose}>Delete</MenuItem>
+        <MenuItem onClick={() => {
+          handleClose()
+          openDeleteVocab()
+        }}>
+          Delete
+        </MenuItem>
       </Menu>
     </TableRow>
   );

@@ -6,6 +6,8 @@ import Button from '@mui/material/Button';
 import { HandleLogin, HandleSignUp } from './MyEventHandlers';
 import { Vocab } from './Learner';
 import { getAuth } from 'firebase/auth';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 import MenuListComposition from './Menu';
 
 export default function AddWord ({ closeModal, eventHandler, updateVocab, newWord}) {
@@ -99,6 +101,46 @@ export function EditWord({closeModal, eventHandler, newWord, closeUpdateWord, ed
             </Box>
         </div>
     )
+}
+
+//* Popover code 
+// * ask user if they want to delete the word or not. call delete word from heft
+export function DeleteWord({closeDeleteVocab, deletevocab}) {
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        pt: 2,
+        px: 4,
+        pb: 3,
+      };
+
+    <Modal
+        //open={open}
+        // do i need this? - onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        >
+        <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+            Delete this word?
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            If you delete this word you won't be able to get it back
+        </Typography>
+        <Button onClick={() => {
+            closeDeleteVocab()
+            // deleteVocab()
+        }}>
+            Confirm
+        </Button>
+        </Box>
+    </Modal>
 }
 
 export function Register ({toggleSignIn, setError, setMessage}) {
