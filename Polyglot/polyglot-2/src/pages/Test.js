@@ -1,10 +1,12 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import TextField from '@mui/material/TextField';
 import { FetchVocab } from '../components/MyEventHandlers';
-import { Test } from '../components/Learner';
+import { Test, Vocab } from '../components/Learner';
 import { getAuth } from 'firebase/auth';
+import { Link, useParams } from 'react-router-dom';
+import { MenuItem, Select, Typography } from '@mui/material';
 
 
 // This is the vocab test
@@ -17,6 +19,8 @@ import { getAuth } from 'firebase/auth';
 // first hardcode
 
 export default function TestLearner() {
+    const {testName} = useParams();
+
     // current word to be displayed
     const [word, setWord] = useState('');
     // move through vocablist indices
@@ -36,12 +40,13 @@ export default function TestLearner() {
     const vocabTest = new Test(user);
 
     useEffect(() => {
+        console.log(vocabTest.getScore())
         // Ensure vocabListRef.current is not empty before trying to access it
         if (vocabTest.verifyWordSet(vocabListRef.current, count)) {
             // when count changes show value at index "count"
             setWord(vocabListRef.current[count].native);
         }
-    }, [count])
+    }, [count,vocabTest])
 
     const initializeVocab = async () => {
         const newWords = await vocabTest.getVocab();
@@ -60,9 +65,10 @@ export default function TestLearner() {
     };
 
    const compare = () => {
-        vocabTest.checkAnswer(vocabListRef.current[count].translation, input)
+       if(vocabTest.checkAnswer(vocabListRef.current[count].translation, input)){
+        setScore(score+1)
+       }
    }
-
     return (
         <div>
             {count === (vocabListRef.current.length) ?
@@ -77,7 +83,7 @@ export default function TestLearner() {
                 noValidate
                 autoComplete="off"
                 >
-                <TextField id="standard-basic" label="Standard" variant="standard" type='text' onChange={handleInputChange}/> 
+                <TextField id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}/> 
 
                 <Button variant="contained" 
                 onClick={() => {
@@ -101,3 +107,45 @@ export default function TestLearner() {
         </div>
     )
 }
+//This is where the user will choose which test to write.
+function IndexTest(){
+    const [options,setOptions] = useState([])
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    const vocab = useMemo(() => {
+      if (user) {
+        return new Vocab(user);
+      } else {
+        console.log("user not authenticated, function: Sidebar");
+        return null;
+      }
+    }, [user]);
+
+    useEffect(() => {
+      if (vocab) {
+        const fetchVocabLists = async () => {
+          try {
+            console.log("Fetching vocab lists...");
+            const vocabListNames = await vocab.getAllVocabLists();
+            console.log(`UseEffect: ${vocabListNames}`);
+            if (vocabListNames.length > 0) {
+                setOptions(prevRows => [...new Set([...prevRows, ...vocabListNames])]); // Set removes duplicates
+            }
+          } catch (error) {
+            console.error("Error fetching vocab lists:", error);
+          }
+        };
+    
+        fetchVocabLists();
+      }
+    }, [vocab]);
+    return (
+        <div>
+            <Typography variant='h5'> Select your vocab list</Typography>
+            {options.map((name,index)=>(<Link key={index} to={'/test/'+name}>{name}</Link>))}
+        </div>
+    )
+}
+
+export {IndexTest}

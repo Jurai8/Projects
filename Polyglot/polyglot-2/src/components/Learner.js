@@ -442,6 +442,7 @@ export class Vocab {
 
 
 export class Test {
+
     // constructor
     constructor(user) {
         this.user = user;
@@ -480,11 +481,15 @@ export class Test {
     }
 
     checkAnswer(currentWord, currentAnswer) {
+        console.log(currentWord,currentAnswer,currentWord === currentAnswer)
         if (currentWord === currentAnswer) {
-            this.score++;
+            this.score = this.score + 1;
+            console.log(this.score)
+            return true;
         } else {
             return false;
         }
+        
     }
 
     verifyWordSet(vocabList, count) {
