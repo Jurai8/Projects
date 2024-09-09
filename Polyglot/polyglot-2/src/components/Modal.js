@@ -105,7 +105,7 @@ export function EditWord({closeModal, eventHandler, newWord, closeUpdateWord, ed
 
 //* Popover code 
 // * ask user if they want to delete the word or not. call delete word from heft
-export function DeleteWord({closeDeleteVocab, deletevocab}) {
+export function DeleteWord({closeDeleteVocab, deleteVocab, open}) {
     const style = {
         position: 'absolute',
         top: '50%',
@@ -119,28 +119,29 @@ export function DeleteWord({closeDeleteVocab, deletevocab}) {
         px: 4,
         pb: 3,
       };
-
-    <Modal
-        //open={open}
-        // do i need this? - onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        >
-        <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-            Delete this word?
-        </Typography>
-        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            If you delete this word you won't be able to get it back
-        </Typography>
-        <Button onClick={() => {
-            closeDeleteVocab()
-            // deleteVocab()
-        }}>
-            Confirm
-        </Button>
-        </Box>
-    </Modal>
+      return (
+        <Modal
+            open={open}
+             onClose={closeDeleteVocab}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+            >
+            <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+                Delete this word?
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                If you delete this word you won't be able to get it back
+            </Typography>
+            <Button onClick={() => {
+                closeDeleteVocab()
+                deleteVocab()
+            }}>
+                Confirm
+            </Button>
+            </Box>
+        </Modal>
+      )
 }
 
 export function Register ({toggleSignIn, setError, setMessage}) {

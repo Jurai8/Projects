@@ -132,9 +132,8 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
     
       >
         <MenuItem onClick={() => {
-          const number = 2;
           handleClose();
-          openModal(number);
+          openModal(2);
         }}>
           Edit
         </MenuItem>

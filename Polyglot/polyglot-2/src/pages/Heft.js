@@ -119,12 +119,12 @@ export default function Heft () {
     const [deleteVocabModal, setDeleteVocabModal] = useState(false);
 
     const openDeleteVocab = () => {
+        console.log("opening...");
         setDeleteVocabModal(true);
+        console.log(deleteVocabModal);
     }
-
-    const closeDeleteVocab = () => [
-        setDeleteVocabModal(false)
-    ]
+        
+    const closeDeleteVocab = () => setDeleteVocabModal(false);
 
     // pass this to confirm button
     const updateVocab = () => {
@@ -382,6 +382,7 @@ export default function Heft () {
                 <DeleteWord 
                     deleteVocab={deleteVocab} 
                     closeDeleteVocab={closeDeleteVocab}
+                    open={deleteVocabModal}
                 />
             }
 
