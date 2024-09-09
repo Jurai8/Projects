@@ -407,12 +407,12 @@ export class Vocab {
     }
 
     //* remove word
-    async deleteWord(collectionName, wordPair) {
+    async deleteWord(currCollection, wordPair) {
         const uid = this.user.uid;
 
         const native = wordPair.native;
         const trans =  wordPair.translation;
-
+        const collectionName =  currCollection;
 
         if (!trans || !native) {
             throw new Error("could not get words to delete");
@@ -433,7 +433,6 @@ export class Vocab {
             
             // delete doc
             await deleteDoc(doc(firestore, "Users", uid, collectionName, docId)).catch((error) => {
-                console.error("could not delete doc");
                 alert("Could not delete word");
                 throw new Error("could not delete doc"); 
             });
