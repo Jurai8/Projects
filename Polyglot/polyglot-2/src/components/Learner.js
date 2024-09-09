@@ -409,30 +409,38 @@ export class Vocab {
     //* remove word
     async deleteWord(collectionName, wordPair) {
         const uid = this.user.uid;
+
+        const native = wordPair.native;
+        const trans =  wordPair.translation;
+
+
+        if (!trans || !native) {
+            throw new Error("could not get words to delete");
+        }
+
         // query db to find doc that contains word AND translation
         const q = query(collection(firestore, "Users", uid, collectionName),
-         where("word", "==", wordPair.natve), 
-         where("translation", "==", wordPair.translation)
+         where("word", "==", native), 
+         where("translation", "==", trans)
         );
 
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-            const doc = querySnapshot.docs[0];
+            const docRef = querySnapshot.docs[0];
             // get the doc id
-            const docId = doc.id;
+            const docId = docRef.id;
+            
             // delete doc
-            await deleteDoc(doc(firestore, "Users", docId)).catch((error) => {
+            await deleteDoc(doc(firestore, "Users", uid, collectionName, docId)).catch((error) => {
                 console.error("could not delete doc");
                 alert("Could not delete word");
                 throw new Error("could not delete doc"); 
-            })
+            });
         } else {
             console.log('No documents found');
         }
     }
-
-    // edit word
 
 
     // get allvocablists

@@ -118,11 +118,7 @@ export default function Heft () {
     
     const [deleteVocabModal, setDeleteVocabModal] = useState(false);
 
-    const openDeleteVocab = () => {
-        console.log("opening...");
-        setDeleteVocabModal(true);
-        console.log(deleteVocabModal);
-    }
+    const openDeleteVocab = () => setDeleteVocabModal(true);
         
     const closeDeleteVocab = () => setDeleteVocabModal(false);
 
@@ -194,7 +190,7 @@ export default function Heft () {
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const vocab = new Vocab(user)
+                const vocab = new Vocab(user);
 
                 try {
                     // name of vocab list + og word
