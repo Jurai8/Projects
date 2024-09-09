@@ -378,11 +378,18 @@ export class Vocab {
     }
 
     async deleteCollection(listName) {
+
+        //! how it should work:
+            // ! collections can't be deleted
+            // ! change the field to "inactive"
+            // ! go to "All_Vocab_Lists" and delete the collection name (saved as a doc)
+
         const uid = this.user.uid;
         const vocabListRef = doc(firestore, "Users", uid, "All_Vocab_Lists", listName)
         const pathToUserDoc = doc(firestore, "Users", uid);
         const docSnap = await getDoc(pathToUserDoc);
 
+        // ! replace with deleteDoc
         await updateDoc(vocabListRef, {
             status: "inactive"
         }).catch((error) => {
