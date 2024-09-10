@@ -8,6 +8,7 @@ import { getAuth, onAuthStateChanged} from "firebase/auth";
 import SignUp from "./SignUp.js";
 import { SignOut } from "../components/MyEventHandlers.js";
 import Heft from "./Heft.js";
+import VocabLists from "./VocabLists.js";
 import MyButton from "../components/Button";
 import TestLearner,{IndexTest} from "./Test.js"
 
@@ -29,6 +30,7 @@ function App() {
     // Cleanup subscription on unmount
     return () => unsubscribe();
   }, [auth]);
+
   return (
     <div className="App">
        <Router> 
@@ -36,10 +38,12 @@ function App() {
           <MyButton to="heft" /> 
           <MyButton to="signup" /> 
           <MyButton to="test" /> 
+          <MyButton to="vocablists" /> 
           <Routes> 
             <Route path="/signup" element={<SignUp />} /> 
             <Route path="/" element={<Home />} /> 
             <Route path="/heft" element={<Heft />} />
+            <Route path="/vocablists" element={<VocabLists/>}/>
             <Route path="/test">
               <Route index element={<IndexTest />}/>
               <Route path=":testName" element={<TestLearner />}/>
