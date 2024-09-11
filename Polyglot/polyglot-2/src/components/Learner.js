@@ -1,7 +1,7 @@
 import { firestore } from '../firebase';
 import { 
     setDoc, addDoc, collection, getDocs, getDoc, doc, updateDoc, query, where,
-    deleteDoc
+    deleteDoc, getCountFromServer
 } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged, signOut,  createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, updateProfile,} from "firebase/auth";
@@ -111,27 +111,41 @@ export class Vocab {
     }
 
     async getAllVocabLists() {
-        const userId = this.user.uid;
+        const uid = this.user.uid;
 
         try {
             // path to subcollection
             const querySnapshot = await getDocs(collection(
-                firestore, "Users", userId, "All_Vocab_Lists"
+                firestore, "Users", uid, "All_Vocab_Lists"
             ));
 
-            querySnapshot.forEach((doc) => {
-                // add each list name into an array
-                this.allVocabLists.push(doc.id); 
-            });
+             // Map over each document to create an array of promises
+            const promises = querySnapshot.docs.map(async (doc) => {
+                try {
+                // Reference the vocab list
+                const coll = collection(firestore, "Users", uid, doc.id);
+        
+                // Get snapshot of vocab list count
+                const numberOfWords = await getCountFromServer(coll);
+        
+                // Add object to array with list name and vocab count
+                this.allVocabLists.push({ listName: doc.id, vocabCount: numberOfWords.data().count });
 
+                } catch (error) {
+                console.error("Could not get vocab count for list:", doc.id, error);
+                }
+            });
+        
+            // Wait for all promises to complete
+            await Promise.all(promises);
+            
             return this.allVocabLists;
         } catch (error) {
             console.error("Could not get names of vocab lists", error);
         }
     }
 
-    // updateVocab() in Heft.js
-    // TODO: How to get the current list that the user is in?
+
     async addWord(vocabList, wordPair) {
         const userId = this.user.uid;
         const listname = vocabList;
