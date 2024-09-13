@@ -46,31 +46,31 @@ export default function VocabLists() {
 
     const auth = getAuth();
 
-    const event = () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const vocab = new Vocab(user);
-          const row = await vocab.getAllVocabLists();
-
-          console.log("row from getAllVocabLists:", row);
-            
-          setRows(row);
-
-        } else {
-            alert("user not signed in")
-          }
-      });
+    function Event() {
+      useEffect(() => {
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            const vocab = new Vocab(user);
+            const row = await vocab.getAllVocabLists();
+  
+            console.log("row from getAllVocabLists:", row);
+              
+            setRows(row);
+  
+          } else {
+              alert("user not signed in")
+            }
+        });
+      }, [])
     }
 
-    useEffect(() => {
-
-    }, [rows])
+    
 
   return (
     <div>
       <h1>Your vocab list</h1>
 
-      <Button onClick={event}>
+      <Button onClick={Event}>
         click me
       </Button>
 
