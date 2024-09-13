@@ -44,24 +44,27 @@ export default function VocabLists() {
     
     const [rows, setRows] = useState([]);
 
-    const event = () => {
-      const auth = getAuth();
+    const auth = getAuth();
 
-        onAuthStateChanged(auth, (user) => {
+    const event = () => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
           const vocab = new Vocab(user);
-          const row = vocab.getAllVocabLists();
+          const row = await vocab.getAllVocabLists();
 
           console.log("row from getAllVocabLists:", row);
-          
+            
           setRows(row);
+
         } else {
-          alert("user not signed in")
-        }
+            alert("user not signed in")
+          }
       });
     }
 
-    
+    useEffect(() => {
+
+    }, [rows])
 
   return (
     <div>

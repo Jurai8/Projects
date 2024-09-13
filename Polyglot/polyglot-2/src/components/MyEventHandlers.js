@@ -120,7 +120,6 @@ export async function DisplayVocabList(collectionName) {
     const auth = getAuth();
     const user = auth.currentUser; 
 
-    console.log(`Collection name: ${collectionName}`)
     // pass an object (word and translation in one obj) into the array?
     if (user) {
         const userId = user.uid;
@@ -140,12 +139,12 @@ export async function DisplayVocabList(collectionName) {
             });
         });
 
-        console.log(vocabulary)
        return vocabulary;
     } else {
         console.error("user not signed in");
     }
 }
+
 
 // for the vocabtest
 export async function FetchVocab () {
