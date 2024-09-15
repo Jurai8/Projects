@@ -43,6 +43,11 @@ export default function VocabLists() {
     */
     
     const [rows, setRows] = useState([]);
+    const [dummyState, setDummyState] = useState(false);
+
+    const control = () => {
+      setDummyState(true);
+    }
 
     const auth = getAuth();
 
@@ -54,9 +59,8 @@ export default function VocabLists() {
 
           console.log("row from getAllVocabLists:", row);
 
-          setRows(() => {console.log("within setRows: ", row); return row});
+          setRows(row);
           console.log(rows);
-
         } else {
             alert("user not signed in")
           }
@@ -64,8 +68,9 @@ export default function VocabLists() {
     }
 
     useEffect(() => {
+      console.log("Updated rows: ", rows);
       
-    }, [rows])
+    }, [rows]); 
 
   return (
     <div>
@@ -84,25 +89,38 @@ export default function VocabLists() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.listName}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.listName}
-                </TableCell>
-                <TableCell align="right">{row.vocabCount}</TableCell>
-              </TableRow>
-            ))}
+          {dummyState && (
+              <VocabTableRow rows={rows} control={control} />
+            )}
           </TableBody>
         </Table>
       </TableContainer>
-      
     </div>
   );
 }
 
+function VocabTableRow({rows, control}) {
+  if (rows.length > 0) {
+    control();
+  }
+  
+  return (
+    <>
+      {rows.map((row) => (
+        <TableRow
+          key={row.listName}
+          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        >
+          <TableCell component="th" scope="row">
+            {row.listName}
+          </TableCell>
+          <TableCell align="right">{row.vocabCount}</TableCell>
+        </TableRow>
+      ))}
+    </>
+    
+  )
+}
 
 //! row.VocabList does not exist yet. (each name should be unique) 
 
