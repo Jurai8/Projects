@@ -316,9 +316,8 @@ export default function Heft () {
             // set name of current vocab list
             setCurrList(ListName);
         } catch (error) {
-            console.error("unable to display vocab list")
+            console.error("unable to display vocab list", error);
         }
-        
     }
     
     /* button: new collection

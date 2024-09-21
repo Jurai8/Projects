@@ -7,17 +7,11 @@
     // future: while in heft.js, they should be able to choose specific words they want to be tested on
 
 import { Vocab } from "../components/Learner"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef} from "react"
 import { getAuth, onAuthStateChanged} from "firebase/auth"
 import * as React from 'react';
 import { Button } from "@mui/material";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { VocabList } from "../components/Table";
 
 export default function VocabLists() {
     /** 
@@ -43,83 +37,56 @@ export default function VocabLists() {
     */
     
     const [rows, setRows] = useState([]);
-    const [dummyState, setDummyState] = useState(false);
-
-    const control = () => {
-      setDummyState(true);
-    }
-
+    
     const auth = getAuth();
 
-    const event = () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const vocab = new Vocab(user);
-          const row = await vocab.getAllVocabLists();
-
-          console.log("row from getAllVocabLists:", row);
-
-          setRows(row);
-          console.log(rows);
-        } else {
+    useEffect(() => {
+      const uevent = () => {
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            const vocab = new Vocab(user);
+            // setVocab(voc);
+    
+            try {
+              const row = await vocab.getAllVocabLists();
+      
+              console.log("row from getAllVocabLists:", row);
+      
+              // Check if row is a valid array and has data before updating state
+              if (row && Array.isArray(row) && row.length > 0) {
+                setRows(row); // Update state
+                rowsRef.current = row;  // Keep ref updated with latest rows
+              } else {
+                console.error("No vocab lists found");
+              }
+      
+              console.log(rows);
+      
+            } catch (error) {
+              console.error(error);
+            }
+          } else {
             alert("user not signed in")
           }
-      });
-    }
-
-    useEffect(() => {
-      console.log("Updated rows: ", rows);
+        });
+      }
       
-    }, [rows]); 
+      uevent();
+    }, []); 
+
 
   return (
     <div>
-      <h1>Your vocab list</h1>
+      <h1>Your vocab lists</h1>
 
-      <Button onClick={() => {event()}}>
-        click me
-      </Button>
-
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>List Name </TableCell>
-              <TableCell align="right">Words&nbsp;</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-          {dummyState && (
-              <VocabTableRow rows={rows} control={control} />
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {/* Conditionally render a message if rows are still empty */}
+      {rows.length === 0 ? (
+        <p>Loading vocab lists...</p>
+      ) : (
+        <VocabList rows={rows} />
+      )}
     </div>
   );
-}
-
-function VocabTableRow({rows, control}) {
-  if (rows.length > 0) {
-    control();
-  }
-  
-  return (
-    <>
-      {rows.map((row) => (
-        <TableRow
-          key={row.listName}
-          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-        >
-          <TableCell component="th" scope="row">
-            {row.listName}
-          </TableCell>
-          <TableCell align="right">{row.vocabCount}</TableCell>
-        </TableRow>
-      ))}
-    </>
-    
-  )
 }
 
 //! row.VocabList does not exist yet. (each name should be unique) 

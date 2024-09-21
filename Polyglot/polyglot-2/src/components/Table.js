@@ -1,6 +1,7 @@
 import '../App.css';
 import { useState, useEffect, useMemo } from 'react';
 import { getAuth } from 'firebase/auth';
+import { Button } from '@mui/material';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Table from '@mui/material/Table';
@@ -145,5 +146,34 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
         </MenuItem>
       </Menu>
     </TableRow>
+  );
+}
+
+export  function VocabList({ rows }) {
+
+  return (
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>List Name </TableCell>
+            <TableCell align="right">Words&nbsp;</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((row) => (
+            <TableRow
+              key={row.listName}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {row.listName}
+              </TableCell>
+              <TableCell align="right">{row.vocabCount}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
