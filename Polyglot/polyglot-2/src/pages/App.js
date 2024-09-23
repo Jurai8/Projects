@@ -72,4 +72,6 @@ export function Home () {
   )
 }
 
+//get all the vocab lists and pass it to vocablists
+
 export default App;

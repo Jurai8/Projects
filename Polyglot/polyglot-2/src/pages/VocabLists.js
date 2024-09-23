@@ -7,7 +7,7 @@
     // future: while in heft.js, they should be able to choose specific words they want to be tested on
 
 import { Vocab } from "../components/Learner"
-import { useState, useEffect, useRef} from "react"
+import { useState, useEffect, } from "react"
 import { getAuth, onAuthStateChanged} from "firebase/auth"
 import * as React from 'react';
 import { Button } from "@mui/material";
@@ -37,53 +37,51 @@ export default function VocabLists() {
     */
     
     const [rows, setRows] = useState([]);
+    const [show, setShow] = useState(false);
     
     const auth = getAuth();
 
-    useEffect(() => {
-      const uevent = () => {
-        onAuthStateChanged(auth, async (user) => {
-          if (user) {
-            const vocab = new Vocab(user);
-            // setVocab(voc);
+    const uevent = () => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const vocab = new Vocab(user);
+  
+          try {
+            const row = await vocab.getAllVocabLists();
     
-            try {
-              const row = await vocab.getAllVocabLists();
-      
-              console.log("row from getAllVocabLists:", row);
-      
-              // Check if row is a valid array and has data before updating state
-              if (row && Array.isArray(row) && row.length > 0) {
-                setRows(row); // Update state
-                rowsRef.current = row;  // Keep ref updated with latest rows
-              } else {
-                console.error("No vocab lists found");
-              }
-      
-              console.log(rows);
-      
-            } catch (error) {
-              console.error(error);
-            }
-          } else {
-            alert("user not signed in")
+            console.log("row from getAllVocabLists:", row, show);
+    
+            console.log("hello")
+            setRows(row); // Update state
+    
+            console.log(rows);
+    
+          } catch (error) {
+            console.error(error);
           }
-        });
+        } else {
+          alert("user not signed in")
+        }
+      });
+    }
+
+    useEffect(() => {
+      console.log("rows", rows, "length: ", rows.length)
+      if (rows.length > 0) {
+        setShow(true);
       }
-      
-      uevent();
-    }, []); 
+    }, [rows]); 
 
 
   return (
     <div>
       <h1>Your vocab lists</h1>
-
+      <Button onClick={uevent}>click me</Button>
       {/* Conditionally render a message if rows are still empty */}
-      {rows.length === 0 ? (
-        <p>Loading vocab lists...</p>
-      ) : (
+      {show ? (
         <VocabList rows={rows} />
+      ) : (
+        <p>Loading vocab lists...</p>
       )}
     </div>
   );
