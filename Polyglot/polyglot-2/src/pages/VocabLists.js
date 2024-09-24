@@ -12,35 +12,16 @@ import { getAuth, onAuthStateChanged} from "firebase/auth"
 import * as React from 'react';
 import { Button } from "@mui/material";
 import { VocabList } from "../components/Table";
+import { Component } from "react";
 
 export default function VocabLists() {
-    /** 
-    //TODO call a method from learner.js. The method should return an array of all the active vocablists that the user has. Each index will be an object with the properties - listName & wordCount/vocabCount
-
-    //! e.g 
-    const auth = get auth
-    **get signed in user, 
-    const vocab = new Vocab(user);
-    const rows = vocab.getUserVocabLists();
-    rows[0].Listname = Family;
-    rows[0].wordCount = 5;
-    */
-
-    /*
-    const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-    ];  
-    */
-    
-    const [rows, setRows] = useState([]);
-    const [show, setShow] = useState(false);
-    
+  
     const auth = getAuth();
 
+    const [rows, setRows] = useState([]);
+    const [show, setShow] = useState(false);
+    const [length, setLength] = useState(0);
+ 
     const uevent = () => {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -53,24 +34,27 @@ export default function VocabLists() {
     
             console.log("hello")
             setRows(row); // Update state
+            setLength(row.length);
     
             console.log(rows);
     
           } catch (error) {
             console.error(error);
           }
+
         } else {
           alert("user not signed in")
         }
       });
     }
 
+
     useEffect(() => {
-      console.log("rows", rows, "length: ", rows.length)
-      if (rows.length > 0) {
+      console.log("rows", rows, "length: ", length)
+      if (length > 0) {
         setShow(true);
       }
-    }, [rows]); 
+    }, [rows, length]);
 
 
   return (
@@ -86,7 +70,3 @@ export default function VocabLists() {
     </div>
   );
 }
-
-//! row.VocabList does not exist yet. (each name should be unique) 
-
-//! row.wordCount does not exist 
