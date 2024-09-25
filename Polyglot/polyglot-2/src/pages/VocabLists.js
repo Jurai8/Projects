@@ -4,7 +4,7 @@
     // when clicked (3 dots), a menu will show up, to either delete the collection or initiate a test or view the vocab list
     // Also when the user double clicks on the list they should be taken to heft.js where they can view the list they clicked on
 
-    // future: while in heft.js, they should be able to choose specific words they want to be tested on
+    // future: while in heft.js, they should be able to choose specific words they want to be tested on (on a specific date)
 
 import { Vocab } from "../components/Learner"
 import { useState, useEffect, } from "react"
@@ -15,39 +15,42 @@ import { VocabList } from "../components/Table";
 import { Component } from "react";
 
 export default function VocabLists() {
-  
-    const auth = getAuth();
+  // update the
+  const auth = getAuth();
+  const [rows, setRows] = useState([]);
+  const [show, setShow] = useState(false);
+  const [length, setLength] = useState(0);
 
-    const [rows, setRows] = useState([]);
-    const [show, setShow] = useState(false);
-    const [length, setLength] = useState(0);
- 
-    const uevent = () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const vocab = new Vocab(user);
-  
-          try {
-            const row = await vocab.getAllVocabLists();
-    
-            console.log("row from getAllVocabLists:", row, show);
-    
-            console.log("hello")
-            setRows(row); // Update state
-            setLength(row.length);
-    
-            console.log(rows);
-    
-          } catch (error) {
-            console.error(error);
-          }
+  const uevent = () => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const vocab = new Vocab(user);
 
-        } else {
-          alert("user not signed in")
+        try {
+          const row = await vocab.getAllVocabLists();
+  
+          console.log("row from getAllVocabLists:", row, show);
+  
+          console.log("hello")
+          setRows(row); // Update state
+        
+          console.log(rows);
+  
+        } catch (error) {
+          console.error(error);
         }
-      });
-    }
 
+      } else {
+        alert("user not signed in")
+      }
+    });
+  }
+
+  // uvent should return the array
+  // the set state with value from uvent
+  // useEffect can track if the value has changed 
+  // if it has setShow(true)
+  // remove length
 
     useEffect(() => {
       console.log("rows", rows, "length: ", length)
@@ -60,13 +63,9 @@ export default function VocabLists() {
   return (
     <div>
       <h1>Your vocab lists</h1>
-      <Button onClick={uevent}>click me</Button>
       {/* Conditionally render a message if rows are still empty */}
-      {show ? (
-        <VocabList rows={rows} />
-      ) : (
-        <p>Loading vocab lists...</p>
-      )}
+      {show && <VocabList rows={rows} />}
+      
     </div>
   );
 }
