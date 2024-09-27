@@ -27,40 +27,15 @@ export default function VocabLists() {
   const auth = getAuth();
   const [rows, setRows] = useState([]);
   const [show, setShow] = useState(false);
-  const [rowsInitialized, setRowsInitialized] = useState(false);
 
-  /*const uevent = () => {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const vocab = new Vocab(user);
-
-        try {
-          const row = await vocab.getAllVocabLists();
-  
-          console.log("row from getAllVocabLists:", row, show);
-  
-          console.log("hello")
-          setRows(row); // Update state
-        
-          console.log(rows);
-  
-        } catch (error) {
-          console.error(error);
-        }
-
-      } else {
-        alert("user not signed in")
-      }
-    });
-  } */
-
-  const uevent = () => {
+  const getWords = () => {
     return new Promise((resolve, reject) => {
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           const vocab = new Vocab(user);
   
           try {
+
             const row = await vocab.getAllVocabLists();
             resolve(row);  // Resolve with the array of vocab lists
           } catch (error) {
@@ -80,26 +55,25 @@ export default function VocabLists() {
   // then set state with value from uvent
   // useEffect can track if the value has changed 
   // if it has setShow(true)
-  // remove length
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const call = await uevent();  
+        
+        const call = await getWords();  
         setRows(call);  // Set state with the returned data
-        setRowsInitialized(true);
       } catch (error) {
         console.error("Error fetching vocab lists:", error);
       }
     };
   
     fetchData();  // Call the function once on component mount
-  }, []);  // Empty dependency array to run only on mount
-
+  }, []);  
 
     useEffect(() => {
+      console.log("Rows updated in useEffect: ", rows, "length: ", rows.length);
+
       if (rows.length > 0) {
-        console.log("Rows updated in useEffect: ", rows, "length: ", rows.length);
         setShow(true);  // Only show if rows exist
       } else {
         console.log("Rows length is 0, no vocab lists found.");
@@ -140,3 +114,30 @@ export default function VocabLists() {
     </div>
   );
 }
+
+
+
+ /*const uevent = () => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const vocab = new Vocab(user);
+
+        try {
+          const row = await vocab.getAllVocabLists();
+  
+          console.log("row from getAllVocabLists:", row, show);
+  
+          console.log("hello")
+          setRows(row); // Update state
+        
+          console.log(rows);
+  
+        } catch (error) {
+          console.error(error);
+        }
+
+      } else {
+        alert("user not signed in")
+      }
+    });
+  } */
