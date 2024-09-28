@@ -34,26 +34,45 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
       }
     }, [user]);
 
+    const fetchVocabLists = async () => {
+      try {
+        console.log("Fetching vocab lists...");
+
+        return await vocab.getAllVocabLists();
+        
+        /* 
+        console.log(`UseEffect: ${vocabListNames}`);
+
+        if (vocabListNames.length > 0) {
+          setRows(prevRows => [...new Set([...prevRows, ...vocabListNames])]); // Set removes duplicates
+        } */
+
+      } catch (error) {
+        console.error("Error fetching vocab lists:", error);
+      }
+    }
+
+    // ! same issue. seState is async, so i'm not able to compare the length
     useEffect(() => {
       if (vocab) {
-        const fetchVocabLists = async () => {
-          try {
-            console.log("Fetching vocab lists...");
-            const vocabListNames = await vocab.getAllVocabLists();
-            console.log(`UseEffect: ${vocabListNames}`);
-            if (vocabListNames.length > 0) {
-              setRows(prevRows => [...new Set([...prevRows, ...vocabListNames])]); // Set removes duplicates
-            }
-          } catch (error) {
-            console.error("Error fetching vocab lists:", error);
+        const getLists = async () => {
+          const lists = await fetchVocabLists();
+
+          console.log("UseEffect: ", lists, lists.length);
+          //! ask chatgpt why the array doesn't show up in this statement
+          console.log("UseEffect using stringify: ", JSON.stringify(lists), lists.length);
+
+          if (lists.length > 0) {
+            setRows(prevRows => [...new Set([...prevRows, ...lists])]); // Set removes duplicates
           }
-        };
-    
-        fetchVocabLists();
+        }
+
+        getLists();
       }
+
     }, [vocab]);
 
-
+    // TODO: when rows is updated
     const SidebarList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleSidebar(false)}>
         <List>
@@ -68,7 +87,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
                  />
                 </ListItemButton>
             </ListItem>
-            {rows.map((text, index) => (
+            {rows.map((text) => (
             <ListItem key={text} disablePadding>
                 <ListItemButton onClick={() => getListName(text)}>
                 <ListItemIcon>
@@ -91,5 +110,3 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
         </div>
     );
 }
-
-

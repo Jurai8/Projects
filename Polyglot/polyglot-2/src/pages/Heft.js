@@ -20,6 +20,12 @@ import { Vocab } from '../components/Learner';
         add vocab list name to "All_Vocab_List" collection
 */
 
+// ! this page will only display the vocab with in a heft
+// ! to get to this page user needs to go to Vocablists.js, click on the list to view, then it will direct them here
+// ! while in heft allow the user to switch between collections
+
+// ! check which functions need to be moved
+
 
 // button leading to current page should be removed
 export default function Heft () {

@@ -274,6 +274,7 @@ export function LogIn({toggleSignIn, setError, setMessage}) {
     )
 }
 
+
 // pass user if possible
 export function NewCollection({ toggleNewCollectionModal }) {
     // get signed in user
@@ -304,14 +305,7 @@ export function NewCollection({ toggleNewCollectionModal }) {
         } catch (error) {
             alert("could not create new collection");
         }
-        // if there's an error
-        /* if (message.success === null) {
-            setError(true);
-            setMessage(message.error);
-        } else {
-            setError(false);
-            setMessage(message.success);
-        } */
+       
         toggleNewCollectionModal(false);
     }
 
