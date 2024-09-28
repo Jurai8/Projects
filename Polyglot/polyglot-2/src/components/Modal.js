@@ -1,6 +1,7 @@
 import '../App.css';
 import { useRef, useState } from 'react';
 import Box from '@mui/material/Box';
+import { Learner } from './Learner';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { HandleLogin, HandleSignUp } from './MyEventHandlers';
@@ -148,10 +149,12 @@ export function Register ({toggleSignIn, setError, setMessage}) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const usernameRef = useRef(null);
+    const user = new Learner();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const message = await HandleSignUp(emailRef.current.value, passwordRef.current.value, usernameRef.current.value)
+        // TODO change to try/catch
+        const message = await user.SignUp(emailRef.current.value, passwordRef.current.value, usernameRef.current.value)
 
         // if there's an error
         if (message.success === null) {
@@ -215,10 +218,12 @@ export function Register ({toggleSignIn, setError, setMessage}) {
 export function LogIn({toggleSignIn, setError, setMessage}) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
+    const user = new Learner();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const message = await HandleLogin(emailRef.current.value, passwordRef.current.value)
+        // TODO: change to try/catch
+        const message = await user.LogIn(emailRef.current.value, passwordRef.current.value)
 
         // if there's an error
         if (message.success === null) {

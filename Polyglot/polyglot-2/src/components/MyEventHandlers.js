@@ -7,13 +7,9 @@ import {
 } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged, signOut,  createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, updateProfile,} from "firebase/auth";
-// Signup.js looks terrible because of all the functions
-// this will be a mini library
-// export all functions that should be added here
-// import in files
-    //e.g import {handleLogin, handleSave} from 'MyEventHandlers'
 
-async function checkUser(username, email) {
+
+export async function checkUser(username, email) {
     try {
         const res = await fetch('/checkUser', {
             method: 'POST',
@@ -95,14 +91,6 @@ export function CheckPasswordStrength(password) {
     return errorMessage;
 }
 
-export function SignOut() {
-    const auth = getAuth();
-    signOut(auth).then(() => {
-    // Sign-out successful.
-    }).catch((error) => {
-    // An error happened.
-    });
-}
 
 
 /* say the user wants to view a specific vocab list
@@ -146,7 +134,7 @@ export async function DisplayVocabList(collectionName) {
 }
 
 
-// for the vocabtest
+// ! for the vocabtest
 export async function FetchVocab () {
     const vocabList = [];
 
@@ -175,187 +163,16 @@ export async function FetchVocab () {
         console.error("User not logged in");
     }
 }
-// TODO: delete for now = move to bin
-    // should each doc have a doc id = the native word?
-// if they hover or click on the row, show these 2 options
-    // edit word in vocab collection
 
-// "delete" word from collection
-export async function RemoveWord(collection, word, translation) {
-    // TODO: 
-        // edit this function if i decide to change docid = native word
-    const auth = getAuth();
-    const user = auth.currentUser;
-    // query in collection for docs that have the properties 
-        // word: word passed in arg
-        // translation: word passed in arg
-
-        const findDoc= query(collection(firestore, "Users", user.uid, collection), where("word", "==", word), 
-        where("translation", "==", translation));
-
-        try {
-            // Execute the query to get documents
-            const querySnapshot = await getDocs(findDoc);
-        
-            // Check if any documents were found
-            if (!querySnapshot.empty) {
-              // Get the first document in the query snapshot
-              const document = querySnapshot.docs[0];
-              const docRef = doc(firestore, "Users", user.uid, collection, document.id);
-        
-              // remove word by updating the status of the document
-              await updateDoc(docRef, {
-                status: "inactive"
-              });
-              console.log(`Document ${document.id} status updated successfully!`);
-            } else {
-              console.log("No documents found matching the criteria.");
-            }
-          } catch (error) {
-            console.error("Error setting status to inactive: ", error);
-          }
-}
 
 
 // "delete" collection
 // show option to delete with right click, on collection button within    collection drawer/ sidebar
-export async function RemoveCollection(collectionName, status) {
-    const auth = getAuth();
-    const user = auth.currentUser;
 
-    if (user) {
-        // reference doc within All_Vocab_Lists,
-        const docRef =  doc("Users", user.uid, "All_Vocab_Lists", collectionName) // collectionName as doc
 
-        try {
-            // "delete" doc by changing status to inactive
-            await updateDoc(docRef, {
-              status: status
-            });
-            console.log("Document status updated successfully!");
-          } catch (error) {
-            console.error("Error setting status to inactive: ", error);
-          }
-    } else {
-        console.log("user not signed in")
-    }
-}
 
-export function HandleLogin(emailRef, passwordRef) {
 
-    const email = emailRef;
-    const password = passwordRef;
 
-    const auth = getAuth();
-    return signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed in 
-            const user = userCredential.user;
-            
-            return {
-                success: `Welcome ${user.displayName}`,
-                error: null
-            };
-        })
-        .catch((error) => {
-            return {
-                error: "Failed to login",
-                success: null
-            };
-        });
-
-}
-
-export async function HandleSignUp(emailRef, passwordRef, usernameRef) {
-
-    const email = emailRef;
-    const password = passwordRef;
-    const username = usernameRef;
-
-    if (
-        email &&
-        password &&
-        username &&
-        // remove white spaces
-        email.trim() !== '' &&
-        username.trim() !== '' &&
-        password.trim() !== ''
-      ) {
-
-        try {
-            // Check password strength
-            const passwordStrength = CheckPasswordStrength(password);
-            if (!passwordStrength.isValid) {
-                alert(passwordStrength.errors);
-                return false;
-            }
-
-            const res = await checkUser(username, email);
-            if (res.status === "error" ) {
-                alert(res.message);
-                return false;
-            } 
-            // Proceed with the rest of the logic if no errors
-        } catch (error) {
-            console.error("Issue checking for identity (async function)");
-            return {
-                error: "Failed to create account",
-                success: null
-            };;
-            // Handle the error appropriately, e.g., display a user-friendly message
-        }
-
-        const auth = getAuth();
-        try {
-          await createUserWithEmailAndPassword(auth, email, password).catch((err) =>
-            console.log(err)
-          );
-       
-          await updateProfile(auth.currentUser, { displayName: username }).catch(
-            (err) => console.log("unable to create username")
-          )
-
-          // get logged in user
-          onAuthStateChanged(auth, async (user) => {
-            if (user) {
-              const userId = user.uid;
-              const email = user.email;
-              const userData = {
-                Username: user.displayName,
-                Email: email
-              }
-              // docid = userid
-              const userDocRef = doc(firestore, 'Users', userId);
-
-              try {
-                await setDoc(userDocRef, userData);
-                console.log("user doc created");
-              } catch (error) {
-                console.error("could not create user doc")
-              }
-              
-            } else {
-              console.log("No user is signed in.");
-            }
-          });
-
-          return {
-            success:`Hello ${username}`,
-            error: null
-          }
-            
-
-        } catch (error) {
-            return {
-                error: "Failed to create account",
-                success: null
-            };
-        }
-
-    } else {
-        console.warn('credentials are undefined or null');
-      }
-}
 
 
 // fuction if Vocab_Lists? == false, return false.

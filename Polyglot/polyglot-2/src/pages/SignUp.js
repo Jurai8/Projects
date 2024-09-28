@@ -4,9 +4,8 @@ import React, { useRef, useState} from 'react';
 
 
 
-/* if logged in user doesn't have a library ask them 
-    to create their first library
-*/
+// TODO if logged in user doesn't have a library ask them to create their first library
+
 
 export default function SignUp () {
   // use one state handler. set true/false

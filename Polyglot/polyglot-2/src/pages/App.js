@@ -11,12 +11,17 @@ import Heft from "./Heft.js";
 import VocabLists from "./VocabLists.js";
 import MyButton from "../components/Button";
 import TestLearner,{IndexTest} from "./Test.js"
+import { Learner } from "../components/Learner.js";
 
 
 function App() {
   const [username, setUsername] = useState(null);
   const auth = getAuth();
+  const user = new Learner();
 
+  const signOut = () => {
+    user.SignOut();
+  }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -56,7 +61,7 @@ function App() {
         <section id="username"> {username  ?
           <div style={{display: 'flex'}}>
             <h1>{username}</h1>
-            <Button onClick={SignOut}>Sign out</Button>
+            <Button onClick={() => user.SignOut()}>Sign out</Button>
           </div> 
           // TODO: 
             // change to button

@@ -6,6 +6,9 @@ import {
 import { getAuth, onAuthStateChanged, signOut,  createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, updateProfile,} from "firebase/auth";
 
+import { checkUser, CheckPasswordStrength } from './MyEventHandlers';
+import VocabLists from '../pages/VocabLists';
+
 /* TODO: 
 create a learner class
     it it's methods will be the user related functions in MyEventHandlers.js
@@ -14,11 +17,7 @@ create a learner class
 
 export class Learner {
 
-    #userid;
-    constructor(userid, username, ) {
-        this.#userid = userid;
-        this.username = username;
-    }
+
 
     getUsername() {
         return this.username;
@@ -28,13 +27,136 @@ export class Learner {
     // handle login
 
     // handle sign up
+    async SignUp(emailRef, passwordRef, usernameRef) {
 
+        const email = emailRef;
+        const password = passwordRef;
+        const username = usernameRef;
+    
+        if (
+            email &&
+            password &&
+            username &&
+            // remove white spaces
+            email.trim() !== '' &&
+            username.trim() !== '' &&
+            password.trim() !== ''
+          ) {
+    
+            try {
+                // Check password strength
+                const passwordStrength = CheckPasswordStrength(password);
+                if (!passwordStrength.isValid) {
+                    alert(passwordStrength.errors);
+                    return false;
+                }
+                // check if user already exists
+                const res = await checkUser(username, email);
+                if (res.status === "error" ) {
+                    alert(res.message);
+                    return false;
+                } 
+                
+            } catch (error) {
+                console.error(error, "Issue checking for identity (async function)");
+                return {
+                    error: "Failed to create account",
+                    success: null
+                };;
+                // Handle the error appropriately, e.g., display a user-friendly message
+            }
+    
+            const auth = getAuth();
+            try {
+              await createUserWithEmailAndPassword(auth, email, password).catch((err) =>
+                console.log(err)
+              );
+           
+              await updateProfile(auth.currentUser, { displayName: username }).catch(
+                (err) => console.log("unable to create username")
+              )
+    
+              // get logged in user
+              onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                  const userId = user.uid;
+                  const email = user.email;
+                  const userData = {
+                    Username: user.displayName,
+                    Email: email,
+                    VocabLists: 0
+                  }
+                  // docid = userid
+                  const userDocRef = doc(firestore, 'Users', userId);
+    
+                  try {
+                    await setDoc(userDocRef, userData);
+                    console.log("user doc created");
+                  } catch (error) {
+                    console.error("could not create user doc")
+                  }
+                  
+                } else {
+                  console.log("No user is signed in.");
+                }
+              });
+    
+              return {
+                success:`Hello ${username}`,
+                error: null
+              }
+                
+    
+            } catch (error) {
+                return {
+                    error: "Failed to create account",
+                    success: null
+                };
+            }
+    
+        } else {
+            console.warn('credentials are undefined or null');
+            alert("Fill in all the boxes");
+          }
+    }
+
+    // handle login
+    LogIn(emailRef, passwordRef) {
+
+        const email = emailRef;
+        const password = passwordRef;
+    
+        const auth = getAuth();
+        return signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                
+                return {
+                    success: `Welcome ${user.displayName || user.email}`,
+                    error: null
+                };
+            }).catch((error) => {
+                console.error(error);
+                return {
+                    error: "Failed to login",
+                    success: null
+                };
+            });
+    
+    }
     // handle sign out
+    SignOut() {
+        const auth = getAuth();
 
-    // check password strength
+        signOut(auth).then(() => {
+            alert("Successfully signed out");
+        }).catch((error) => {
+            console.error(error);
 
-    // check for existing user
-
+            alert("Error while signing out");
+        });
+    }
 }
 
 export class Vocab {
@@ -50,7 +172,7 @@ export class Vocab {
         // does it work i put this.uid?
         if (this.user) {
             const userId = this.user.uid;
-            console.log(userId);
+            
             // path to new vocab list
             const SpecificListRef = collection(firestore, "Users", userId, name);
 
@@ -95,7 +217,7 @@ export class Vocab {
                         console.error("unable to update number of vocablists: ", error)
                     });
                 } else {
-                    console.log("user doc does not exist");
+                    console.error("user doc does not exist");
                     return;
                 }
 
@@ -189,7 +311,7 @@ export class Vocab {
 
         const error = this.checkInput(newWord);
         // it should return null, if not, end the program
-        if (error.code != null) {
+        if (error.code !== 7) {
             alert(error.message);
             return false;
         }
@@ -222,13 +344,14 @@ export class Vocab {
             const vocabListRef = collection(firestore, "Users", userId, listname)
             
             await addDoc(vocabListRef, {
-                status: "include",
                 word: newWord.native,
                 translation: newWord.translation
             }).catch((error) => {
                 console.error('Error caught while adding document:', error);
                 throw new Error("Error adding word to subcollection"); 
             });
+
+            // TODO: go to all vocablists add a field under each doc(vocab list) for how many words the list has
 
             return true;
         } catch (error) {
@@ -238,19 +361,18 @@ export class Vocab {
     }
 
     async editWord(collectionName, oldPair, newWord) {
-        // check which property is null. the property with a value will be updated in db
         const uid = this.user.uid;
-        // currently the user can only update one word at a time
+    
         const newNative = newWord.native; 
         const oldNative = oldPair.native; 
         const newTrans =  newWord.translation;
         const oldTrans = oldPair.translation;
         const event = newWord.case; // different cases
 
-        console.log(oldPair);
+    
 
         // Maybe reconsider this !!!!!
-        // either original or translation should have a valeu to find the doc
+        // either original or translation should have a value to find the doc
         if (!oldTrans || !oldNative) {
             throw new Error("Could not get original word pair");
         }
@@ -262,7 +384,7 @@ export class Vocab {
 
 
         switch (event) {
-            // event 1 = update native
+            // event = 1 = update native
             case 1:
                 if (newNative) {
                     // check input this.checkInput
@@ -303,7 +425,7 @@ export class Vocab {
                     throw new Error("case 1: Invalid input");
                 }
                 break;
-            // event 2 = update translation
+            // event = 2 = update translation
             case 2:
                 if (newTrans) {
                     // check input
@@ -341,7 +463,7 @@ export class Vocab {
                     throw new Error("Invalid input");
                 }
                 break;
-            // event 3 = update native and translation 
+            // event = 3 = update native and translation 
             case 3:
                 if (newTrans && newNative) {
                     // check input
@@ -395,9 +517,8 @@ export class Vocab {
         const translation = word.translation;
         const alpha = /^[a-zA-Z]+$/;
         const error = {
-            code: null,
+            code: 7,
             message: ""
-
         }
 
         // string should only contain alphabet
@@ -438,11 +559,10 @@ export class Vocab {
         const docSnap = await getDoc(pathToUserDoc);
 
         // ! replace with deleteDoc
-        await updateDoc(vocabListRef, {
-            status: "inactive"
-        }).catch((error) => {
-            alert(`Could not delete ${listName}`)
-        })  
+        await deleteDoc(vocabListRef).catch((error) => {
+            alert("Could not delete collection");
+            throw new Error("could not delete doc"); 
+        });
 
         // update number of docs
         if (docSnap.exists()) {
@@ -468,6 +588,7 @@ export class Vocab {
         const native = wordPair.native;
         const trans =  wordPair.translation;
         const collectionName =  currCollection;
+
 
         if (!trans || !native) {
             throw new Error("could not get words to delete");
