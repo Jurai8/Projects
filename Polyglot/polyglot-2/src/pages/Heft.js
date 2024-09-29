@@ -1,5 +1,5 @@
 import '../App.css';
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useMemo} from 'react';
 import VocabBook from '../components/Table'
 import AddWord, { EditWord } from '../components/Modal';
 import Sidebar from '../components/Sidebar';
@@ -12,7 +12,7 @@ import { DisplayVocabList } from '../components/MyEventHandlers';
 import { DeleteWord } from '../components/Modal';
 import { Vocab } from '../components/Learner';
 
-/* TODO: 
+/* // TODO: 
     if user has no vocab list
         display modal 
         values: Name of list, first word pair
@@ -27,14 +27,51 @@ import { Vocab } from '../components/Learner';
 // ! check which functions need to be moved
 
 
-// button leading to current page should be removed
+// TODO: remove all excess functions that check if the user is signed in,
+// TODO: remove all excess Vocab obj creations
+// TODO: check if the function still work
+
+// ? button leading to heft page should be removed?
 export default function Heft () {
+    // * so that i don't have to define a new Vocab obj each time
+    // * or check if the user is signed in
+    const [learner, setLearner] = useState(null);
 
+    const getUser = () => {
+        const auth = getAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setLearner(user); // Set the learner when the user is authenticated
+            } else {
+                console.log("User is signed out");
+                alert("not signed in yet");
+            }
+        });
+    }
+
+    useEffect(() => {
+        console.log("is user signed in?")
+        getUser();
+    }, []);
+
+    const vocabulary = useMemo(() => {
+        if (learner) {
+            return new Vocab(learner); // Create a new Vocab object when learner is available
+          } else {
+            console.log("User not authenticated, function: Sidebar");
+            return null;
+          }
+    }, [learner])
+          
+
+    // ! move to vocablist.js
     const [newVocabCollection, setNewVocabCollection] = useState(false);
-
+    // ! move to vocablist.js
     const toggleNewCollectionModal = (bool) => {
         setNewVocabCollection(bool);
     }
+
     // state for sidebar
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -46,8 +83,9 @@ export default function Heft () {
     const [input, setInput] = useState({
         native: '',
         translation: ''
-    })
+    });
 
+    // TODO: using the concept of closures put these functions all under one functions, like a pseudo obj
     // input newWord
     const newNative = (e) => {
         setInput(prevInput => ({
@@ -81,14 +119,20 @@ export default function Heft () {
             translation: wordpair.translation
         })
     }
+    // ? stop here
+
+
     // manage state of which vocab book to show
     // pass vocab to vocabBook
     const [vocab, setVocab] = useState([]);
+
     // name of vocablist that is being accessed by user
     const [currList, setCurrList] = useState("");
 
     // control both edit/add word modals 
-    const [isModalOpen, setIsModalOpen] = useState({addWord: false, editWord: false});
+    const [isModalOpen, setIsModalOpen] = useState({
+        addWord: false, editWord: false
+    });
 
     const openModal = (number) => {
         if (number !== 2 && number !== 1) {
@@ -129,7 +173,7 @@ export default function Heft () {
     const closeDeleteVocab = () => setDeleteVocabModal(false);
 
     // pass this to confirm button
-    const updateVocab = () => {
+    const updateVocab = async () => {
         // if the input is not a string
         if (!input || typeof input.native !== 'string' || typeof input.translation !== 'string') {
             alert('Both fields must be filled out.');
@@ -142,82 +186,50 @@ export default function Heft () {
             return;
         }
 
-        const auth = getAuth();
-        
-        // get signed in user
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const words = new Vocab(user)
+        try {
+            // name of vocab list + the new word
+            await vocabulary.addWord(currList, input);
 
-                try {
-                    // name of vocab list + the new word
-                    await words.addWord(currList, input);
+            console.log("Word has been added to list");
+            alert("Word has been added to list");
 
-                    console.log("Word has been added to list");
-                    alert("Word has been added to list");
-
-                } catch (error) {
-                    console.error("Error caught while adding word to vocablist", error);
-                }
-            } else {
-                console.log("user not logged in")
-            }
-        });
-        
+        } catch (error) {
+            console.error("Error caught while adding word to vocablist", error);
+        }
+       
     }
 
-    const editVocab = () => {
-        // ! check input
-        const auth = getAuth();
+    const editVocab = async () => {
+        // TODO: check input
+        try {
+            console.log("before calling editWord: ", newWord.native)
+            // name of vocab list + the new word
+            await vocabulary.editWord(currList, originalWord, newWord);
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const vocab = new Vocab(user)
+            alert("Successfully edited word");
 
-                try {
-                    console.log("before calling editWord: ", newWord.native)
-                    // name of vocab list + the new word
-                    await vocab.editWord(currList, originalWord, newWord);
-
-                    alert("Successfully edited word");
-
-                } catch (error) {
-                    console.error("Error caught while editing word", error);
-                }
-            } else {
-                console.log("user not logged in");
-            }
-        });
+        } catch (error) {
+            console.error("Error caught while editing word", error);
+        }
     }
 
     // * delete vocab 
-    const deleteVocab = () => {
-        const auth = getAuth();
+    const deleteVocab = async () => {
+        try {
+            // name of vocab list + og word
+            await vocabulary.deleteWord(currList, originalWord);
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const vocab = new Vocab(user);
+            alert("Successfully deleted word");
 
-                try {
-                    // name of vocab list + og word
-                    await vocab.deleteWord(currList, originalWord);
-
-                    alert("Successfully deleted word");
-
-                } catch (error) {
-                    console.error("Error caught while deleting word", error);
-                }
-            } else {
-                console.log("user not logged in");
-            }
-        });
+        } catch (error) {
+            console.error("Error caught while deleting word", error);
+        }
     } 
 
 
     const eventHandler = (e) => {
 
         if (e.target.name === "any-word") {
-            // state handler to update input
             // update existing word
             switch(newWord.case) { 
                 // update native
@@ -259,8 +271,8 @@ export default function Heft () {
             return;
         }
 
-         // add new word
-         if (e.target.name === "native") {
+        // add new word
+        if (e.target.name === "native") {
             newNative(e);
             setNewWord({native: e})
         } 
@@ -272,7 +284,6 @@ export default function Heft () {
 
     // modal for update word
     const closeUpdateWord = (event, value) => {
-        console.log("Target: ", value);
     
         setNewWord(() => {
           if (value === null || value === undefined) {
@@ -308,14 +319,13 @@ export default function Heft () {
           // change
           return "nothing worked";
         });
-      };
+    };
 
 
-    // TODO: replace this with some method from learner.js
     // function to set state using vocab list name
     const getListName = async (ListName) => {
-        // row = displayvocablist()
         try {
+            // TODO: replace this with some method from learner.js
             const vocabList = await DisplayVocabList(ListName);
             // set all the vocab within the specific list
             setVocab(vocabList);
@@ -326,8 +336,6 @@ export default function Heft () {
         }
     }
     
-    /* button: new collection
-        make user type in collection name and also add their first word */
     return (
         <div id='table-position'>
             <div className='button-container'>
@@ -351,6 +359,7 @@ export default function Heft () {
              toggleNewCollectionModal={toggleNewCollectionModal}
             />}
 
+            {/* // !move to vocablist.js*/}
             {newVocabCollection && 
                 <NewCollection 
                     toggleNewCollectionModal={toggleNewCollectionModal}
@@ -358,7 +367,6 @@ export default function Heft () {
             }
 
             {isModalOpen.addWord &&
-               
                 <AddWord 
                     closeModal={closeModal} 
                     eventHandler={eventHandler}

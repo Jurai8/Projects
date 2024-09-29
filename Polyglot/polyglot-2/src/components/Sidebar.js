@@ -18,7 +18,6 @@ import { getAuth } from 'firebase/auth';
 
 // pass onclick function here
 export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, toggleNewCollectionModal }) { 
-    
     const auth = getAuth();
     const user = auth.currentUser;
     

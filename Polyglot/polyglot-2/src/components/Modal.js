@@ -11,6 +11,89 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import MenuListComposition from './Menu';
 
+
+// pass user if possible
+export function NewCollection({ toggleNewCollectionModal }) {
+    // get signed in user
+    const auth = getAuth();
+    const user = auth.currentUser;
+    let vocab;
+
+    if (user != null) {
+        vocab = new Vocab(user);
+    } else {
+        console.log("user not signed in")
+    }
+
+
+    const collectionNameRef = useRef(null);
+    const nativeRef = useRef(null);
+    const translationRef = useRef(null);
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            console.log(user.email);
+            const result = await vocab.CreateVocabList(
+                collectionNameRef.current.value, nativeRef.current.value, translationRef.current.value
+            );
+            alert(result);
+        } catch (error) {
+            alert("could not create new collection");
+        }
+       
+        toggleNewCollectionModal(false);
+    }
+
+    return (
+        <div className='overlay'>
+            <Box
+                id='create-collection-modal'
+                className='my-modal'
+                component="form"
+                sx={{
+                    '& > :not(style)': { m: 1, width: '25ch' },
+                }}
+                noValidate
+                autoComplete="off"
+                onSubmit={handleSubmit}
+            >
+                <h1>New Collection</h1>
+                <div >
+                    <TextField
+                    id='vocab-collection-name'
+                    placeholder="Familiy"
+                    label='vocab-collection-name'
+                    variant='outlined'
+                    inputRef={collectionNameRef}
+                    />
+                </div>
+                <div >
+                    <TextField
+                    id='native'
+                    placeholder="native"
+                    label="native"
+                    variant="outlined"
+                    inputRef={nativeRef}
+                    />
+                </div>
+                <div >
+                    <TextField
+                    id='translation'
+                    placeholder="translation"
+                    label="translation"
+                    variant="outlined"
+                    inputRef={translationRef}
+                    />
+                </div>
+                <Button id="Confirm-word" variant="contained" type='submit'>
+                    Create collection
+                </Button>
+            </Box>
+        </div>
+    )
+}
 export default function AddWord ({ closeModal, eventHandler, updateVocab, newWord}) {
     //TODO: use newWord for adding a word to vocab book
     // Test update word
@@ -18,7 +101,8 @@ export default function AddWord ({ closeModal, eventHandler, updateVocab, newWor
     return (
         <div className='overlay'>
             <Box 
-                className='new-word-modal'
+                id='new-word-modal'
+                className='my-modal'
                 component="form"
                 sx={{
                     '& > :not(style)': { m: 1, width: '25ch' },
@@ -56,7 +140,8 @@ export function EditWord({closeModal, eventHandler, newWord, closeUpdateWord, ed
     return (
         <div className='overlay'>
             <Box 
-                className='new-word-modal'
+                id='edit-word-modal'
+                className='my-modal'
                 component="form"
                 sx={{
                     '& > :not(style)': { m: 1, width: '25ch' },
@@ -275,82 +360,5 @@ export function LogIn({toggleSignIn, setError, setMessage}) {
 }
 
 
-// pass user if possible
-export function NewCollection({ toggleNewCollectionModal }) {
-    // get signed in user
-    const auth = getAuth();
-    const user = auth.currentUser;
-    let vocab;
 
-    if (user != null) {
-        vocab = new Vocab(user);
-    } else {
-        console.log("user not signed in")
-    }
-
-
-    const collectionNameRef = useRef(null);
-    const nativeRef = useRef(null);
-    const translationRef = useRef(null);
-
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            console.log(user.email);
-            const result = await vocab.CreateVocabList(
-                collectionNameRef.current.value, nativeRef.current.value, translationRef.current.value
-            );
-            alert(result);
-        } catch (error) {
-            alert("could not create new collection");
-        }
-       
-        toggleNewCollectionModal(false);
-    }
-
-    return (
-        <Box
-            component="form"
-            sx={{
-                '& > :not(style)': { m: 1, width: '25ch' },
-            }}
-            noValidate
-            autoComplete="off"
-            onSubmit={handleSubmit}
-        >
-            <h1>New Collection</h1>
-            <div >
-                <TextField
-                id='vocab-collection-name'
-                placeholder="Familiy"
-                label='vocab-collection-name'
-                variant='outlined'
-                inputRef={collectionNameRef}
-                />
-            </div>
-            <div >
-                <TextField
-                id='native'
-                placeholder="native"
-                label="native"
-                variant="outlined"
-                inputRef={nativeRef}
-                />
-            </div>
-            <div >
-                <TextField
-                id='translation'
-                placeholder="translation"
-                label="translation"
-                variant="outlined"
-                inputRef={translationRef}
-                />
-            </div>
-            <Button id="Confirm-word" variant="contained" type='submit'>
-                Create collection
-            </Button>
-        </Box>
-    )
-}
 

@@ -149,31 +149,38 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
   );
 }
 
-export  function VocabList({ rows }) {
+export function ShowVocabLists ({ rows }) {
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>List Name </TableCell>
-            <TableCell align="right">Words&nbsp;</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.listName}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.listName}
-              </TableCell>
-              <TableCell align="right">{row.vocabCount}</TableCell>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>List Name </TableCell>
+              <TableCell align="right">Words&nbsp;</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+          { rows.length === 0 ? 
+            <TableRow>
+              <TableCell colSpan={2} align="center"> 
+                Getting your lists...
+              </TableCell>
+            </TableRow> :
+
+              rows.map((row) => (
+              <TableRow
+                key={row.listName}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {row.listName}
+                </TableCell>
+                <TableCell align="right">{row.vocabCount}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
     </TableContainer>
   );
 }

@@ -16,15 +16,9 @@ create a learner class
 */
 
 export class Learner {
-
-
-
     getUsername() {
         return this.username;
     }
-
-
-    // handle login
 
     // handle sign up
     async SignUp(emailRef, passwordRef, usernameRef) {
@@ -164,6 +158,7 @@ export class Vocab {
         // uid should be private?
         this.user = user;
         this.allVocabLists = [];
+        this.vocab = [];
         // seperate variables or just on object?
         this.wordPair = {native: null , translation: null};
     }
@@ -241,10 +236,9 @@ export class Vocab {
                     // path to collection 
                     const coll = collection(firestore, "Users", uid, doc.id);
 
-                    //! don't use getCountFromServer, instead get the number that each vocablist has from All_Vocab_list collection.
                     // number of words (docs) in collection
+                    // TODO: replace with doc.data().words
                     const numberOfWords = await getCountFromServer(coll);
-
                     
                     return {
                         listName: doc.id,
@@ -267,7 +261,6 @@ export class Vocab {
             console.error("Could not get names of vocab lists", error);
         }
     }
-
 
     async addWord(vocabList, wordPair) {
         const userId = this.user.uid;
@@ -608,6 +601,30 @@ export class Vocab {
         } else {
             console.log('No documents found');
         }
+    }
+
+    async getVocabulary(collectionName) {
+        const uid = this.user.uid;
+
+        try {
+            const querySnapshot = await getDocs(collection(
+                firestore, "Users", uid, collectionName
+            ));
+    
+            querySnapshot.forEach((doc) => {
+                // add each wordpair into the array
+                console.log(`data: ${doc.data().word}`);
+    
+                this.vocab.push({
+                    word: doc.data().word,
+                    translation: doc.data().translation
+                });
+            })
+        } catch (error) {
+            console.error(error);
+        }
+
+        return this.vocab;
     }
 }
 

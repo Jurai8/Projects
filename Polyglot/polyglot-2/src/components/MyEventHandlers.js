@@ -104,6 +104,8 @@ export function CheckPasswordStrength(password) {
 // string = vocablist name will be passed to this func, onclick event
 // use this function when asking user which list they want to view
 // then pass rows to Table.js
+// TODO: move to learner.js
+// TODO: change name to getVocabulary
 export async function DisplayVocabList(collectionName) {
     const auth = getAuth();
     const user = auth.currentUser; 
@@ -134,7 +136,7 @@ export async function DisplayVocabList(collectionName) {
 }
 
 
-// ! for the vocabtest
+// * for the vocabtest
 export async function FetchVocab () {
     const vocabList = [];
 
