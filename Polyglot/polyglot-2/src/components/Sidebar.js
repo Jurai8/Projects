@@ -55,32 +55,33 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
     }, [vocab]);
 
     const SidebarList = (
-        <Box sx={{ width: 250 }} role="presentation" onClick={toggleSidebar(false)}>
-        <List>
-            <ListItem key={"New"} disablePadding>
-                <ListItemButton>
-                <ListItemIcon>
-                    <LibraryAddIcon /> 
-                </ListItemIcon>
-                <ListItemText primary={"New Collection"} 
-                  // set state handler true, for create vocab collection function in heft
-                  onClick={() => {toggleNewCollectionModal(true)}}
-                 />
-                </ListItemButton>
-            </ListItem>
-            {vocabLists.map((list, index) => (
-            <ListItem key={index} disablePadding>
-              {/* get name of list that was clicked on */}
-                <ListItemButton onClick={() => getListName(list)}>
-                <ListItemIcon>
-                     <LibraryBooksIcon />
-                </ListItemIcon>
-                <ListItemText primary={list.listName} />
-                </ListItemButton>
-            </ListItem>
-            ))}
-        </List>
-        <Divider />
+        <Box sx={{ width: 250 }} role="presentation" onClick={toggleSidebar(false)
+        }>
+          <List>
+              <ListItem key={"New"} disablePadding>
+                  <ListItemButton>
+                  <ListItemIcon>
+                      <LibraryAddIcon /> 
+                  </ListItemIcon>
+                  <ListItemText primary={"New Collection"} 
+                    // set state handler true, for create vocab collection function in heft
+                    onClick={() => {toggleNewCollectionModal(true)}}
+                  />
+                  </ListItemButton>
+              </ListItem>
+              {vocabLists.map((list, index) => (
+              <ListItem key={index} disablePadding>
+                {/* get name of list that was clicked on */}
+                  <ListItemButton onClick={() => getListName(list.listName)}>
+                  <ListItemIcon>
+                      <LibraryBooksIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={list.listName} />
+                  </ListItemButton>
+              </ListItem>
+              ))}
+          </List>
+          <Divider />
         </Box>
     );
 

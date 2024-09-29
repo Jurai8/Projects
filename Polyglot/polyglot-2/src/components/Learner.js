@@ -168,67 +168,61 @@ export class Vocab {
         this.wordPair = {native: null , translation: null};
     }
 
-    async CreateVocabList(name, word, translation) {
-        // does it work i put this.uid?
-        if (this.user) {
-            const userId = this.user.uid;
-            
-            // path to new vocab list
-            const SpecificListRef = collection(firestore, "Users", userId, name);
+    async CreateVocabList(listName, word, translation) {
+        const userId = this.user.uid;
+        
+        // path to new vocab list
+        const SpecificListRef = collection(firestore, "Users", userId, listName);
 
-            const pathToUserDoc = doc(firestore, "Users", userId);
+        const pathToUserDoc = doc(firestore, "Users", userId);
+
+        // path to collection of vocab list names
+        const AllVocabListNamesPath = doc(firestore, "Users", userId, "All_Vocab_Lists", listName);
+
+        try {
+            // create new vocab list and add doc
+            await addDoc(SpecificListRef, {
+                word: word, 
+                translation: translation
+            }).catch((error) => {
+                console.error("unable to create new vocab list: ", error)
+                return;
+            })
+
+            // add new vocab list name to collection of vocab list names 
+            await setDoc(AllVocabListNamesPath, {
+                ListName: listName, // doc id = name, so this field probably doesn't need to be here
+                Words: 1,
+            }).catch((error) => {
+                console.error("Unable to save list name to All_Vocab_Lists: ", error);
+                return; // Stop execution if setDoc fails
+            });
 
             const docSnap = await getDoc(pathToUserDoc);
-            // path to collection of vocab list names
-            const AllVocabListNamesPath = doc(firestore, "Users", userId, "All_Vocab_Lists", name);
 
-            try {
-                // create new vocab list and add doc
-                await addDoc(SpecificListRef, {
-                    status: 'include', // "deleted" for delete
-                    word: word, 
-                    translation: translation
+            // update number of docs
+            if (docSnap.exists()) {
+                // Retrieve the current number of vocab lists
+                const currTotalVocabLists = docSnap.data().VocabLists || 0; // Default to 0 if undefined
+            
+                // Increment the number of vocab lists
+                const newTotalLists = currTotalVocabLists + 1;
+            
+                // Update the document with the new number of vocab lists
+                await updateDoc(pathToUserDoc, {
+                    VocabLists: newTotalLists,
                 }).catch((error) => {
-                    console.error("unable to create new vocab list: ", error)
-                    return;
-                })
-
-                // add new vocab list name to collection of vocab list names 
-                await setDoc(AllVocabListNamesPath, {
-                    ListName: name, // doc id = name, so this field probably doesn't need to be here
-                    status: 'active'
-                }).catch((error) => {
-                    console.error("Unable to save list name to All_Vocab_Lists: ", error);
-                    return; // Stop execution if setDoc fails
+                    console.error("unable to update number of vocablists: ", error)
                 });
-
-                // update number of docs
-                if (docSnap.exists()) {
-                    // Retrieve the current number of vocab lists
-                    let currentNumberOfVocabLists = docSnap.data().VocabLists || 0; // Default to 0 if undefined
-                
-                    // Increment the number of vocab lists
-                    const numberOfVocabLists = currentNumberOfVocabLists + 1;
-                
-                    // Update the document with the new number of vocab lists
-                    await updateDoc(pathToUserDoc, {
-                        VocabLists: numberOfVocabLists,
-                    }).catch((error) => {
-                        console.error("unable to update number of vocablists: ", error)
-                    });
-                } else {
-                    console.error("user doc does not exist");
-                    return;
-                }
-
-                return `successfully created ${name} collection`;
-
-            } catch (error) {
-                console.error("could not create new list or save list name to collection of names: ", error)
+            } else {
+                console.error("user doc does not exist");
+                return;
             }
 
-        } else {
-            console.error("CreateVocabList: User not logged in")
+            return `successfully created ${listName} collection`;
+
+        } catch (error) {
+            console.error("could not create new list or save list name to collection of names: ", error)
         }
     }
 
@@ -246,7 +240,7 @@ export class Vocab {
                 try {
                     // path to collection 
                     const coll = collection(firestore, "Users", uid, doc.id);
-                    
+
                     //! don't use getCountFromServer, instead get the number that each vocablist has from All_Vocab_list collection.
                     // number of words (docs) in collection
                     const numberOfWords = await getCountFromServer(coll);
@@ -273,42 +267,6 @@ export class Vocab {
             console.error("Could not get names of vocab lists", error);
         }
     }
-
-/*
-    async getAllVocabLists() {
-        const uid = this.user.uid;
-
-        try {
-            // path to subcollection
-            const querySnapshot = await getDocs(collection(
-                firestore, "Users", uid, "All_Vocab_Lists"
-            ));
-
-             // Map over each document to create an array of promises
-            const promises = querySnapshot.docs.map(async (doc) => {
-                try {
-                // Reference the vocab list
-                const coll = collection(firestore, "Users", uid, doc.id);
-        
-                // Get snapshot of vocab list count
-                const numberOfWords = await getCountFromServer(coll);
-        
-                // Add object to array with list name and vocab count
-                this.allVocabLists.push({ listName: doc.id, vocabCount: numberOfWords.data().count });
-
-                } catch (error) {
-                console.error("Could not get vocab count for list:", doc.id, error);
-                }
-            });
-        
-            // Wait for all promises to complete
-            await Promise.all(promises);
-            
-            return this.allVocabLists;
-        } catch (error) {
-            console.error("Could not get names of vocab lists", error);
-        }
-    } */
 
 
     async addWord(vocabList, wordPair) {
@@ -359,6 +317,32 @@ export class Vocab {
                 console.error('Error caught while adding document:', error);
                 throw new Error("Error adding word to subcollection"); 
             });
+
+            // path to listname within "All_Vocab_lists"
+            const docRef = doc(firestore, "Users", userId, "All_Vocab_Lists", listname);
+
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data().Words || "0");
+
+                // treat it as a number if it isn't already
+                const currTotalWords = docSnap.data().Words ? Number(docSnap.data().Words) : 0;
+
+                const newTotalWords = currTotalWords + 1;
+                
+                await updateDoc(docRef, {
+                    Words: newTotalWords
+                }).catch((error) => {
+                    console.error(error);
+                });
+            } else {
+            // docSnap.data() will be undefined in this case
+            console.error("couldn't find collection");
+            alert("couldn't find collection");
+            }
+
+            
 
             // TODO: go to all vocablists add a field under each doc(vocab list) for how many words the list has
 
@@ -559,18 +543,18 @@ export class Vocab {
 
         //! how it should work:
             // ! collections can't be deleted
-            // ! change the field to "inactive"
             // ! go to "All_Vocab_Lists" and delete the collection name (saved as a doc)
+            // the collection won't actually be deleted but the user won't be able to access it
+            // TODO: can i write code to delete it as an admin? similar to checkUser(); 
 
         const uid = this.user.uid;
         const vocabListRef = doc(firestore, "Users", uid, "All_Vocab_Lists", listName)
         const pathToUserDoc = doc(firestore, "Users", uid);
         const docSnap = await getDoc(pathToUserDoc);
 
-        // ! replace with deleteDoc
         await deleteDoc(vocabListRef).catch((error) => {
-            alert("Could not delete collection");
-            throw new Error("could not delete doc"); 
+            alert("Could not delete list");
+            throw new Error("could not delete Vocab list doc"); 
         });
 
         // update number of docs
@@ -625,11 +609,6 @@ export class Vocab {
             console.log('No documents found');
         }
     }
-
-
-    // get allvocablists
-        // if return null 
-        // tell user to create a new list
 }
 
 
