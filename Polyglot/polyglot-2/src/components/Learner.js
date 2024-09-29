@@ -241,24 +241,33 @@ export class Vocab {
                 firestore, "Users", uid, "All_Vocab_Lists"
             ));
 
-             // Map over each document to create an array of promises
-            querySnapshot.forEach(async (doc) => {
+             // Collect all promises to resolve asynchronously
+             const vocabListPromises = querySnapshot.docs.map(async (doc) => {
                 try {
-                    // Reference the vocab list
+                    // path to collection 
                     const coll = collection(firestore, "Users", uid, doc.id);
-            
-                    // Get snapshot of vocab list count
+                    
+                    //! don't use getCountFromServer, instead get the number that each vocablist has from All_Vocab_list collection.
+                    // number of words (docs) in collection
                     const numberOfWords = await getCountFromServer(coll);
-            
-                    // Add object to array with list name and vocab count
-                    this.allVocabLists.push({ listName: doc.id, vocabCount: numberOfWords.data().count });
 
+                    
+                    return {
+                        listName: doc.id,
+                        vocabCount: numberOfWords.data().count
+                    };
                 } catch (error) {
                     console.error("Could not get vocab count for list:", doc.id, error);
+                    return null; // Handle errors gracefully by returning null
                 }
             });
-            
-            console.log("is it an array: ", this.allVocabLists);
+
+             // Wait for all promises to resolve
+             const vocabLists = await Promise.all(vocabListPromises);
+
+             // Filter out any null results caused by errors
+            this.allVocabLists = vocabLists.filter(list => list !== null);
+
             return this.allVocabLists;
         } catch (error) {
             console.error("Could not get names of vocab lists", error);

@@ -18,61 +18,42 @@ import { getAuth } from 'firebase/auth';
 
 // pass onclick function here
 export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, toggleNewCollectionModal }) { 
-    // get all vocab lists belonging to user
-    // State to hold vocab lists
-    const [rows, setRows] = useState([]);
-
+    
     const auth = getAuth();
     const user = auth.currentUser;
+    
+    const [vocabLists, setVocabLists] = useState([]);
 
+    // when user auth (user signed in) changes
     const vocab = useMemo(() => {
       if (user) {
+        // return Vocab obj
         return new Vocab(user);
       } else {
         console.log("user not authenticated, function: Sidebar");
+        alert("not signed in yet");
         return null;
       }
     }, [user]);
 
-    const fetchVocabLists = async () => {
-      try {
-        console.log("Fetching vocab lists...");
-
-        return await vocab.getAllVocabLists();
-        
-        /* 
-        console.log(`UseEffect: ${vocabListNames}`);
-
-        if (vocabListNames.length > 0) {
-          setRows(prevRows => [...new Set([...prevRows, ...vocabListNames])]); // Set removes duplicates
-        } */
-
-      } catch (error) {
-        console.error("Error fetching vocab lists:", error);
-      }
-    }
-
-    // ! same issue. seState is async, so i'm not able to compare the length
+    // when the vocab obj has been defined
     useEffect(() => {
       if (vocab) {
-        const getLists = async () => {
-          const lists = await fetchVocabLists();
+        // get all the lists that the user has
+        const fetchVocabLists = async () => {
+          const lists = await vocab.getAllVocabLists();
+    
+          // Ensure unique lists before updating state
+          const uniqueLists = [...new Map(lists.map(list => [list.listName, list])).values()];
 
-          console.log("UseEffect: ", lists, lists.length);
-          //! ask chatgpt why the array doesn't show up in this statement
-          console.log("UseEffect using stringify: ", JSON.stringify(lists), lists.length);
+          setVocabLists(uniqueLists);
+        };
 
-          if (lists.length > 0) {
-            setRows(prevRows => [...new Set([...prevRows, ...lists])]); // Set removes duplicates
-          }
-        }
-
-        getLists();
-      }
+        fetchVocabLists();
+      }  
 
     }, [vocab]);
 
-    // TODO: when rows is updated
     const SidebarList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleSidebar(false)}>
         <List>
@@ -87,13 +68,14 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
                  />
                 </ListItemButton>
             </ListItem>
-            {rows.map((text) => (
-            <ListItem key={text} disablePadding>
-                <ListItemButton onClick={() => getListName(text)}>
+            {vocabLists.map((list, index) => (
+            <ListItem key={index} disablePadding>
+              {/* get name of list that was clicked on */}
+                <ListItemButton onClick={() => getListName(list)}>
                 <ListItemIcon>
                      <LibraryBooksIcon />
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary={list.listName} />
                 </ListItemButton>
             </ListItem>
             ))}
