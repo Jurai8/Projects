@@ -53,6 +53,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar, getListName, tog
 
     }, [vocab]);
 
+
     const SidebarList = (
         <Box sx={{ width: 250 }} role="presentation" onClick={toggleSidebar(false)
         }>

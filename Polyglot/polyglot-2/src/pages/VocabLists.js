@@ -24,7 +24,21 @@ export default function VocabLists() {
   const [newVocabCollection, setNewVocabCollection] = useState(false);
   // * new
   const toggleNewCollectionModal = (bool) => setNewVocabCollection(bool);
-  
+
+  const handleDoubleClick = () => {
+    console.log("in handledoubleclick");
+    return ( 
+      <a href={"/heft"}> 
+          <button className="my-button"> 
+          </button> 
+      </a> 
+    ) 
+  }
+
+  /*  on double click
+        send user to /heft
+        load the vocab
+  */
 
   const getLists = () => {
     return new Promise((resolve, reject) => {
@@ -78,13 +92,17 @@ export default function VocabLists() {
         New Collection 
       </Button>
 
+      <Button variant="contained">          
+        Schedule Test
+      </Button>
+
       {newVocabCollection && 
         <NewCollection 
           toggleNewCollectionModal={toggleNewCollectionModal}
         />
       }
 
-      <ShowVocabLists rows={rows}/>
+      <ShowVocabLists rows={rows} />
     </div>
   );
 }

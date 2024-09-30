@@ -151,6 +151,17 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
 
 export function ShowVocabLists ({ rows }) {
 
+  // on double click
+  const handleDoubleClick = () => {
+    // send user to /heft
+    window.location.href = "/heft";
+  }
+
+  /*  on double click
+        send user to /heft
+        load the vocab
+  */
+
   return (
     <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -172,6 +183,10 @@ export function ShowVocabLists ({ rows }) {
               <TableRow
                 key={row.listName}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                onDoubleClick={() => {
+                  console.log("double clicking");
+                  handleDoubleClick();
+                }}
               >
                 <TableCell component="th" scope="row">
                   {row.listName}
