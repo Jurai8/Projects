@@ -40,34 +40,23 @@ function App() {
 
   return (
     <div className="App">
-       <Router> 
-          <MyButton to="" /> 
-          <MyButton to="heft" /> 
-          <MyButton to="signup" /> 
-          <MyButton to="test" /> 
-          <MyButton to="vocablists" /> 
-          <Routes> 
-            <Route path="/signup" element={<SignUp />} /> 
-            <Route path="/" element={<Home />} /> 
-            <Route path="/heft" element={<Heft />} />
-            <Route path="/vocablists" element={<VocabLists />}/>
-            <Route path="/test">
-              <Route index element={<IndexTest />}/>
-              <Route path=":testName" element={<TestLearner />}/>
-            </Route>
-          </Routes> 
-        </Router> 
+      <MyButton link="heft">Heft</MyButton>
+      <MyButton link="signup">SignUp</MyButton>
+      <MyButton link="test">Test</MyButton>
+      <MyButton link="vocablists">Vocab Lists</MyButton>
 
-        <section id="username"> {username  ?
-          <div style={{display: 'flex'}}>
-            <h1>{username}</h1>
-            <Button onClick={() => user.SignOut()}>Sign out</Button>
-          </div> 
-          // TODO: 
-            // change to button
-            // onclick, route to signInpage
-          : "sign in"} 
-        </section>
+      <h1>Polyglot</h1>
+
+      <section id="username"> {username  ?
+        <div style={{display: 'flex'}}>
+          <h1>{username}</h1>
+          <Button onClick={() => user.SignOut()}>Sign out</Button>
+        </div> 
+        // TODO: 
+          // change to button
+          // onclick, route to signInpage
+        : "sign in"} 
+      </section>
     </div>
   );
 }

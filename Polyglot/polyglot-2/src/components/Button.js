@@ -1,11 +1,13 @@
-const MyButton = ({ to }) => { 
-    return ( 
-        <a href={`/${to}`}> 
-            <button className="my-button"> 
-                {to === '' ? "home" : to} 
-            </button> 
-        </a> 
-    ) 
-} 
+import { Link } from "react-router-dom";
+
+const MyButton = ({ link }) => {
+  return (
+    <Link to={`/${link}`}>
+      <button className="my-button">
+        {link === '' ? "Home" : link}
+      </button>
+    </Link>
+  );
+};
   
 export default MyButton;
