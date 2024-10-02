@@ -13,6 +13,7 @@ import { ShowVocabLists } from "../components/Table";
 import { Vocab } from "../components/Learner"
 import { getAuth, onAuthStateChanged} from "firebase/auth"
 import { useState, useEffect, } from "react"
+import { Outlet } from "react-router-dom";
 
 
 
@@ -20,6 +21,9 @@ export default function VocabLists() {
   const auth = getAuth();
   const [rows, setRows] = useState([]);
 
+  const [heft, setHeft] = useState(false);
+
+  const handleHeft = () => setHeft(true);
   // * new 
   const [newVocabCollection, setNewVocabCollection] = useState(false);
   // * new
@@ -81,9 +85,8 @@ export default function VocabLists() {
 
 
   return (
+      
     <div>
-      {/* //* new */}
-
       <h1>Your vocab lists</h1>
 
       <Button variant="contained" onClick={() => 
@@ -102,7 +105,9 @@ export default function VocabLists() {
         />
       }
 
-      <ShowVocabLists rows={rows} />
+      <ShowVocabLists rows={rows} handleHeft={handleHeft} />
     </div>
+      
   );
 }
+

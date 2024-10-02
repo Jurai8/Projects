@@ -26,7 +26,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/vocablists",
-    element: <VocabLists />,  
+    element: <VocabLists />, 
   },
   {
     path: "/test",

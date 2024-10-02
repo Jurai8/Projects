@@ -12,6 +12,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Vocab } from './Learner';
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -149,7 +150,7 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
   );
 }
 
-export function ShowVocabLists ({ rows }) {
+export function ShowVocabLists ({ rows, handleHeft}) {
 
   // on double click
   const handleDoubleClick = () => {
@@ -162,6 +163,7 @@ export function ShowVocabLists ({ rows }) {
         load the vocab
   */
 
+  const navigate = useNavigate();
   return (
     <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -180,20 +182,23 @@ export function ShowVocabLists ({ rows }) {
             </TableRow> :
 
               rows.map((row) => (
-              <TableRow
-                key={row.listName}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                onDoubleClick={() => {
-                  console.log("double clicking");
-                  handleDoubleClick();
-                }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.listName}
-                </TableCell>
-                <TableCell align="right">{row.vocabCount}</TableCell>
-              </TableRow>
-            ))}
+                <TableRow
+                  key={row.listName}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  onDoubleClick={() =>{
+                    
+                    navigate(`/heft/${row.listName}`);
+                  }}
+                  
+                  // {() => navigate(`/heft/${row.listName}`)}
+                >
+                  <TableCell component="th" scope="row">
+                    {row.listName}
+                  </TableCell>
+                  <TableCell align="right">{row.vocabCount}</TableCell>
+                </TableRow>
+              ))
+          }
           </TableBody>
         </Table>
     </TableContainer>

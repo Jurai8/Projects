@@ -11,6 +11,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { DisplayVocabList } from '../components/MyEventHandlers';
 import { DeleteWord } from '../components/Modal';
 import { Vocab } from '../components/Learner';
+import { useParams } from 'react-router-dom';
 
 /* // TODO: 
     if user has no vocab list
@@ -35,6 +36,9 @@ import { Vocab } from '../components/Learner';
 export default function Heft () {
     // * so that i don't have to define a new Vocab obj each time
     // * or check if the user is signed in
+
+    const { listName } = useParams();
+
     const [learner, setLearner] = useState(null);
 
     const getUser = () => {
@@ -125,6 +129,26 @@ export default function Heft () {
     // manage state of which vocab book to show
     // pass vocab to vocabBook
     const [vocab, setVocab] = useState([]);
+
+    useEffect(() => {
+        if (listName) {
+            console.log("hello: ", listName || "no params");
+            const getListName = async (ListName) => {
+            try {
+                // TODO: replace this with some method from learner.js
+                const vocabList = await DisplayVocabList(ListName);
+                // set all the vocab within the specific list
+                setVocab(listName);
+                // set name of current vocab list
+                setCurrList(ListName);
+            } catch (error) {
+                console.error("unable to display vocab list", error);
+            }
+        }
+
+        getListName();
+        }
+    },[listName])
 
     // name of vocablist that is being accessed by user
     const [currList, setCurrList] = useState("");
