@@ -18,6 +18,10 @@ import { useNavigate } from "react-router-dom";
 
 export default function VocabBook({ vocab, openModal, getOriginalWord, openDeleteVocab}) {
 
+  useEffect(() => {
+    console.log(vocab);
+  },[])
+
   return (
     <TableContainer id='table-container' component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -185,9 +189,8 @@ export function ShowVocabLists ({ rows, handleHeft}) {
                 <TableRow
                   key={row.listName}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  onDoubleClick={() =>{
-                    
-                    navigate(`/heft/${row.listName}`);
+                 onDoubleClick={() =>{
+                    navigate(`/vocablists/${row.listName}`);
                   }}
                   
                   // {() => navigate(`/heft/${row.listName}`)}

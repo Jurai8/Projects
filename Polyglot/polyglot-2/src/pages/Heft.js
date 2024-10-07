@@ -37,7 +37,9 @@ export default function Heft () {
     // * so that i don't have to define a new Vocab obj each time
     // * or check if the user is signed in
 
-    const { listName } = useParams();
+    const listName  = useParams();
+
+    console.log(listName || "no list");
 
     const [learner, setLearner] = useState(null);
 
@@ -130,28 +132,31 @@ export default function Heft () {
     // pass vocab to vocabBook
     const [vocab, setVocab] = useState([]);
 
-    useEffect(() => {
-        if (listName) {
-            console.log("hello: ", listName || "no params");
-            const getListName = async (ListName) => {
-            try {
-                // TODO: replace this with some method from learner.js
-                const vocabList = await DisplayVocabList(ListName);
-                // set all the vocab within the specific list
-                setVocab(listName);
-                // set name of current vocab list
-                setCurrList(ListName);
-            } catch (error) {
-                console.error("unable to display vocab list", error);
-            }
-        }
-
-        getListName();
-        }
-    },[listName])
-
     // name of vocablist that is being accessed by user
     const [currList, setCurrList] = useState("");
+
+    // get vocabulary to pass to vocab 
+    useEffect(() => {
+        if (listName) {
+            console.log("hello: ", listName.list || "no params");
+            const getListName = async () => {
+                try {
+                    // TODO: replace this with some method from learner.js
+                    const vocabList = await vocabulary.getVocabulary(listName.list);
+
+                    console.log("vocabList: ", vocabList);
+                    // set all the vocab within the specific list
+                    setVocab(vocabList);
+                    // set name of current vocab list
+                    setCurrList(vocabList);
+                } catch (error) {
+                    console.error("unable to display vocab list", error);
+                }
+            }
+
+            getListName();
+        }
+    },[listName,vocabulary])
 
     // control both edit/add word modals 
     const [isModalOpen, setIsModalOpen] = useState({

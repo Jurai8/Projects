@@ -18,6 +18,8 @@ import { MenuItem, Select, Typography } from '@mui/material';
 
 // first hardcode
 
+//TODO: create a collection to store words that user wants to be tested on in the future. User should be able to select individual words to be tested on within a vocab collection (?) or they can get tested on the entire collection
+
 export default function TestLearner() {
     const {testName} = useParams();
 

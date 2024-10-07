@@ -6,6 +6,7 @@ import React, { useRef, useState} from 'react';
 
 // TODO if logged in user doesn't have a library ask them to create their first library
 
+// TODO: implement sign in with google
 
 export default function SignUp() {
   // use one state handler. set true/false

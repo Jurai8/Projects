@@ -6,10 +6,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   createBrowserRouter,
-  RouterProvider,
+  RouterProvider, 
 } from "react-router-dom";
 import './index.css';
 import App from './pages/App';
+import { LogIn } from './components/Modal';
 import ErrorPage from './pages/ErrorPage';
 import VocabLists from './pages/VocabLists';
 import TestLearner from './pages/Test';
@@ -25,12 +26,20 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/vocablists",
+    path: "/vocablists/",
     element: <VocabLists />, 
+    errorElement: <ErrorPage />
+  },
+  {
+    // ":" - makes it dynamic
+    path: "/vocablists/:list",
+    element: <Heft/>,
+    errorElement: <ErrorPage />
   },
   {
     path: "/test",
     element: <TestLearner />, // Default element for /test
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "index", // /test/index
@@ -40,12 +49,13 @@ const router = createBrowserRouter([
   },
   {
     path: "/heft",
-    element: <Heft />,  
-    // use loader
+    element: <Heft />, 
+    errorElement: <ErrorPage />, 
   },
   {
     path: "/signup",
     element: <SignUp />,  
+    errorElement: <ErrorPage />,
   },
 ]);
 

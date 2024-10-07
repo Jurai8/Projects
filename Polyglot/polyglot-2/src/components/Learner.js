@@ -606,6 +606,8 @@ export class Vocab {
     async getVocabulary(collectionName) {
         const uid = this.user.uid;
 
+        console.log("getVocab: ", collectionName);
+
         try {
             const querySnapshot = await getDocs(collection(
                 firestore, "Users", uid, collectionName
