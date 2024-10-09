@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import './index.css';
 import App from './pages/App';
-import { LogIn } from './components/Modal';
+import { SignIn } from './pages/SignUp';
 import ErrorPage from './pages/ErrorPage';
 import VocabLists from './pages/VocabLists';
 import TestLearner from './pages/Test';
@@ -19,6 +19,7 @@ import Heft from './pages/Heft';
 import SignUp from './pages/SignUp';
 import reportWebVitals from './reportWebVitals';
 
+/* 
 const router = createBrowserRouter([
   {
     path: "/",
@@ -47,6 +48,8 @@ const router = createBrowserRouter([
       },
     ],
   },
+
+  //* Do i need a seperate heft page?
   {
     path: "/heft",
     element: <Heft />, 
@@ -57,13 +60,21 @@ const router = createBrowserRouter([
     element: <SignUp />,  
     errorElement: <ErrorPage />,
   },
+
+  {
+    path: "/signin",
+    element: <SignIn />,  
+    errorElement: <ErrorPage />,
+    if(message) =  true
+  }
 ]);
+*/
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <App />
   </React.StrictMode>
 );
 

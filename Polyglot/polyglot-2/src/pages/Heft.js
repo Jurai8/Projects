@@ -8,7 +8,6 @@ import { Button } from '@mui/material';
 import { firestore } from '../firebase';
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { DisplayVocabList } from '../components/MyEventHandlers';
 import { DeleteWord } from '../components/Modal';
 import { Vocab } from '../components/Learner';
 import { useParams } from 'react-router-dom';
@@ -355,7 +354,7 @@ export default function Heft () {
     const getListName = async (ListName) => {
         try {
             // TODO: replace this with some method from learner.js
-            const vocabList = await DisplayVocabList(ListName);
+            const vocabList = await vocabulary.getVocabulary(ListName);
             // set all the vocab within the specific list
             setVocab(vocabList);
             // set name of current vocab list

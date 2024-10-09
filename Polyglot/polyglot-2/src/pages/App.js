@@ -1,11 +1,11 @@
 import { 
-  BrowserRouter as Router, Routes, 
-  Route 
+  Link,
+  Route, Router, Routes
 } from "react-router-dom"; 
 import { Button } from "@mui/material";
 import {useState, useEffect, useRef} from "react"
 import { getAuth, onAuthStateChanged} from "firebase/auth";
-import SignUp from "./SignUp.js";
+import SignUp, { SignIn } from "./SignUp.js";
 import { SignOut } from "../components/MyEventHandlers.js";
 import Heft from "./Heft.js";
 import VocabLists from "./VocabLists.js";
@@ -15,11 +15,14 @@ import { Learner } from "../components/Learner.js";
 
 
 function App() {
+  const [signedIn, setSignedIn] = useState(false);
   const [username, setUsername] = useState(null);
   const auth = getAuth();
   const user = new Learner();
 
   const signOut = () => {
+    window.location.reload(true); 
+    setSignedIn(false);
     user.SignOut();
   }
 
@@ -40,32 +43,58 @@ function App() {
 
   return (
     <div className="App">
-      <MyButton link="heft">Heft</MyButton>
-      <MyButton link="signup">SignUp</MyButton>
-      <MyButton link="test">Test</MyButton>
-      <MyButton link="vocablists">Vocab Lists</MyButton>
 
-      <h1>Polyglot</h1>
+      {signedIn ? (
+          <>
+            <Router> 
+              <MyButton to="" /> 
+              <MyButton to="heft" /> 
+              <MyButton to="signup" /> 
+              <MyButton to="test" /> 
+              <MyButton to="vocablists" /> 
+              <Routes> 
+                <Route path="/" element={<App />} /> 
+                <Route path="/signup" element={<SignUp />} /> 
+                <Route path="/signin" element={<SignIn />} /> 
+                <Route path="/heft" element={<Heft />} />
+                <Route path="/vocablists" element={<VocabLists />}>
+                  <Route path="/vocablists/:list" element={<TestLearner />}/> 
+                </Route>
+                <Route path="/test">
+                  <Route index element={<IndexTest />}/>
+                  <Route path=":testName" element={<TestLearner />}/>
+                </Route>
+              </Routes> 
+            </Router> 
 
-      <section id="username"> {username  ?
-        <div style={{display: 'flex'}}>
-          <h1>{username}</h1>
-          <Button onClick={() => user.SignOut()}>Sign out</Button>
-        </div> 
-        // TODO: 
-          // change to button
-          // onclick, route to signInpage
-        : "sign in"} 
-      </section>
+            <h1>Polyglot</h1>
+
+            <section id="username">
+              {username ? (
+                <div style={{ display: 'flex' }}>
+                  <h1>{username}</h1>
+                  <Button onClick={() => signOut()}>
+                      Sign out
+                  </Button>
+                </div>
+              ) : null}
+            </section>
+          </>
+        ) : (
+          <>
+            <h1>Polyglot</h1>
+            <h2>Welcome</h2>
+
+            <Link to="/signin" state={{ user: signedIn}}>
+              <Button>sign in</Button>
+            </Link>
+            <Link to="/signup" state={{ user: signedIn}}>
+              <Button>sign up</Button>
+            </Link>
+          </>
+      )}
     </div>
   );
-}
-
-// home page
-export function Home () {
-  return (
-    <h1>Hello</h1>
-  )
 }
 
 //get all the vocab lists and pass it to vocablists

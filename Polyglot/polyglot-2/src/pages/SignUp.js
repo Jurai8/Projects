@@ -1,6 +1,7 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { Register, LogIn } from '../components/Modal';
 import React, { useRef, useState} from 'react';
+import { useLocation } from 'react-router-dom';
 
 
 
@@ -14,28 +15,15 @@ export default function SignUp() {
   // message depends on error or success
   const [message, setMessage] = useState(null);
 
-  const [signIn, setSignIn] = useState(false);
-
-  const toggleSignIn = () => {
-    setSignIn(!signIn);
-  }
-
   return (
       <div>
           <CssBaseline />
           {/* conditional rendering for register and sign in */}
-          {signIn ? 
-            <LogIn 
-              toggleSignIn={toggleSignIn} 
-              setError={setError}
-              setMessage={setMessage}
-            /> :
             <Register 
-              toggleSignIn={toggleSignIn} 
+              
               setError={setError}
               setMessage={setMessage}
             />
-          }
           {error ?
           // if there is an error
           <p style={{ color: 'red' }}>{message}</p> 
@@ -46,6 +34,39 @@ export default function SignUp() {
   )
 }
 
+
+export function SignIn() {
+  let { state } = useLocation();
+
+  // use one state handler. set true/false
+  const [error, setError] = useState(false);
+  // message depends on error or success
+  const [message, setMessage] = useState("");
+
+  return (
+    <>
+      <CssBaseline />
+      <LogIn 
+        setError={setError}
+        setMessage={setMessage}
+        userSignedIn={state}
+      /> 
+      
+      { error? 
+        // if there is an error
+        <p style={{ color: 'red' }}>{message}</p> 
+        // else success
+        : <p style={{ color: 'green' }}>{message}</p>
+      }
+    </>
+  )
+  
+}
+
+/* 
+* // ! can't do this yet. Need an authorized domain
+* vist "https://developers.google.com/identity/gsi/web/guides/display-button#html", when ready
+
 export function SignIn() {
   // TODO: check Prerequisites
   <>
@@ -53,7 +74,7 @@ export function SignIn() {
     <div id="g_id_onload"
         data-client_id="YOUR_GOOGLE_CLIENT_ID"
         data-login_uri="https://your.domain/your_login_endpoint"
-        data-auto_prompt="false"> {/* //! remove */}
+        data-auto_prompt="false"> 
     </div>
     <div class="g_id_signin"
         data-type="standard"
@@ -64,5 +85,5 @@ export function SignIn() {
         data-logo_alignment="left">
     </div>
   </>
-    
 }
+*/

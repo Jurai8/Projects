@@ -1,5 +1,6 @@
 import '../App.css';
 import { useRef, useState } from 'react';
+import { Link, useNavigation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { Learner } from './Learner';
 import TextField from '@mui/material/TextField';
@@ -230,7 +231,7 @@ export function DeleteWord({closeDeleteVocab, deleteVocab, open}) {
       )
 }
 
-export function Register ({toggleSignIn, setError, setMessage}) {
+export function Register ({ setError, setMessage}) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const usernameRef = useRef(null);
@@ -294,29 +295,37 @@ export function Register ({toggleSignIn, setError, setMessage}) {
                 Sign up
             </Button>
             <section>
-                <p onClick={toggleSignIn}>Log in</p>
+                <p>Already have an account?</p> 
+                <Link to="/signin">
+                    sign in
+                </Link>
+                &nbsp; &nbsp;
+                <Link to="/">
+                    home
+                </Link>
             </section>
         </Box>
     )
 }
 
-export function LogIn({toggleSignIn, setError, setMessage}) {
+export function LogIn({ setError, setMessage, userSignedIn }) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const user = new Learner();
+    const navigation = useNavigation();
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        // TODO: change to try/catch
-        const message = await user.LogIn(emailRef.current.value, passwordRef.current.value)
+        
+        try {
+            const message = await user.LogIn(emailRef.current.value, passwordRef.current.value)
 
-        // if there's an error
-        if (message.success === null) {
-            setError(true);
-            setMessage(message.error);
-        } else {
             setError(false);
             setMessage(message.success);
+            userSignedIn(true);
+            
+        } catch (error) {
+            setError(true);
+            setMessage("Failed to login");
         }
     }
 
@@ -353,7 +362,14 @@ export function LogIn({toggleSignIn, setError, setMessage}) {
                 Log in
             </Button>
             <section>
-                <p onClick={toggleSignIn}>Sign up</p>
+                <p>Don't have an account ?</p> 
+                <Link to="/signup">
+                    sign up
+                </Link>
+                &nbsp; &nbsp;
+                <Link to="/">
+                    home
+                </Link>
             </section>
         </Box>
     )

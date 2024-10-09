@@ -132,10 +132,7 @@ export class Learner {
                 };
             }).catch((error) => {
                 console.error(error);
-                return {
-                    error: "Failed to login",
-                    success: null
-                };
+                throw new Error("log in failed");
             });
     
     }

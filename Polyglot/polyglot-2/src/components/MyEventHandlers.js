@@ -93,49 +93,6 @@ export function CheckPasswordStrength(password) {
 
 
 
-/* say the user wants to view a specific vocab list
-   onclick event, take the string of the button they clicked on
-   copy that string onto the user path
-    then display the vocab list
-*/
-
-// in the future: set a limit to the number of lists per user
-
-// string = vocablist name will be passed to this func, onclick event
-// use this function when asking user which list they want to view
-// then pass rows to Table.js
-// TODO: move to learner.js
-// TODO: change name to getVocabulary
-export async function DisplayVocabList(collectionName) {
-    const auth = getAuth();
-    const user = auth.currentUser; 
-
-    // pass an object (word and translation in one obj) into the array?
-    if (user) {
-        const userId = user.uid;
-        const vocabulary = [];
-        // path to subcollection
-        const querySnapshot = await getDocs(collection(
-            firestore, "Users", userId, collectionName
-        ));
-
-        querySnapshot.forEach((doc) => {
-            // add each wordpair into the array
-            console.log(`data: ${doc.data().word}`);
-
-            vocabulary.push({
-                word: doc.data().word,
-                translation: doc.data().translation
-            });
-        });
-
-       return vocabulary;
-    } else {
-        console.error("user not signed in");
-    }
-}
-
-
 // * for the vocabtest
 export async function FetchVocab () {
     const vocabList = [];
@@ -168,18 +125,9 @@ export async function FetchVocab () {
 
 
 
-// "delete" collection
-// show option to delete with right click, on collection button within    collection drawer/ sidebar
-
-
-
-
-
-
-
-// fuction if Vocab_Lists? == false, return false.
 
 // TODO:
+// ! not necessary
     // hide words
         // button = hide
             // dropdown = native/ translation
