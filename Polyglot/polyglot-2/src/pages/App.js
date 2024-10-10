@@ -1,7 +1,4 @@
-import { 
-  Link,
-  Route, Router, Routes
-} from "react-router-dom"; 
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import { Button } from "@mui/material";
 import {useState, useEffect, useRef} from "react"
 import { getAuth, onAuthStateChanged} from "firebase/auth";
@@ -12,6 +9,7 @@ import VocabLists from "./VocabLists.js";
 import MyButton from "../components/Button";
 import TestLearner,{IndexTest} from "./Test.js"
 import { Learner } from "../components/Learner.js";
+import ErrorPage from './ErrorPage.js';
 
 
 function App() {
@@ -46,24 +44,43 @@ function App() {
 
       {signedIn ? (
           <>
-            <Router> 
-              <MyButton to="" /> 
-              <MyButton to="heft" /> 
-              <MyButton to="signup" /> 
-              <MyButton to="test" /> 
-              <MyButton to="vocablists" /> 
+            <Router>  
+            <nav>
+              <Link to="/heft">
+                <Button>Go to Heft</Button>
+              </Link>
+              <Link to="/signup">
+                <Button>Go to SignUp</Button>
+              </Link>
+              <Link to="/signin">
+                <Button>Go to SignIn</Button>
+              </Link>
+              <Link to="/test">
+                <Button>Go to Test</Button>
+              </Link>
+              <Link to="/vocablists">
+                <Button>Go to VocabLists</Button>
+              </Link>
+            </nav>
+              
               <Routes> 
                 <Route path="/" element={<App />} /> 
+                {/* Sign Up and Sign In */}
                 <Route path="/signup" element={<SignUp />} /> 
                 <Route path="/signin" element={<SignIn />} /> 
+
                 <Route path="/heft" element={<Heft />} />
-                <Route path="/vocablists" element={<VocabLists />}>
-                  <Route path="/vocablists/:list" element={<TestLearner />}/> 
-                </Route>
+                
+                <Route path="/vocablists" element={<VocabLists />}/>
+                {/* Dynamic Page for individual lists */}
+                <Route path="/vocablists/:list" element={<Heft />}/> 
+
                 <Route path="/test">
                   <Route index element={<IndexTest />}/>
                   <Route path=":testName" element={<TestLearner />}/>
                 </Route>
+
+                <Route path="*" element={<ErrorPage />} />
               </Routes> 
             </Router> 
 

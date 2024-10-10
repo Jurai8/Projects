@@ -1,6 +1,6 @@
 import '../App.css';
 import { useRef, useState } from 'react';
-import { Link, useNavigation } from 'react-router-dom';
+import { BrowserRouter as Link, useNavigation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { Learner } from './Learner';
 import TextField from '@mui/material/TextField';
@@ -312,7 +312,7 @@ export function LogIn({ setError, setMessage, userSignedIn }) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const user = new Learner();
-    const navigation = useNavigation();
+    
 
     const handleSubmit = async (e) => {
         

@@ -36,7 +36,7 @@ export default function Heft () {
     // * so that i don't have to define a new Vocab obj each time
     // * or check if the user is signed in
 
-    const listName  = useParams();
+    const { listName }  = useParams();
 
     console.log(listName || "no list");
 

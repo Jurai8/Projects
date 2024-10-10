@@ -156,12 +156,6 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
 
 export function ShowVocabLists ({ rows, handleHeft}) {
 
-  // on double click
-  const handleDoubleClick = () => {
-    // send user to /heft
-    window.location.href = "/heft";
-  }
-
   /*  on double click
         send user to /heft
         load the vocab

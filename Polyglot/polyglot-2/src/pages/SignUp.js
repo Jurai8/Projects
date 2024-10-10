@@ -1,7 +1,7 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { Register, LogIn } from '../components/Modal';
 import React, { useRef, useState} from 'react';
-import { useLocation } from 'react-router-dom';
+import { BrowserRouter as useLocation } from 'react-router-dom';
 
 
 
