@@ -9,7 +9,7 @@ import { BrowserRouter as useLocation } from 'react-router-dom';
 
 // TODO: implement sign in with google
 
-export default function SignUp() {
+export default function SignUp({ setUserState }) {
   // use one state handler. set true/false
   const [error, setError] = useState(null);
   // message depends on error or success
@@ -35,8 +35,7 @@ export default function SignUp() {
 }
 
 
-export function SignIn() {
-  let { state } = useLocation();
+export function SignIn({ setUserState }) {
 
   // use one state handler. set true/false
   const [error, setError] = useState(false);
@@ -49,7 +48,7 @@ export function SignIn() {
       <LogIn 
         setError={setError}
         setMessage={setMessage}
-        userSignedIn={state}
+        setUserState={setUserState}
       /> 
       
       { error? 

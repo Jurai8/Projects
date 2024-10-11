@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { Button } from "@mui/material";
 import {useState, useEffect, useRef} from "react"
 import { getAuth, onAuthStateChanged} from "firebase/auth";
@@ -14,13 +14,38 @@ import ErrorPage from './ErrorPage.js';
 
 function App() {
   const [signedIn, setSignedIn] = useState(false);
+  const setUserState = (bool) => setSignedIn(bool);
+
+  /* <Route path="/" element={
+    <Home signedIn={signedIn} setUserState={setUserState} />
+  }/> */
+  return (
+    <>
+    <BrowserRouter>
+      <Routes> 
+        <Route path="/signin" element={<SignIn setUserState={setSignedIn} />} />  
+      </Routes>
+    </BrowserRouter>
+
+      <h1>Hello</h1>
+
+      <Link to="/signin">
+        <Button>sign in</Button>
+      </Link>
+    </>
+        
+  );
+}
+
+
+function Home({ signedIn, setUserState }) {
   const [username, setUsername] = useState(null);
   const auth = getAuth();
   const user = new Learner();
 
   const signOut = () => {
     window.location.reload(true); 
-    setSignedIn(false);
+    setUserState(false);
     user.SignOut();
   }
 
@@ -37,53 +62,11 @@ function App() {
     return () => unsubscribe();
   }, [auth]);
 
-  
 
   return (
     <div className="App">
-
       {signedIn ? (
           <>
-            <Router>  
-            <nav>
-              <Link to="/heft">
-                <Button>Go to Heft</Button>
-              </Link>
-              <Link to="/signup">
-                <Button>Go to SignUp</Button>
-              </Link>
-              <Link to="/signin">
-                <Button>Go to SignIn</Button>
-              </Link>
-              <Link to="/test">
-                <Button>Go to Test</Button>
-              </Link>
-              <Link to="/vocablists">
-                <Button>Go to VocabLists</Button>
-              </Link>
-            </nav>
-              
-              <Routes> 
-                <Route path="/" element={<App />} /> 
-                {/* Sign Up and Sign In */}
-                <Route path="/signup" element={<SignUp />} /> 
-                <Route path="/signin" element={<SignIn />} /> 
-
-                <Route path="/heft" element={<Heft />} />
-                
-                <Route path="/vocablists" element={<VocabLists />}/>
-                {/* Dynamic Page for individual lists */}
-                <Route path="/vocablists/:list" element={<Heft />}/> 
-
-                <Route path="/test">
-                  <Route index element={<IndexTest />}/>
-                  <Route path=":testName" element={<TestLearner />}/>
-                </Route>
-
-                <Route path="*" element={<ErrorPage />} />
-              </Routes> 
-            </Router> 
-
             <h1>Polyglot</h1>
 
             <section id="username">
@@ -102,10 +85,10 @@ function App() {
             <h1>Polyglot</h1>
             <h2>Welcome</h2>
 
-            <Link to="/signin" state={{ user: signedIn}}>
+            <Link to="/signin">
               <Button>sign in</Button>
             </Link>
-            <Link to="/signup" state={{ user: signedIn}}>
+            <Link to="/signup">
               <Button>sign up</Button>
             </Link>
           </>
@@ -114,6 +97,36 @@ function App() {
   );
 }
 
-//get all the vocab lists and pass it to vocablists
+/*
+
+<Routes> 
+        
+        <Route path="/signup" element={
+          <SignUp setUserState={setUserState}/>
+        }/> 
+        <Route path="/signin" element={
+          <SignIn setUserState={setUserState}/>
+        }/> 
+
+        <Route path="/heft" element={<Heft />} />
+        
+        <Route path="/vocablists" element={<VocabLists />}/>
+        {/* Dynamic Page for individual lists 
+        <Route path="/vocablists/:list" element={<Heft />}/> 
+
+        <Route path="/test">
+          <Route index element={<IndexTest />}/>
+          <Route path=":testName" element={<TestLearner />}/>
+        </Route>
+
+        
+      </Routes>  
+      
+      <h1>Hello</h1>
+
+      <Link to="/signin">
+        <Button>sign in</Button>
+      </Link>
+*/
 
 export default App;

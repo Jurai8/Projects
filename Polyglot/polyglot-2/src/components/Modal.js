@@ -308,7 +308,7 @@ export function Register ({ setError, setMessage}) {
     )
 }
 
-export function LogIn({ setError, setMessage, userSignedIn }) {
+export function LogIn({ setError, setMessage, setUserState }) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const user = new Learner();
@@ -320,9 +320,8 @@ export function LogIn({ setError, setMessage, userSignedIn }) {
             const message = await user.LogIn(emailRef.current.value, passwordRef.current.value)
 
             setError(false);
-            setMessage(message.success);
-            userSignedIn(true);
-            
+            setMessage(message.success);  
+            setUserState(true);          
         } catch (error) {
             setError(true);
             setMessage("Failed to login");

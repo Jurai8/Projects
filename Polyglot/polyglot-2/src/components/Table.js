@@ -154,7 +154,7 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
   );
 }
 
-export function ShowVocabLists ({ rows, handleHeft}) {
+export function ShowVocabLists ({ rows }) {
 
   /*  on double click
         send user to /heft

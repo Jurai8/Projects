@@ -29,16 +29,6 @@ export default function VocabLists() {
   // * new
   const toggleNewCollectionModal = (bool) => setNewVocabCollection(bool);
 
-  const handleDoubleClick = () => {
-    console.log("in handledoubleclick");
-    return ( 
-      <a href={"/heft"}> 
-          <button className="my-button"> 
-          </button> 
-      </a> 
-    ) 
-  }
-
   /*  on double click
         send user to /heft
         load the vocab

@@ -5,7 +5,7 @@ import '@fontsource/roboto/700.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './pages/App';
 import { SignIn } from './pages/SignUp';
 import ErrorPage from './pages/ErrorPage';
@@ -16,66 +16,19 @@ import Heft from './pages/Heft';
 import SignUp from './pages/SignUp';
 import reportWebVitals from './reportWebVitals';
 
-/* 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,  
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/vocablists/",
-    element: <VocabLists />, 
-    errorElement: <ErrorPage />
-  },
-  {
-    // ":" - makes it dynamic
-    path: "/vocablists/:list",
-    element: <Heft/>,
-    errorElement: <ErrorPage />
-  },
-  {
-    path: "/test",
-    element: <TestLearner />, // Default element for /test
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "index", // /test/index
-        element: <IndexTest />,
-      },
-    ],
-  },
-
-  //* Do i need a seperate heft page?
-  {
-    path: "/heft",
-    element: <Heft />, 
-    errorElement: <ErrorPage />, 
-  },
-  {
-    path: "/signup",
-    element: <SignUp />,  
-    errorElement: <ErrorPage />,
-  },
-
-  {
-    path: "/signin",
-    element: <SignIn />,  
-    errorElement: <ErrorPage />,
-    if(message) =  true
-  }
-]);
-*/
-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>,
+    <App/>
   </React.StrictMode>
 );
+
+/* 
+<Routes>
+  <Route path="/*" element={<App />} />
+</Routes>
+*/
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
