@@ -12,6 +12,8 @@ import { Learner } from "../components/Learner.js";
 import ErrorPage from './ErrorPage.js';
 
 
+// TODO make sure the data (/state?) persists after refresh
+// * how to keep track of whether the user is signed in or not, without using state?
 function App() {
   const [signedIn, setSignedIn] = useState(false);
   const setUserState = (bool) => setSignedIn(bool);
@@ -86,7 +88,7 @@ function Home({ signedIn, setUserState }) {
           <MyButton to="signup" /> 
           <MyButton to="test" /> 
           <MyButton to="vocablists" />
-           
+
             <h1>Polyglot</h1>
 
             <section id="username">
