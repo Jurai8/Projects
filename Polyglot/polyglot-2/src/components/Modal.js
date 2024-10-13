@@ -1,6 +1,6 @@
 import '../App.css';
 import { useRef, useState } from 'react';
-import { BrowserRouter as Link, useNavigation } from 'react-router-dom';
+import { Link, useNavigation } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { Learner } from './Learner';
 import TextField from '@mui/material/TextField';
@@ -315,7 +315,7 @@ export function LogIn({ setError, setMessage, setUserState }) {
     
 
     const handleSubmit = async (e) => {
-        
+        e.preventDefault();
         try {
             const message = await user.LogIn(emailRef.current.value, passwordRef.current.value)
 

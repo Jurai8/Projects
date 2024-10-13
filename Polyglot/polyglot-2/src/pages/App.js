@@ -21,17 +21,31 @@ function App() {
   }/> */
   return (
     <>
-    <BrowserRouter>
       <Routes> 
-        <Route path="/signin" element={<SignIn setUserState={setSignedIn} />} />  
-      </Routes>
-    </BrowserRouter>
+        <Route path="/" element={
+          <Home signedIn={signedIn} setUserState={setUserState} />
+        }/> 
 
-      <h1>Hello</h1>
+        {/* signin & signup */}
+        <Route path="/signup" element={
+          <SignUp setUserState={setUserState}/>
+        }/> 
+        <Route path="/signin" element={
+          <SignIn setUserState={setUserState}/>
+        }/> 
 
-      <Link to="/signin">
-        <Button>sign in</Button>
-      </Link>
+        {/* vocablist */}
+        <Route path="/heft" element={<Heft />} />
+        
+        <Route path="/vocablists" element={<VocabLists />}/>
+        {/* Dynamic Page for individual lists */}
+        <Route path="/vocablists/:list" element={<Heft />}/> 
+
+        <Route path="/test">
+          <Route index element={<IndexTest />}/>
+          <Route path=":testName" element={<TestLearner />}/>
+        </Route>
+      </Routes>  
     </>
         
   );
@@ -67,6 +81,12 @@ function Home({ signedIn, setUserState }) {
     <div className="App">
       {signedIn ? (
           <>
+          <MyButton to="" /> 
+          <MyButton to="heft" /> 
+          <MyButton to="signup" /> 
+          <MyButton to="test" /> 
+          <MyButton to="vocablists" />
+           
             <h1>Polyglot</h1>
 
             <section id="username">
@@ -97,36 +117,5 @@ function Home({ signedIn, setUserState }) {
   );
 }
 
-/*
-
-<Routes> 
-        
-        <Route path="/signup" element={
-          <SignUp setUserState={setUserState}/>
-        }/> 
-        <Route path="/signin" element={
-          <SignIn setUserState={setUserState}/>
-        }/> 
-
-        <Route path="/heft" element={<Heft />} />
-        
-        <Route path="/vocablists" element={<VocabLists />}/>
-        {/* Dynamic Page for individual lists 
-        <Route path="/vocablists/:list" element={<Heft />}/> 
-
-        <Route path="/test">
-          <Route index element={<IndexTest />}/>
-          <Route path=":testName" element={<TestLearner />}/>
-        </Route>
-
-        
-      </Routes>  
-      
-      <h1>Hello</h1>
-
-      <Link to="/signin">
-        <Button>sign in</Button>
-      </Link>
-*/
 
 export default App;

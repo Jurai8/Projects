@@ -1,7 +1,7 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { Register, LogIn } from '../components/Modal';
 import React, { useRef, useState} from 'react';
-import { BrowserRouter as useLocation } from 'react-router-dom';
+
 
 
 
@@ -20,9 +20,9 @@ export default function SignUp({ setUserState }) {
           <CssBaseline />
           {/* conditional rendering for register and sign in */}
             <Register 
-              
               setError={setError}
               setMessage={setMessage}
+              setUserState={setUserState}
             />
           {error ?
           // if there is an error

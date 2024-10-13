@@ -20,7 +20,9 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App/>
+    <BrowserRouter>
+      <App/>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
@@ -39,11 +41,7 @@ reportWebVitals();
 // ! old version
 /* 
   <Router> 
-    <MyButton to="" /> 
-    <MyButton to="heft" /> 
-    <MyButton to="signup" /> 
-    <MyButton to="test" /> 
-    <MyButton to="vocablists" /> 
+    
     <Routes> 
       <Route path="/signup" element={<SignUp />} /> 
       <Route path="/" element={<Home />} /> 
