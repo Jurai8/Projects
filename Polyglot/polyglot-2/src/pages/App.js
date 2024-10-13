@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { Button } from "@mui/material";
-import {useState, useEffect, useRef} from "react"
+import {useState, useEffect, useMemo} from "react"
 import { getAuth, onAuthStateChanged} from "firebase/auth";
 import SignUp, { SignIn } from "./SignUp.js";
 import { SignOut } from "../components/MyEventHandlers.js";
@@ -10,6 +10,7 @@ import MyButton from "../components/Button";
 import TestLearner,{IndexTest} from "./Test.js"
 import { Learner } from "../components/Learner.js";
 import ErrorPage from './ErrorPage.js';
+import usePersistState from '../components/Hooks.js';
 
 
 // TODO make sure the data (/state?) persists after refresh
@@ -60,6 +61,9 @@ function Home({ signedIn, setUserState }) {
   const [username, setUsername] = useState(null);
   const auth = getAuth();
   const user = new Learner();
+
+  const [counter, setCounter] = usePersistState(0, 'counter');
+
 
   const signOut = () => {
     window.location.reload(true); 
@@ -115,6 +119,9 @@ function Home({ signedIn, setUserState }) {
             <Link to="/signup">
               <Button>sign up</Button>
             </Link>
+            <Button onClick={() => signOut()}>
+                Sign out
+             </Button>
           </>
       )}
     </div>
