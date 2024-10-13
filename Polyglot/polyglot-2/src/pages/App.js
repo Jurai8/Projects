@@ -14,6 +14,8 @@ import ErrorPage from './ErrorPage.js';
 
 // TODO make sure the data (/state?) persists after refresh
 // * how to keep track of whether the user is signed in or not, without using state?
+
+// * probably use onauthstatechange?
 function App() {
   const [signedIn, setSignedIn] = useState(false);
   const setUserState = (bool) => setSignedIn(bool);
