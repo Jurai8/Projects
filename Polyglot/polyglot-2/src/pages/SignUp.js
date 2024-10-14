@@ -9,7 +9,7 @@ import React, { useRef, useState} from 'react';
 
 // TODO: implement sign in with google
 
-export default function SignUp({ setUserState }) {
+export default function SignUp({ setStatus }) {
   // use one state handler. set true/false
   const [error, setError] = useState(null);
   // message depends on error or success
@@ -22,7 +22,7 @@ export default function SignUp({ setUserState }) {
             <Register 
               setError={setError}
               setMessage={setMessage}
-              setUserState={setUserState}
+              setStatus={setStatus}
             />
           {error ?
           // if there is an error
@@ -35,10 +35,12 @@ export default function SignUp({ setUserState }) {
 }
 
 
-export function SignIn({ setUserState }) {
+export function SignIn({ setStatus }) {
 
   // use one state handler. set true/false
   const [error, setError] = useState(false);
+
+  // ! no use in using a welcome message if i redirect the user
   // message depends on error or success
   const [message, setMessage] = useState("");
 
@@ -48,7 +50,7 @@ export function SignIn({ setUserState }) {
       <LogIn 
         setError={setError}
         setMessage={setMessage}
-        setUserState={setUserState}
+        setStatus={setStatus}
       /> 
       
       { error? 

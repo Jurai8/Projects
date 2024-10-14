@@ -18,8 +18,10 @@ import usePersistState from '../components/Hooks.js';
 
 // * probably use onauthstatechange?
 function App() {
-  const [signedIn, setSignedIn] = useState(false);
-  const setUserState = (bool) => setSignedIn(bool);
+  // remember if user is already signed in after refresh
+  const [LoggedIn, setLoggedIn] = usePersistState(false, 'user7');
+
+  const setStatus = (bool) => setLoggedIn(bool);
 
   /* <Route path="/" element={
     <Home signedIn={signedIn} setUserState={setUserState} />
@@ -28,15 +30,15 @@ function App() {
     <>
       <Routes> 
         <Route path="/" element={
-          <Home signedIn={signedIn} setUserState={setUserState} />
+          <Home signedIn={LoggedIn} setStatus={setStatus} />
         }/> 
 
         {/* signin & signup */}
         <Route path="/signup" element={
-          <SignUp setUserState={setUserState}/>
+          <SignUp setStatus={setStatus}/>
         }/> 
         <Route path="/signin" element={
-          <SignIn setUserState={setUserState}/>
+          <SignIn setStatus={setStatus}/>
         }/> 
 
         {/* vocablist */}
@@ -57,22 +59,20 @@ function App() {
 }
 
 
-function Home({ signedIn, setUserState }) {
+function Home({ signedIn, setStatus }) {
   const [username, setUsername] = useState(null);
   const auth = getAuth();
   const user = new Learner();
 
-  const [counter, setCounter] = usePersistState(0, 'counter');
-
 
   const signOut = () => {
-    window.location.reload(true); 
-    setUserState(false);
+    window.location.reload(true);
+    setStatus(false);
     user.SignOut();
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const showUsername = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUsername(user.displayName);
       } else {
@@ -80,8 +80,7 @@ function Home({ signedIn, setUserState }) {
       }
     });
 
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
+    return () => showUsername();
   }, [auth]);
 
 

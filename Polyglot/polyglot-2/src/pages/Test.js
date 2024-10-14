@@ -1,10 +1,11 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import React, { useRef, useState, useEffect, useMemo } from 'react';
 import TextField from '@mui/material/TextField';
+import MyButton from "../components/Button";
 import { FetchVocab } from '../components/MyEventHandlers';
 import { Test, Vocab } from '../components/Learner';
 import { getAuth } from 'firebase/auth';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MenuItem, Select, Typography } from '@mui/material';
 
@@ -73,6 +74,8 @@ export default function TestLearner() {
    }
     return (
         <div>
+            <MyButton to="" />
+
             {count === (vocabListRef.current.length) ?
                 <h1> Score: {score} / 3</h1> : <h1> Word: {word} </h1>
             }

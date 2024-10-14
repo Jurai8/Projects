@@ -8,6 +8,7 @@
     
     
 import { Button } from "@mui/material";
+import MyButton from "../components/Button";
 import { NewCollection } from "../components/Modal";
 import { ShowVocabLists } from "../components/Table";
 import { Vocab } from "../components/Learner"
@@ -77,6 +78,7 @@ export default function VocabLists() {
   return (
       
     <div>
+      <MyButton to="" />
       <h1>Your vocab lists</h1>
 
       <Button variant="contained" onClick={() => 

@@ -2,9 +2,10 @@ import { useState, useMemo, useEffect } from "react";
 
 
 export default function usePersistState(initial_value, id) {
+    // 1. only run on mount.
     const _initial_value = useMemo(() => {
         const local_storage_value_str = localStorage.getItem('state:' + id);
-        // If there is a value stored in localStorage, use that
+        // If there is a value stored in localStorage (meaning state has updated), use that
         if(local_storage_value_str) {
             return JSON.parse(local_storage_value_str);
         } 
@@ -12,8 +13,10 @@ export default function usePersistState(initial_value, id) {
         return initial_value;
     }, []);
 
+    // used to update state outside of hook
     const [state, setState] = useState(_initial_value);
 
+    // 2. track state updates and save them 
     useEffect(() => {
         const state_str = JSON.stringify(state); // Stringified state
         localStorage.setItem('state:' + id, state_str) // Set stringified state as item in localStorage

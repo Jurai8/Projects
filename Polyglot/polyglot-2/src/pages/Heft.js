@@ -1,15 +1,15 @@
-import '../App.css';
-import React, { useState, useEffect, useMemo} from 'react';
-import VocabBook from '../components/Table'
-import AddWord, { EditWord } from '../components/Modal';
-import Sidebar from '../components/Sidebar';
-import { NewCollection } from '../components/Modal';
 import { Button } from '@mui/material';
+import '../App.css';
+import { DeleteWord, NewCollection } from '../components/Modal';
+import { Vocab } from '../components/Learner';
+import MyButton from "../components/Button";
+import Sidebar from '../components/Sidebar';
+import VocabBook from '../components/Table'
+import React, { useState, useEffect, useMemo} from 'react';
+import AddWord, { EditWord } from '../components/Modal';
 import { firestore } from '../firebase';
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { DeleteWord } from '../components/Modal';
-import { Vocab } from '../components/Learner';
 import { useParams } from 'react-router-dom';
 
 /* // TODO: 
@@ -29,16 +29,17 @@ import { useParams } from 'react-router-dom';
 
 // TODO: remove all excess functions that check if the user is signed in,
 // TODO: remove all excess Vocab obj creations
-// TODO: check if the function still work
+// TODO: check if the functions still work
 
 // ? button leading to heft page should be removed?
 export default function Heft () {
     // * so that i don't have to define a new Vocab obj each time
     // * or check if the user is signed in
 
-    const { listName }  = useParams();
+    // ! why is it not working
+    const { list } = useParams();
 
-    console.log(listName || "no list");
+    console.log(list || "no list");
 
     const [learner, setLearner] = useState(null);
 
@@ -136,12 +137,12 @@ export default function Heft () {
 
     // get vocabulary to pass to vocab 
     useEffect(() => {
-        if (listName) {
-            console.log("hello: ", listName.list || "no params");
+        if (list) {
+            console.log("hello: ", list.list || "no params");
             const getListName = async () => {
                 try {
                     // TODO: replace this with some method from learner.js
-                    const vocabList = await vocabulary.getVocabulary(listName.list);
+                    const vocabList = await vocabulary.getVocabulary(list.list);
 
                     console.log("vocabList: ", vocabList);
                     // set all the vocab within the specific list
@@ -155,7 +156,7 @@ export default function Heft () {
 
             getListName();
         }
-    },[listName,vocabulary])
+    },[list,vocabulary])
 
     // control both edit/add word modals 
     const [isModalOpen, setIsModalOpen] = useState({
@@ -365,6 +366,8 @@ export default function Heft () {
     }
     
     return (
+        <>
+        <MyButton to="" />
         <div id='table-position'>
             <div className='button-container'>
                 {/* only display button when showing a list */}
@@ -431,5 +434,7 @@ export default function Heft () {
                     openDeleteVocab={openDeleteVocab}
                 />
         </div>
-    )
+        </>
+       
+    );
 }

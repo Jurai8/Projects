@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 
 
-const MyButton = ({ link }) => {
+const MyButton = ({ to }) => {
   return (
-    <Link to={`/${link}`}>
+    <Link to={`/${to}`}>
       <button className="my-button">
-        {link === '' ? "Home" : link}
+        {to === '' ? "Home" : to}
       </button>
     </Link>
   );

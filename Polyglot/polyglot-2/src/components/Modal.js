@@ -1,6 +1,6 @@
 import '../App.css';
 import { useRef, useState } from 'react';
-import { Link, useNavigation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { Learner } from './Learner';
 import TextField from '@mui/material/TextField';
@@ -231,24 +231,29 @@ export function DeleteWord({closeDeleteVocab, deleteVocab, open}) {
       )
 }
 
-export function Register ({ setError, setMessage}) {
+export function Register ({ setError, setMessage, setStatus}) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const usernameRef = useRef(null);
     const user = new Learner();
 
+    const navigation = useNavigate();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         // TODO change to try/catch
-        const message = await user.SignUp(emailRef.current.value, passwordRef.current.value, usernameRef.current.value)
 
-        // if there's an error
-        if (message.success === null) {
-            setError(true);
-            setMessage(message.error);
-        } else {
+        try {
+            await user.SignUp(emailRef.current.value, passwordRef.current.value, usernameRef.current.value)
+
             setError(false);
-            setMessage(message.success);
+            // ! remove (refer to signup.js)
+            setMessage(usernameRef.current.value);
+            setStatus(true);
+            navigation("/")
+        } catch (error) {
+            setError(true);
+            setMessage(error.message);
         }
     }
 
@@ -308,11 +313,12 @@ export function Register ({ setError, setMessage}) {
     )
 }
 
-export function LogIn({ setError, setMessage, setUserState }) {
+export function LogIn({ setError, setMessage, setStatus }) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const user = new Learner();
-    
+    const navigation = useNavigate();
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -320,8 +326,10 @@ export function LogIn({ setError, setMessage, setUserState }) {
             const message = await user.LogIn(emailRef.current.value, passwordRef.current.value)
 
             setError(false);
+            // ! remove (refer to signup.js)
             setMessage(message.success);  
-            setUserState(true);          
+            setStatus(true);
+            navigation("/")          
         } catch (error) {
             setError(true);
             setMessage("Failed to login");

@@ -20,6 +20,7 @@ export class Learner {
         return this.username;
     }
 
+    // ! redo this
     // handle sign up
     async SignUp(emailRef, passwordRef, usernameRef) {
 
@@ -42,21 +43,25 @@ export class Learner {
                 const passwordStrength = CheckPasswordStrength(password);
                 if (!passwordStrength.isValid) {
                     alert(passwordStrength.errors);
-                    return false;
+                    throw new Error("could not create account due to invalid password");
+                    
                 }
                 // check if user already exists
-                const res = await checkUser(username, email);
+                const res = await checkUser(username, email)
                 if (res.status === "error" ) {
                     alert(res.message);
-                    return false;
+                    throw new Error("res.message");
                 } 
                 
             } catch (error) {
-                console.error(error, "Issue checking for identity (async function)");
-                return {
+                console.error(error, "Issue checking for identity");
+                throw new Error("Failed to create account");
+                
+                /* return {
                     error: "Failed to create account",
                     success: null
-                };;
+                };; */ 
+
                 // Handle the error appropriately, e.g., display a user-friendly message
             }
     
@@ -91,21 +96,13 @@ export class Learner {
                   }
                   
                 } else {
-                  console.log("No user is signed in.");
+                  console.error("No user is signed in.");
                 }
               });
-    
-              return {
-                success:`Hello ${username}`,
-                error: null
-              }
                 
     
             } catch (error) {
-                return {
-                    error: "Failed to create account",
-                    success: null
-                };
+                console.error("failed to create account")
             }
     
         } else {
