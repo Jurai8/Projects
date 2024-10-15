@@ -42,7 +42,7 @@ function App() {
         }/> 
 
         {/* vocablist */}
-        <Route path="/heft" element={<Heft />} />
+        
         
         <Route path="/vocablists" element={<VocabLists />}/>
         {/* Dynamic Page for individual lists */}

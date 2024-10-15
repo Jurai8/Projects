@@ -137,12 +137,12 @@ export default function Heft () {
 
     // get vocabulary to pass to vocab 
     useEffect(() => {
-        if (list) {
-            console.log("hello: ", list.list || "no params");
+        if (list && vocabulary) {
+            console.log("hello: ", JSON.stringify(list) || "no params");
             const getListName = async () => {
                 try {
                     // TODO: replace this with some method from learner.js
-                    const vocabList = await vocabulary.getVocabulary(list.list);
+                    const vocabList = await vocabulary.getVocabulary(list);
 
                     console.log("vocabList: ", vocabList);
                     // set all the vocab within the specific list

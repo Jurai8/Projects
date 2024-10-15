@@ -72,8 +72,6 @@ export default function VocabLists() {
     fetchData();  // Call the function once on component mount
   }, []);  
 
-   
-
 
   return (
       
