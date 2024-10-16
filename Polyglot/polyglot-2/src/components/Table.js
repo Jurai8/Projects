@@ -184,11 +184,9 @@ export function ShowVocabLists ({ rows }) {
                 <TableRow
                   key={row.listName}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                 onDoubleClick={() =>{
+                  onDoubleClick={() =>{
                     navigate(`/vocablists/${row.listName}`);
                   }}
-                  
-                  // {() => navigate(`/heft/${row.listName}`)}
                 >
                   <TableCell component="th" scope="row">
                     {row.listName}
@@ -201,4 +199,8 @@ export function ShowVocabLists ({ rows }) {
         </Table>
     </TableContainer>
   );
+}
+
+export function DisplayVocablists() {
+  
 }

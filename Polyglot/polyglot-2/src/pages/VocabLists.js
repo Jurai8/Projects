@@ -13,7 +13,7 @@ import { NewCollection } from "../components/Modal";
 import { ShowVocabLists } from "../components/Table";
 import { Vocab } from "../components/Learner"
 import { getAuth, onAuthStateChanged} from "firebase/auth"
-import { useState, useEffect, } from "react"
+import { useState, useEffect, useMemo, } from "react"
 import { Outlet } from "react-router-dom";
 
 
@@ -30,47 +30,33 @@ export default function VocabLists() {
   // * new
   const toggleNewCollectionModal = (bool) => setNewVocabCollection(bool);
 
-  /*  on double click
-        send user to /heft
-        load the vocab
-  */
-
-  const getLists = () => {
-    return new Promise((resolve, reject) => {
-      onAuthStateChanged(auth, async (user) => {
+  
+  // safest method?
+  // or user useMemo to initialize vocab obj
+  // then useEffect to get vocab lists
+  // why does it call useMemo multiple times?
+  useMemo(() => {
+    const lists = () => {onAuthStateChanged(auth, async (user) => {
         if (user) {
           const vocab = new Vocab(user);
   
           try {
-
-            const row = await vocab.getAllVocabLists();
-            resolve(row);  // Resolve with the array of vocab lists
+            const vocabLists = await vocab.getAllVocabLists();
+  
+            console.log(vocabLists.length);
+            setRows(vocabLists);
           } catch (error) {
-            console.error(error);
-            reject(error);  // Handle error
+            console.error("could not get vocablists", error);
           }
   
         } else {
           alert("user not signed in");
-          reject("user not signed in");  // Reject if not signed in
         }
-      });
-    });
-  };
+    })}
 
-  useEffect(() => {
-    console.log("renders")
-    const fetchData = async () => {
-      try {
-        const vocablists = await getLists();  
-        setRows(vocablists);  
-      } catch (error) {
-        console.error("Error fetching vocab lists:", error);
-      }
-    };
-  
-    fetchData();  // Call the function once on component mount
-  }, []);  
+    lists();
+  },[])
+
 
 
   return (

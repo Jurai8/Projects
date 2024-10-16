@@ -11,6 +11,7 @@ import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import MenuListComposition from './Menu';
+import { DisplayVocablists } from './Table';
 
 
 // pass user if possible
@@ -381,7 +382,5 @@ export function LogIn({ setError, setMessage, setStatus }) {
         </Box>
     )
 }
-
-
 
 

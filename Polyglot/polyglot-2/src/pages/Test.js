@@ -146,6 +146,8 @@ function IndexTest(){
         fetchVocabLists();
       }
     }, [vocab]);
+
+    
     return (
         <div>
             <Typography variant='h5'> Select your vocab list</Typography>

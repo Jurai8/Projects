@@ -149,7 +149,7 @@ export class Learner {
 
 export class Vocab {
     constructor(user) {
-        // uid should be private?
+        // user should be private?
         this.user = user;
         this.allVocabLists = [];
         this.vocab = [];
@@ -214,7 +214,7 @@ export class Vocab {
             console.error("could not create new list or save list name to collection of names: ", error)
         }
     }
-
+    /*
     async getAllVocabLists() {
         const uid = this.user.uid;
 
@@ -254,6 +254,54 @@ export class Vocab {
         } catch (error) {
             console.error("Could not get names of vocab lists", error);
         }
+    } */
+
+    async getAllVocabLists() {
+        const uid = this.user.uid;
+
+        try {
+            // path to subcollection
+            const querySnapshot = await getDocs(collection(
+                firestore, "Users", uid, "All_Vocab_Lists"
+            ));
+
+            querySnapshot.forEach((doc) => {
+                // add each vocablist into an array
+                
+                this.allVocabLists.push({
+                    listName: doc.id,
+                    vocabCount: doc.data().Words
+                });        
+            });
+
+            return this.allVocabLists;
+        } catch (error) {
+            console.error("Could not get names of vocab lists", error);
+        }
+    }
+
+    async getVocabulary(collectionName) {
+        const uid = this.user.uid;
+
+        try {
+            const querySnapshot = await getDocs(collection(
+                firestore, "Users", uid, collectionName
+            ));
+    
+            querySnapshot.forEach((doc) => {
+                // add each wordpair into the array
+                
+                this.vocab.push({
+                    word: doc.data().word,
+                    translation: doc.data().translation
+                });
+            })
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+
+        return this.vocab;
     }
 
     async addWord(vocabList, wordPair) {
@@ -595,32 +643,6 @@ export class Vocab {
         } else {
             console.log('No documents found');
         }
-    }
-
-    async getVocabulary(collectionName) {
-        const uid = this.user.uid;
-
-        console.log("getVocab: ", collectionName);
-
-        try {
-            const querySnapshot = await getDocs(collection(
-                firestore, "Users", uid, collectionName
-            ));
-    
-            querySnapshot.forEach((doc) => {
-                // add each wordpair into the array
-                console.log(`data: ${doc.data().word}`);
-    
-                this.vocab.push({
-                    word: doc.data().word,
-                    translation: doc.data().translation
-                });
-            })
-        } catch (error) {
-            console.error(error);
-        }
-
-        return this.vocab;
     }
 }
 
