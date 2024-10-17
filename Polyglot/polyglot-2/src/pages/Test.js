@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import MyButton from "../components/Button";
 import { FetchVocab } from '../components/MyEventHandlers';
 import { Test, Vocab } from '../components/Learner';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MenuItem, Select, Typography } from '@mui/material';
@@ -115,9 +115,25 @@ export default function TestLearner() {
 
 //This is where the user will choose which test to write.
 function IndexTest(){
-    const [options,setOptions] = useState([])
-    const auth = getAuth();
-    const user = auth.currentUser;
+    const [options, setOptions] = useState([])
+    const [user, setUser] = useState(null);
+
+    const getUser = () => {
+        const auth = getAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUser(user); 
+            } else {
+                console.log("User is signed out");
+                alert("not signed in yet");
+            }
+        });
+    }
+
+    useEffect(() => {
+        getUser();
+    },[])
 
     const vocab = useMemo(() => {
       if (user) {
@@ -130,14 +146,13 @@ function IndexTest(){
 
     useEffect(() => {
       if (vocab) {
+
         const fetchVocabLists = async () => {
           try {
             console.log("Fetching vocab lists...");
             const vocabListNames = await vocab.getAllVocabLists();
-            console.log(`UseEffect: ${vocabListNames}`);
-            if (vocabListNames.length > 0) {
-                setOptions(prevRows => [...new Set([...prevRows, ...vocabListNames])]); // Set removes duplicates
-            }
+
+            setOptions(vocabListNames);
           } catch (error) {
             console.error("Error fetching vocab lists:", error);
           }
@@ -151,7 +166,11 @@ function IndexTest(){
     return (
         <div>
             <Typography variant='h5'> Select your vocab list</Typography>
-            {options.map((name,index)=>(<Link key={index} to={'/test/'+name}>{name}</Link>))}
+            {options.map((list,index)=>(
+                <li key={index}>
+                    <Link to={'/test/'+ list.listName}>{list.listName}</Link>
+                </li>
+            ))}
         </div>
     )
 }

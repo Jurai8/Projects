@@ -91,6 +91,8 @@ export function CheckPasswordStrength(password) {
     return errorMessage;
 }
 
+// TODO: word checker - is it a noun?
+
 
 
 // * for the vocabtest

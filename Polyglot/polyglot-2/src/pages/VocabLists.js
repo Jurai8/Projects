@@ -20,6 +20,7 @@ import { Outlet } from "react-router-dom";
 
 export default function VocabLists() {
   const auth = getAuth();
+  
   const [rows, setRows] = useState([]);
 
   const [heft, setHeft] = useState(false);
@@ -30,13 +31,9 @@ export default function VocabLists() {
   // * new
   const toggleNewCollectionModal = (bool) => setNewVocabCollection(bool);
 
-  
-  // safest method?
-  // or user useMemo to initialize vocab obj
-  // then useEffect to get vocab lists
-  // why does it call useMemo multiple times?
-  useMemo(() => {
-    const lists = () => {onAuthStateChanged(auth, async (user) => {
+  useEffect(() => {
+    const lists = () => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
           const vocab = new Vocab(user);
   
@@ -52,11 +49,11 @@ export default function VocabLists() {
         } else {
           alert("user not signed in");
         }
-    })}
+     })
+    }
 
     lists();
   },[])
-
 
 
   return (
@@ -87,3 +84,51 @@ export default function VocabLists() {
   );
 }
 
+/*
+ const [learner, setLearner] = useState(null);
+
+    const getUser = () => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setLearner(user); // Set the learner when the user is authenticated
+            } else {
+                console.log("User is signed out");
+                alert("not signed in yet");
+            }
+        });
+    }
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+  const vocab = useMemo(() => {
+
+    if (learner) {
+      console.log("hello")
+      return new Vocab(learner);
+    } else {
+      alert("not signed in");
+    }
+  }, [learner])
+
+useEffect(() => {
+  console.log(vocab || "null");
+  const getLists = async () => {
+    if (vocab) {
+      try {
+        const vocabLists = await vocab.getAllVocabLists();
+  
+        console.log(vocabLists.length);
+        setRows(vocabLists);
+      } catch (error) {
+        console.error("could not get vocablists", error);
+      }
+    }
+  }
+
+  getLists();
+  
+}, [vocab])
+
+*/

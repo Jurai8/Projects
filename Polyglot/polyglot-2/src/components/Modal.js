@@ -1,17 +1,16 @@
 import '../App.css';
-import { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { Learner } from './Learner';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { HandleLogin, HandleSignUp } from './MyEventHandlers';
 import { Vocab } from './Learner';
 import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import MenuListComposition from './Menu';
-import { DisplayVocablists } from './Table';
+import { PosMenu } from './Menu';
+import { useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 // pass user if possible
@@ -97,8 +96,6 @@ export function NewCollection({ toggleNewCollectionModal }) {
     )
 }
 export default function AddWord ({ closeModal, eventHandler, updateVocab, newWord}) {
-    //TODO: use newWord for adding a word to vocab book
-    // Test update word
 
     return (
         <div className='overlay'>
@@ -112,6 +109,7 @@ export default function AddWord ({ closeModal, eventHandler, updateVocab, newWor
                 noValidate
                 autoComplete="off"
             >
+
                 <div>
                     <TextField 
                         id="outlined-basic-english" label="English" name="native" variant="outlined" onChange={eventHandler} 

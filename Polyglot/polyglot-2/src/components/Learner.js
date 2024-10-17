@@ -149,7 +149,7 @@ export class Learner {
 
 export class Vocab {
     constructor(user) {
-        // user should be private?
+        // ! user should be private?
         this.user = user;
         this.allVocabLists = [];
         this.vocab = [];
@@ -171,6 +171,8 @@ export class Vocab {
         try {
             // create new vocab list and add doc
             await addDoc(SpecificListRef, {
+                // TODO: Add POS field
+                //* e.g POS: noun
                 word: word, 
                 translation: translation
             }).catch((error) => {
@@ -214,47 +216,6 @@ export class Vocab {
             console.error("could not create new list or save list name to collection of names: ", error)
         }
     }
-    /*
-    async getAllVocabLists() {
-        const uid = this.user.uid;
-
-        try {
-            // path to subcollection
-            const querySnapshot = await getDocs(collection(
-                firestore, "Users", uid, "All_Vocab_Lists"
-            ));
-
-             // Collect all promises to resolve asynchronously
-             const vocabListPromises = querySnapshot.docs.map(async (doc) => {
-                try {
-                    // path to collection 
-                    const coll = collection(firestore, "Users", uid, doc.id);
-
-                    // number of words (docs) in collection
-                    // TODO: replace with doc.data().words
-                    const numberOfWords = await getCountFromServer(coll);
-                    
-                    return {
-                        listName: doc.id,
-                        vocabCount: numberOfWords.data().count
-                    };
-                } catch (error) {
-                    console.error("Could not get vocab count for list:", doc.id, error);
-                    return null; // Handle errors gracefully by returning null
-                }
-            });
-
-             // Wait for all promises to resolve
-             const vocabLists = await Promise.all(vocabListPromises);
-
-             // Filter out any null results caused by errors
-            this.allVocabLists = vocabLists.filter(list => list !== null);
-
-            return this.allVocabLists;
-        } catch (error) {
-            console.error("Could not get names of vocab lists", error);
-        }
-    } */
 
     async getAllVocabLists() {
         const uid = this.user.uid;
@@ -267,7 +228,6 @@ export class Vocab {
 
             querySnapshot.forEach((doc) => {
                 // add each vocablist into an array
-                
                 this.allVocabLists.push({
                     listName: doc.id,
                     vocabCount: doc.data().Words
@@ -687,7 +647,8 @@ export class Test {
     }
 
     checkAnswer(currentWord, currentAnswer) {
-        console.log(currentWord,currentAnswer,currentWord === currentAnswer)
+
+        console.log(currentWord,currentAnswer, currentWord === currentAnswer)
         if (currentWord === currentAnswer) {
             this.score = this.score + 1;
             console.log(this.score)
@@ -719,25 +680,3 @@ export class Test {
 }
 
 // create class to check input?
-// each method is a different case for checking the input
-class Input {
-
-    constructor(wordPair) {
-        this.native = wordPair.native;
-        this.trans = wordPair.translation;
-    }
-
-    addWord() {
-
-    }
-
-    // when changing a word in vocab list
-    updateWord() {
-
-    }
-
-    // user create account
-    checkPassowrd() {
-
-    }
-}
