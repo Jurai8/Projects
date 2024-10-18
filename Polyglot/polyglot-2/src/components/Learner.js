@@ -157,6 +157,52 @@ export class Vocab {
         this.wordPair = {native: null , translation: null};
     }
 
+    wordClassifier(word) {
+        const articles = ['der', 'die', 'das'];
+        let newWord;
+
+        function lowercaseFirstLetter(string) {
+            return string.charAt(0).toLowerCase() + string.slice(1);
+        };
+
+        function capitalizeFirstLetter(string) {
+            // every noun would start at index 4
+            return string.charAt(4).toUpperCase() + string.slice(1);
+        };
+
+        function addSpace(string) {
+            const ogArticle = string.splice(0,3);
+            const word = string.splice(4);
+
+            const article = ogArticle + ' ';
+            const newWord = article + word;
+
+            return newWord;
+        }
+
+        // check if it's a noun
+        articles.forEach(article => {
+            if (word.includes(article)) {
+                // change the article to lowercase
+                newWord = lowercaseFirstLetter(word);
+
+                // check for space between article and word 
+                if(newWord[3] !== ' ') {
+                    newWord = addSpace(newWord);
+                } 
+
+                // change the first letter of the noun to uppercase
+                newWord = capitalizeFirstLetter(newWord);
+            }
+
+            // ! this only stops the loop not entire function
+            return newWord;
+        });
+            
+        // if it's any other word change the first letter to lowercase
+        return newWord = lowercaseFirstLetter(word);
+    }
+
     async CreateVocabList(listName, word, translation) {
         const userId = this.user.uid;
         

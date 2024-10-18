@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { Button } from "@mui/material";
-import {useState, useEffect, useMemo} from "react"
+import {useState, useEffect, useMemo, useRef} from "react"
 import { getAuth, onAuthStateChanged} from "firebase/auth";
 import SignUp, { SignIn } from "./SignUp.js";
 import { SignOut } from "../components/MyEventHandlers.js";
@@ -83,6 +83,70 @@ function Home({ signedIn, setStatus }) {
     return () => showUsername();
   }, [auth]);
 
+  const input = useRef();
+
+  const wordClassifier = (word) => {
+    const articles = ['der', 'die', 'das'];
+    const regex = new RegExp(articles.join( "|" ), "i");
+
+    let newWord;
+    let bool = false;
+
+    function lowercaseFirstLetter(string) {
+        return string.charAt(0).toLowerCase() + string.slice(1);
+    };
+
+    function capitalizeFirstLetter(string) {
+      // get the article with the space ' ' 
+      const article = string.slice(0,4);
+
+      // combine the article with the capitalized word
+      return article + string.charAt(4).toUpperCase() + string.slice(5);
+    };
+
+    function addSpace(string) {
+      const ogArticle = string.slice(0,3);
+
+      const word = string.slice(3);
+      
+      const newWord = ogArticle + ' ' + word;
+
+      return newWord;
+    }
+
+    // TODO: rewrite using regex
+
+    // check if it's a noun
+    articles.forEach(article => {
+        if (word.includes(article)) {
+
+            // change the article to lowercase
+            newWord = lowercaseFirstLetter(word);
+
+            // check for space between article and word 
+            if(newWord[3] !== ' ') {
+              console.log("Before: ", newWord);
+              newWord = addSpace(newWord);
+            } 
+
+            // change the first letter of the noun to uppercase
+            newWord = capitalizeFirstLetter(newWord);
+
+            console.log("After: ", newWord);
+            bool = true;
+            return;
+          }
+    });
+        
+    // if it's any other word change the first letter to lowercase
+    if (bool) {
+      return
+    }
+    console.log("no noun: ", newWord = lowercaseFirstLetter(word)) 
+    return
+}
+
+
 
   return (
     <div className="App">
@@ -95,6 +159,16 @@ function Home({ signedIn, setStatus }) {
           <MyButton to="vocablists" />
 
             <h1>Polyglot</h1>
+
+            <form>
+             <input type='text' ref={input}></input>
+             
+             <input type='submit' onClick={(event) =>{
+              event.preventDefault();
+              wordClassifier(input.current.value)
+             }}>
+              </input>
+            </form>
 
             <section id="username">
               {username ? (
@@ -111,7 +185,7 @@ function Home({ signedIn, setStatus }) {
           <>
             <h1>Polyglot</h1>
             <h2>Welcome</h2>
-
+            
             <Link to="/signin">
               <Button>sign in</Button>
             </Link>
