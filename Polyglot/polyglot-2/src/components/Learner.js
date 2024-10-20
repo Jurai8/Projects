@@ -717,6 +717,13 @@ export class Test {
         return false;
     }
 
+    // allow user to select a date
+    // we remind them on the date - the time to do the test is up to them
+    scheduleTest(date, time) {
+       
+
+    }
+
     // getscore
     getScore() {
         return this.score;

@@ -89,61 +89,55 @@ function Home({ signedIn, setStatus }) {
     const articles = ['der', 'die', 'das'];
     const regex = new RegExp(articles.join( "|" ), "i");
 
-    let newWord;
-    let bool = false;
+    // remove all spaces
+    const newWord = word.replace(/ /g, "");
+    
+    // break up the word
+    const article = word.slice(0,3);
+    let modWord = word.slice(3)
 
     function lowercaseFirstLetter(string) {
         return string.charAt(0).toLowerCase() + string.slice(1);
     };
 
     function capitalizeFirstLetter(string) {
-      // get the article with the space ' ' 
-      const article = string.slice(0,4);
+      const word = string.toLowerCase()
 
-      // combine the article with the capitalized word
-      return article + string.charAt(4).toUpperCase() + string.slice(5);
+      // capitalize first letter and combine with rest of word
+      return word.charAt(0).toUpperCase() + word.slice(1);
     };
 
-    function addSpace(string) {
-      const ogArticle = string.slice(0,3);
+    // TODO: if there's already a space don't add one
 
-      const word = string.slice(3);
+
+    // if the word has an article
+    if (regex.test(article)) {
+      let finWord;
+
+      const article = word.slice(0,3);
       
-      const newWord = ogArticle + ' ' + word;
+      // ensure entire article is lowercase
+      const newArticle = article.toLowerCase();
+    
+      // ensure noun is capitalized
+      modWord = capitalizeFirstLetter(modWord);
 
-      return newWord;
+      if (word[3] === ' ') {
+        finWord = newArticle + modWord;
+      } else {
+        finWord = newArticle + ' ' + modWord;
+      }
+      
+
+      console.log("before: ", word);
+      console.log("After: ", finWord);
+      return;
+
+    } else {
+      // it's not a noun so use the regular word
+      console.log("no noun: ", word.toLowerCase()) 
     }
-
-    // TODO: rewrite using regex
-
-    // check if it's a noun
-    articles.forEach(article => {
-        if (word.includes(article)) {
-
-            // change the article to lowercase
-            newWord = lowercaseFirstLetter(word);
-
-            // check for space between article and word 
-            if(newWord[3] !== ' ') {
-              console.log("Before: ", newWord);
-              newWord = addSpace(newWord);
-            } 
-
-            // change the first letter of the noun to uppercase
-            newWord = capitalizeFirstLetter(newWord);
-
-            console.log("After: ", newWord);
-            bool = true;
-            return;
-          }
-    });
         
-    // if it's any other word change the first letter to lowercase
-    if (bool) {
-      return
-    }
-    console.log("no noun: ", newWord = lowercaseFirstLetter(word)) 
-    return
 }
 
 
