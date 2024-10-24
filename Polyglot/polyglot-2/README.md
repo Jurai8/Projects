@@ -20,3 +20,8 @@ Another method that will help them learn their vocabulary, is by using it. This 
 ## Grammr
 
 ## Writing
+
+
+## ideas
+
+create a dictionary of sorts. each word will have the option to have a meaning associated with it, not just a translation.
