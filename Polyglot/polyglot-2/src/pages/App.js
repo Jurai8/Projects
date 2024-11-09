@@ -1,9 +1,8 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link } from 'react-router-dom'
 import { Button } from "@mui/material";
-import {useState, useEffect, useMemo, useRef} from "react"
+import {useState, useEffect, useRef} from "react"
 import { getAuth, onAuthStateChanged} from "firebase/auth";
 import SignUp, { SignIn } from "./SignUp.js";
-import { SignOut } from "../components/MyEventHandlers.js";
 import Heft from "./Heft.js";
 import VocabLists from "./VocabLists.js";
 import MyButton from "../components/Button";
@@ -11,6 +10,7 @@ import TestLearner,{IndexTest} from "./Test.js"
 import { Learner } from "../components/Learner.js";
 import ErrorPage from './ErrorPage.js';
 import usePersistState from '../components/Hooks.js';
+import LoggedInLayout from '../components/layout.js';
 
 
 // TODO make sure the data (/state?) persists after refresh
@@ -147,8 +147,6 @@ function Home({ signedIn, setStatus }) {
       {signedIn ? (
           <>
           <MyButton to="" /> 
-          <MyButton to="heft" /> 
-          <MyButton to="signup" /> 
           <MyButton to="test" /> 
           <MyButton to="vocablists" />
 
@@ -167,7 +165,7 @@ function Home({ signedIn, setStatus }) {
             <section id="username">
               {username ? (
                 <div style={{ display: 'flex' }}>
-                  <h1>{username}</h1>
+                  <h1>Welcome {username}</h1>
                   <Button onClick={() => signOut()}>
                       Sign out
                   </Button>
@@ -178,7 +176,7 @@ function Home({ signedIn, setStatus }) {
         ) : (
           <>
             <h1>Polyglot</h1>
-            <h2>Welcome</h2>
+            <h2>Hello There</h2>
             
             <Link to="/signin">
               <Button>sign in</Button>
@@ -186,9 +184,6 @@ function Home({ signedIn, setStatus }) {
             <Link to="/signup">
               <Button>sign up</Button>
             </Link>
-            <Button onClick={() => signOut()}>
-                Sign out
-             </Button>
           </>
       )}
     </div>

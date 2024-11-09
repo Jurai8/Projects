@@ -7,13 +7,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './pages/App';
-import { SignIn } from './pages/SignUp';
-import ErrorPage from './pages/ErrorPage';
-import VocabLists from './pages/VocabLists';
-import TestLearner from './pages/Test';
-import { IndexTest } from './pages/Test';
-import Heft from './pages/Heft';
-import SignUp from './pages/SignUp';
 import reportWebVitals from './reportWebVitals';
 
 
