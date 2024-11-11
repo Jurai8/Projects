@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import '../App.css';
 import { DeleteWord, NewCollection } from '../components/Modal';
-import { Vocab } from '../components/Learner';
+import { Vocab } from '../functions/Learner';
 import MyButton from "../components/Button";
 import Sidebar from '../components/Sidebar';
 import VocabBook from '../components/Table'

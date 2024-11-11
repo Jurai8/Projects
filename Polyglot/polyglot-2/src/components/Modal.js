@@ -1,9 +1,9 @@
 import '../App.css';
 import Box from '@mui/material/Box';
-import { Learner } from './Learner';
+import { Learner } from '../functions/Learner';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { Vocab } from './Learner';
+import { Vocab } from '../functions/Learner';
 import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
@@ -11,6 +11,7 @@ import MenuListComposition from './Menu';
 import { PosMenu } from './Menu';
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 
 // pass user if possible
@@ -303,10 +304,6 @@ export function Register ({ setError, setMessage, setStatus}) {
                 <Link to="/signin">
                     sign in
                 </Link>
-                &nbsp; &nbsp;
-                <Link to="/">
-                    home
-                </Link>
             </section>
         </Box>
     )
@@ -317,18 +314,15 @@ export function LogIn({ setError, setMessage, setStatus }) {
     const passwordRef = useRef(null);
     const user = new Learner();
     const navigation = useNavigate();
-
+    const { login } = useAuth()
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const message = await user.LogIn(emailRef.current.value, passwordRef.current.value)
-
-            setError(false);
-            // ! remove (refer to signup.js)
-            setMessage(message.success);  
-            setStatus(true);
-            navigation("/")          
+            await login({ 
+                email: emailRef.current.value, 
+                password: passwordRef.current.value 
+            })        
         } catch (error) {
             setError(true);
             setMessage("Failed to login");
@@ -371,10 +365,6 @@ export function LogIn({ setError, setMessage, setStatus }) {
                 <p>Don't have an account ?</p> 
                 <Link to="/signup">
                     sign up
-                </Link>
-                &nbsp; &nbsp;
-                <Link to="/">
-                    home
                 </Link>
             </section>
         </Box>

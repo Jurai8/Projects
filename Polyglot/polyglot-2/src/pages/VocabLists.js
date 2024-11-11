@@ -11,12 +11,9 @@ import { Button } from "@mui/material";
 import MyButton from "../components/Button";
 import { NewCollection } from "../components/Modal";
 import { ShowVocabLists } from "../components/Table";
-import { Vocab } from "../components/Learner"
+import { Vocab } from "../functions/Learner"
 import { getAuth, onAuthStateChanged} from "firebase/auth"
-import { useState, useEffect, useMemo, } from "react"
-import { Outlet } from "react-router-dom";
-
-
+import { useState, useEffect, } from "react"
 
 export default function VocabLists() {
   const auth = getAuth();
@@ -57,30 +54,29 @@ export default function VocabLists() {
 
 
   return (
-      
-    <div>
-      <MyButton to="" />
-      <h1>Your vocab lists</h1>
+    <>
+      <div>
+        <h1>Your vocab lists</h1>
 
-      <Button variant="contained" onClick={() => 
-        toggleNewCollectionModal(true)
-      }>          
-        New Collection 
-      </Button>
+        <Button variant="contained" onClick={() => 
+          toggleNewCollectionModal(true)
+        }>          
+          New Collection 
+        </Button>
 
-      <Button variant="contained">          
-        Schedule Test
-      </Button>
+        <Button variant="contained">          
+          Schedule Test
+        </Button>
 
-      {newVocabCollection && 
-        <NewCollection 
-          toggleNewCollectionModal={toggleNewCollectionModal}
-        />
-      }
+        {newVocabCollection && 
+          <NewCollection 
+            toggleNewCollectionModal={toggleNewCollectionModal}
+          />
+        }
 
-      <ShowVocabLists rows={rows} handleHeft={handleHeft} />
-    </div>
-      
+        <ShowVocabLists rows={rows} handleHeft={handleHeft} />
+      </div>
+    </>  
   );
 }
 

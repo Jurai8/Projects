@@ -112,7 +112,7 @@ export class Learner {
     }
 
     // handle login
-    LogIn(emailRef, passwordRef) {
+    async LogIn(emailRef, passwordRef) {
 
         const email = emailRef;
         const password = passwordRef;

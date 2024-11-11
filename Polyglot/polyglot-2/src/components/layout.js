@@ -1,7 +1,15 @@
+import Navigation from './Navigation'
+import Footer from './Footer'
+import { Outlet } from 'react-router-dom'
 
-
-export default function LoggedInLayout(page) {
+export default function Layout({ children }) {
     return (
-        <h1>Polyglot---</h1>
+        <>
+            <Navigation />
+            <main>
+                <Outlet />
+            </main>
+            <Footer />
+        </>
     )
 }
