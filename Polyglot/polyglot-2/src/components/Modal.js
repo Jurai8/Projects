@@ -24,7 +24,7 @@ export function NewCollection({ toggleNewCollectionModal }) {
     if (user != null) {
         vocab = new Vocab(user);
     } else {
-        console.log("user not signed in")
+        console.log("user not signed in hehe")
     }
 
 
@@ -231,29 +231,25 @@ export function DeleteWord({closeDeleteVocab, deleteVocab, open}) {
       )
 }
 
-export function Register ({ setError, setMessage, setStatus}) {
+export function Register ({ setError, setMessage}) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const usernameRef = useRef(null);
-    const user = new Learner();
 
-    const navigation = useNavigate();
+    const { register } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // TODO change to try/catch
-
         try {
-            await user.SignUp(emailRef.current.value, passwordRef.current.value, usernameRef.current.value)
+            await register({
+                email: emailRef.current.value, 
+                password: passwordRef.current.value, 
+                username: usernameRef.current.value
+            })
 
-            setError(false);
-            // ! remove (refer to signup.js)
-            setMessage(usernameRef.current.value);
-            setStatus(true);
-            navigation("/")
         } catch (error) {
             setError(true);
-            setMessage(error.message);
+            setMessage("Could not create account");
         }
     }
 

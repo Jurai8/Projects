@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLocalStorage } from "./useLocalStorage";
 import { Learner } from "../functions/Learner";
+import { useLocalStorage } from "./useLocalStorage";
 
 
 const AuthContext = createContext();
@@ -11,18 +11,27 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useLocalStorage("user", false);
   const navigate = useNavigate();
 
-  // TODO complete sign up
   // const sign up
-  
+  const register = async ({ email, password, username}) => {
+    try {
+      await learner.SignUp(email, password, username)
+    } catch (error) {
+      alert("could not create account")
+      throw new Error("useAuth: register error");
+      
+    }
+
+    setUser(email);
+    navigate("/vocablists");
+  }
+
   // call this function when you want to authenticate the user
   const login = async ({ email, password }) => {
-
     try {
         console.log("signing in user");
         await learner.LogIn(email, password);
     } catch (error) {
-        alert("failed to login");
-        return 0; 
+        throw new Error("useAuth: login error");
     }
 
     setUser(email);
@@ -35,8 +44,8 @@ export const AuthProvider = ({ children }) => {
     try {
       learner.SignOut();
   } catch (error) {
-      alert("failed to sign out");
-      return 0; 
+    throw new Error("useAuth: sign out error");
+
   }
     setUser(false);
     navigate("/", { replace: true });
@@ -45,6 +54,7 @@ export const AuthProvider = ({ children }) => {
   const value = useMemo(
     () => ({
       user,
+      register,
       login,
       logout,
     }),

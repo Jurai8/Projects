@@ -126,7 +126,7 @@ function IndexTest(){
                 setUser(user); 
             } else {
                 console.log("User is signed out");
-                alert("not signed in yet");
+                alert("Test: not signed in yet");
             }
         });
     }

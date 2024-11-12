@@ -66,7 +66,7 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
 
   } else {
     alert("user not authenticated")
-    console.log("User not signed in")
+    console.log("User not signed in 1,2")
   }
 
   const handleContextMenu = (row, event) => {

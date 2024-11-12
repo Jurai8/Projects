@@ -51,7 +51,6 @@ export default function Heft () {
                 setLearner(user); // Set the learner when the user is authenticated
             } else {
                 console.log("User is signed out");
-                alert("not signed in yet");
             }
         });
     }

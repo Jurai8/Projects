@@ -44,7 +44,7 @@ export default function VocabLists() {
           }
   
         } else {
-          alert("user not signed in");
+          alert("Vocablists: user not signed in");
         }
      })
     }
