@@ -125,6 +125,7 @@ function IndexTest(){
             if (user) {
                 setUser(user); 
             } else {
+                // TODO: cleanup subscription
                 console.log("User is signed out");
                 alert("Test: not signed in yet");
             }

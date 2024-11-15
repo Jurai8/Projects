@@ -13,43 +13,38 @@ import { NewCollection } from "../components/Modal";
 import { ShowVocabLists } from "../components/Table";
 import { Vocab } from "../functions/Learner"
 import { getAuth, onAuthStateChanged} from "firebase/auth"
-import { useState, useEffect, } from "react"
+import { useState, useEffect, useMemo } from "react"
 
 export default function VocabLists() {
-  const auth = getAuth();
-  
   const [rows, setRows] = useState([]);
-
-  const [heft, setHeft] = useState(false);
-
-  const handleHeft = () => setHeft(true);
-  // * new 
   const [newVocabCollection, setNewVocabCollection] = useState(false);
-  // * new
   const toggleNewCollectionModal = (bool) => setNewVocabCollection(bool);
 
   useEffect(() => {
-    const lists = () => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          const vocab = new Vocab(user);
+    const auth = getAuth();
   
-          try {
-            const vocabLists = await vocab.getAllVocabLists();
-  
-            console.log(vocabLists.length);
-            setRows(vocabLists);
-          } catch (error) {
-            console.error("could not get vocablists", error);
-          }
-  
-        } else {
-          alert("Vocablists: user not signed in");
-        }
-     })
-    }
+    const lists = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const vocab = new Vocab(user);
 
-    lists();
+        try {
+          const vocabLists = await vocab.getAllVocabLists();
+
+          console.log(vocabLists.length);
+          setRows(vocabLists);
+        } catch (error) {
+          console.error("could not get vocablists", error);
+        }
+
+      } else {
+        console.log("Vocablists: user not signed in")
+        alert("Vocablists: user not signed in");
+      }
+
+    })
+
+    // Cleanup listener on component unmount
+    return () => lists();
   },[])
 
 
@@ -74,7 +69,7 @@ export default function VocabLists() {
           />
         }
 
-        <ShowVocabLists rows={rows} handleHeft={handleHeft} />
+        <ShowVocabLists rows={rows} />
       </div>
     </>  
   );

@@ -140,7 +140,6 @@ export default function Heft () {
             console.log("hello: ", JSON.stringify(list) || "no params");
             const getListName = async () => {
                 try {
-                    // TODO: replace this with some method from learner.js
                     const vocabList = await vocabulary.getVocabulary(list);
 
                     console.log("vocabList: ", vocabList);
