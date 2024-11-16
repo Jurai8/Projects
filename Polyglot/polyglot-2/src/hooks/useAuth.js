@@ -1,14 +1,14 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Learner } from "../functions/Learner";
-import { useLocalStorage } from "./useLocalStorage";
-
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const AuthContext = createContext();
 const learner = new Learner();
 
+// TODO: create loading state
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useLocalStorage("user", false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   // const sign up
@@ -18,10 +18,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       alert("could not create account")
       throw new Error("useAuth: register error");
-      
     }
-
-    setUser(email);
     navigate("/vocablists");
   }
 
@@ -33,24 +30,39 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
         throw new Error("useAuth: login error");
     }
-
-    setUser(email);
     navigate("/vocablists");
   };
 
   // call this function to sign out logged in user
   const logout = () => {
-
     try {
       learner.SignOut();
   } catch (error) {
     throw new Error("useAuth: sign out error");
 
   }
-    setUser(false);
     navigate("/", { replace: true });
   };
 
+  // moniter authentication state
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        console.log("User signed in:", user);
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup the listener when the component unmounts
+    return () => unsubscribe();
+  }, []);
+
+  // context value
   const value = useMemo(
     () => ({
       user,

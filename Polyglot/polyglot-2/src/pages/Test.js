@@ -116,53 +116,31 @@ export default function TestLearner() {
 //This is where the user will choose which test to write.
 function IndexTest(){
     const [options, setOptions] = useState([])
-    const [user, setUser] = useState(null);
 
-    const getUser = () => {
+    useEffect(() => {
         const auth = getAuth();
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setUser(user); 
+        const getLists = onAuthStateChanged(auth, async (user) => {
+            if (user) { 
+                const vocab = new Vocab(user)
+
+                try {
+                    const vocabLists = await vocab.getAllVocabLists();
+                    setOptions(vocabLists);
+                } catch (error) {
+                    console.error("Error fetching vocab lists:", error);
+                }
             } else {
-                // TODO: cleanup subscription
+                
                 console.log("User is signed out");
+                // TODO: use an alert or a redirect, for the user?
                 alert("Test: not signed in yet");
             }
         });
-    }
-
-    useEffect(() => {
-        getUser();
+        
+       return () => getLists();
     },[])
-
-    const vocab = useMemo(() => {
-      if (user) {
-        return new Vocab(user);
-      } else {
-        console.log("user not authenticated, function: Sidebar");
-        return null;
-      }
-    }, [user]);
-
-    useEffect(() => {
-      if (vocab) {
-
-        const fetchVocabLists = async () => {
-          try {
-            console.log("Fetching vocab lists...");
-            const vocabListNames = await vocab.getAllVocabLists();
-
-            setOptions(vocabListNames);
-          } catch (error) {
-            console.error("Error fetching vocab lists:", error);
-          }
-        };
     
-        fetchVocabLists();
-      }
-    }, [vocab]);
-
     
     return (
         <div>
