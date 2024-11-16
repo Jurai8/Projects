@@ -7,21 +7,21 @@ import { useAuth } from '../hooks/useAuth';
 
 export default function Home() {
     const [username, setUsername] = useState(null);
-    const auth = getAuth();
     const { user, logout} = useAuth();
   
   
     useEffect(() => {
-      const showUsername = onAuthStateChanged(auth, (user) => {
+      const showUsername = () => {
+
         if (user) {
           setUsername(user.displayName);
         } else {
           setUsername(false);
         }
-      });
-  
-      return () => showUsername();
-    }, [auth]);
+      }
+
+      showUsername();
+    }, [user]);
   
     const input = useRef();
   

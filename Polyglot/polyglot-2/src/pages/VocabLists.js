@@ -24,29 +24,43 @@ export default function VocabLists() {
   const [newVocabCollection, setNewVocabCollection] = useState(false);
   const toggleNewCollectionModal = (bool) => setNewVocabCollection(bool);
 
+  // correct method for cleanup?
   useEffect(() => {
+    let isMounted = true; 
+
     const lists = async () => {
+      if (!isMounted) return;
+
       if (user) {
         const vocab = new Vocab(user);
 
         try {
           const vocabLists = await vocab.getAllVocabLists();
 
-          console.log(vocabLists.length);
-          setRows(vocabLists);
+          if (isMounted) {
+            console.log(vocabLists.length);
+            setRows(vocabLists);
+          }
         } catch (error) {
-          console.error("could not get vocablists", error);
+          if (isMounted) {
+            console.error("Could not get vocab lists", error);
+          }
         }
 
       } else {
-        console.log("Vocablists: user not signed in")
-        alert("Vocablists: user not signed in");
+        if (isMounted) {
+          console.log("Vocablists: user not signed in");
+          alert("Vocablists: user not signed in");
+        }
       }
     }
+    lists();
 
     // Cleanup listener on component unmount
-    return () => lists();
-  },[])
+    return () => {
+      isMounted = false;
+    }
+  },[user])
 
 
   return (

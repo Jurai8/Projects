@@ -11,6 +11,7 @@ import { firestore } from '../firebase';
 import { addDoc, collection, query, where, getDocs } from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useParams } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 /* // TODO: 
     if user has no vocab list
@@ -31,34 +32,24 @@ import { useParams } from 'react-router-dom';
 // TODO: remove all excess Vocab obj creations
 // TODO: check if the functions still work
 
-// ? button leading to heft page should be removed?
+
 export default function Heft () {
-    // * so that i don't have to define a new Vocab obj each time
-    // * or check if the user is signed in
-
-    // ! why is it not working
     const { list } = useParams();
-
-    console.log(list || "no list");
-
+    const { user } = useAuth();
     const [learner, setLearner] = useState(null);
 
-    const getUser = () => {
-        const auth = getAuth();
-
-        onAuthStateChanged(auth, (user) => {
+    useEffect(() => {
+        const getUser = () => {
             if (user) {
                 setLearner(user); // Set the learner when the user is authenticated
             } else {
                 console.log("User is signed out");
+                alert("Heft: user not signed in")
             }
-        });
-    }
+        }
 
-    useEffect(() => {
-        console.log("is user signed in?")
         getUser();
-    }, []);
+    }, [user]);
 
     const vocabulary = useMemo(() => {
         if (learner) {
@@ -365,7 +356,6 @@ export default function Heft () {
     
     return (
         <>
-        <MyButton to="" />
         <div id='table-position'>
             <div className='button-container'>
                 {/* only display button when showing a list */}
