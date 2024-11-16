@@ -578,6 +578,8 @@ export class Vocab {
         }
 
         return error;
+
+        
     }
 
     async deleteCollection(listName) {

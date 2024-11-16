@@ -125,6 +125,50 @@ export async function FetchVocab () {
     }
 }
 
+// check if the word is a noun
+// TODO: implement in vocablist.js
+export const NounChecker = (string) => {
+    const articles = ["der", "die", "das"]
+    // remove any spaces on the side
+    console.log("Before: ", string)
+
+    let word = string.trim()
+
+    // take the first 3 letters from the word as a seperate string and convert to lower case
+    const article = word.slice(0, 3).toLowerCase();
+    console.log("Article: ", article)
+
+     // if the string does not match (der,die,das)
+    if (!articles.includes(article)) {
+        // return false
+        console.log("No change:", word.toLowerCase());
+        return word.toLowerCase();
+    }
+
+    if (articles.includes(article)) {
+        // get the rest of the word
+        word = word.slice(3)
+        // remove any spaces behind the first letter
+        word = word.trim()
+        // capitalize the first letter
+        word = capitalizeFirstLetter(word)
+
+        // concatonate the lowercase article + " " + captilized word
+        // return the final version of the word
+        const newWord = article + " " + word
+        console.log("After: ", newWord)
+        return article + " " + word
+    }
+}
+
+function capitalizeFirstLetter(string) {
+    const word = string.toLowerCase()
+
+    // capitalize first letter and combine with rest of word
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  };
+
+
 
 
 
