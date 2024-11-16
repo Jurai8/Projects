@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import { Learner } from "../functions/Learner";
 import { Button } from "@mui/material";
-import MyButton from "../components/Button";
 import { useAuth } from '../hooks/useAuth';
 
 

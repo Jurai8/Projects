@@ -4,11 +4,14 @@ import { Learner } from "../functions/Learner";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const AuthContext = createContext();
-const learner = new Learner();
+
 
 // TODO: create loading state
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const learner = new Learner();
+
+  const [user, setUser] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // const sign up
@@ -56,7 +59,10 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(null);
       }
+
+      setLoading(false)
     });
+
 
     // Cleanup the listener when the component unmounts
     return () => unsubscribe();
@@ -69,6 +75,7 @@ export const AuthProvider = ({ children }) => {
       register,
       login,
       logout,
+      loading,
     }),
     [user]
   );

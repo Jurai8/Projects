@@ -8,6 +8,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { MenuItem, Select, Typography } from '@mui/material';
+import { useAuth } from '../hooks/useAuth';
 
 
 // This is the vocab test
@@ -115,12 +116,11 @@ export default function TestLearner() {
 
 //This is where the user will choose which test to write.
 function IndexTest(){
+    const { user } = useAuth();
     const [options, setOptions] = useState([])
 
     useEffect(() => {
-        const auth = getAuth();
-
-        const getLists = onAuthStateChanged(auth, async (user) => {
+        const getLists = async () => {
             if (user) { 
                 const vocab = new Vocab(user)
 
@@ -136,7 +136,7 @@ function IndexTest(){
                 // TODO: use an alert or a redirect, for the user?
                 alert("Test: not signed in yet");
             }
-        });
+        }
         
        return () => getLists();
     },[])

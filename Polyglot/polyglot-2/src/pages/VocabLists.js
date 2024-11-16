@@ -13,17 +13,19 @@ import { NewCollection } from "../components/Modal";
 import { ShowVocabLists } from "../components/Table";
 import { Vocab } from "../functions/Learner"
 import { getAuth, onAuthStateChanged} from "firebase/auth"
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
+import { useAuth } from "../hooks/useAuth";
+
 
 export default function VocabLists() {
+  const { user } = useAuth();
+
   const [rows, setRows] = useState([]);
   const [newVocabCollection, setNewVocabCollection] = useState(false);
   const toggleNewCollectionModal = (bool) => setNewVocabCollection(bool);
 
   useEffect(() => {
-    const auth = getAuth();
-  
-    const lists = onAuthStateChanged(auth, async (user) => {
+    const lists = async () => {
       if (user) {
         const vocab = new Vocab(user);
 
@@ -40,8 +42,7 @@ export default function VocabLists() {
         console.log("Vocablists: user not signed in")
         alert("Vocablists: user not signed in");
       }
-
-    })
+    }
 
     // Cleanup listener on component unmount
     return () => lists();
