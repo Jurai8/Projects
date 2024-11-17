@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import { Vocab } from '../functions/Learner';
+import { Vocab } from '../functions/vocab';
 import { getAuth } from 'firebase/auth';
 
 // get the array from UserVocabLists

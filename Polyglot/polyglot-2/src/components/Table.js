@@ -11,7 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Vocab } from '../functions/Learner';
+import { Vocab } from '../functions/vocab';
 import { useNavigate } from "react-router-dom";
 
 

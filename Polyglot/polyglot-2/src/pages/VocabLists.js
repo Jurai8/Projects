@@ -8,11 +8,9 @@
     
     
 import { Button } from "@mui/material";
-import MyButton from "../components/Button";
 import { NewCollection } from "../components/Modal";
 import { ShowVocabLists } from "../components/Table";
-import { Vocab } from "../functions/Learner"
-import { getAuth, onAuthStateChanged} from "firebase/auth"
+import { Vocab } from "../functions/vocab";
 import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth";
 

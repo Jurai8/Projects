@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { Learner } from '../functions/Learner';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { Vocab } from '../functions/Learner';
+import { Vocab } from '../functions/vocab';
 import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';

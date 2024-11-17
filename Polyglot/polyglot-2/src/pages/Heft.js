@@ -1,15 +1,11 @@
 import { Button } from '@mui/material';
 import '../App.css';
 import { DeleteWord, NewCollection } from '../components/Modal';
-import { Vocab } from '../functions/Learner';
-import MyButton from "../components/Button";
+import { Vocab } from '../functions/vocab';
 import Sidebar from '../components/Sidebar';
 import VocabBook from '../components/Table'
 import React, { useState, useEffect, useMemo} from 'react';
 import AddWord, { EditWord } from '../components/Modal';
-import { firestore } from '../firebase';
-import { addDoc, collection, query, where, getDocs } from "firebase/firestore"; 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
@@ -26,11 +22,6 @@ import { useAuth } from '../hooks/useAuth';
 // ! while in heft allow the user to switch between collections
 
 // ! check which functions need to be moved
-
-
-// TODO: remove all excess functions that check if the user is signed in,
-// TODO: remove all excess Vocab obj creations
-// TODO: check if the functions still work
 
 
 export default function Heft () {
@@ -81,7 +72,6 @@ export default function Heft () {
         translation: ''
     });
 
-    // TODO: using the concept of closures put these functions all under one functions, like a pseudo obj
     // input newWord
     const newNative = (e) => {
         setInput(prevInput => ({
@@ -115,8 +105,6 @@ export default function Heft () {
             translation: wordpair.translation
         })
     }
-    // ? stop here
-
 
     // manage state of which vocab book to show
     // pass vocab to vocabBook
@@ -128,7 +116,6 @@ export default function Heft () {
     // get vocabulary to pass to vocab 
     useEffect(() => {
         if (list && vocabulary) {
-            console.log("hello: ", JSON.stringify(list) || "no params");
             const getListName = async () => {
                 try {
                     const vocabList = await vocabulary.getVocabulary(list);
@@ -334,7 +321,7 @@ export default function Heft () {
             }
           }
 
-          // change
+          // TODO: change
           return "nothing worked";
         });
     };
