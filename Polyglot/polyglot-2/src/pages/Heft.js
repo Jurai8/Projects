@@ -1,7 +1,8 @@
-import { Button } from '@mui/material';
+import { Button,  } from '@mui/material';
 import '../App.css';
 import { DeleteWord, NewCollection } from '../components/Modal';
 import { Vocab } from '../functions/vocab';
+import { InputCheck } from '../functions/input';
 import Sidebar from '../components/Sidebar';
 import VocabBook from '../components/Table'
 import React, { useState, useEffect, useMemo} from 'react';
@@ -28,6 +29,7 @@ export default function Heft () {
     const { list } = useParams();
     const { user } = useAuth();
     const [learner, setLearner] = useState(null);
+    const checkInput = new InputCheck()
 
     useEffect(() => {
         const getUser = () => {
@@ -124,7 +126,7 @@ export default function Heft () {
                     // set all the vocab within the specific list
                     setVocab(vocabList);
                     // set name of current vocab list
-                    setCurrList(vocabList);
+                    setCurrList(list);
                 } catch (error) {
                     console.error("unable to display vocab list", error);
                 }
@@ -180,22 +182,21 @@ export default function Heft () {
     // pass this to confirm button
     const updateVocab = async () => {
         // if the input is not a string
-        if (!input || typeof input.native !== 'string' || typeof input.translation !== 'string') {
-            alert('Both fields must be filled out.');
-            return;
-        }
-    
-        // If the input strings are empty or only contain whitespace
-        if (input.native.trim() === '' || input.translation.trim() === '') {
-            alert('Both fields must be filled out.');
-            return;
-        }
 
         try {
+            try {
+                checkInput.checkVocabInput(input)
+            } catch (error) {
+                alert(error);
+                throw new Error("error with inputs: " + error);
+            }
             // name of vocab list + the new word
+            console.log("Heft, Currlist: " + typeof currList)
             await vocabulary.addWord(currList, input);
 
             console.log("Word has been added to list");
+
+            window.location.reload()
             alert("Word has been added to list");
 
         } catch (error) {
@@ -211,6 +212,7 @@ export default function Heft () {
             // name of vocab list + the new word
             await vocabulary.editWord(currList, originalWord, newWord);
 
+            window.location.reload()
             alert("Successfully edited word");
 
         } catch (error) {
@@ -224,6 +226,7 @@ export default function Heft () {
             // name of vocab list + og word
             await vocabulary.deleteWord(currList, originalWord);
 
+            window.location.reload()
             alert("Successfully deleted word");
 
         } catch (error) {
@@ -328,6 +331,7 @@ export default function Heft () {
 
 
     // function to set state using vocab list name
+    // ? is this even being used ?
     const getListName = async (ListName) => {
         try {
             // TODO: replace this with some method from learner.js

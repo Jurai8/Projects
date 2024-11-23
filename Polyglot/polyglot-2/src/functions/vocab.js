@@ -3,7 +3,7 @@ import {
     setDoc, addDoc, collection, getDocs, getDoc, doc, updateDoc, query, where,
     deleteDoc,
 } from "firebase/firestore"; 
-import { Input } from './input';
+import { InputCheck } from './input';
 
 export class Vocab {
     constructor(user) {
@@ -13,7 +13,7 @@ export class Vocab {
         this.vocab = [];
         // seperate variables or just on object?
         this.wordPair = {native: null , translation: null};
-        this.input = new Input();
+        this.input = new InputCheck();
     }
 
     async CreateVocabList(listName, word, translation) {
@@ -129,32 +129,27 @@ export class Vocab {
     async addWord(vocabList, wordPair) {
         const userId = this.user.uid;
         const listname = vocabList;
-        const newWord = wordPair;
 
         // check if it's a noun. regardless, return the word
-        newWord.translation = this.input.classifyWord(newWord.translation);
-    
-        // check input 
-        console.log(newWord);
+        const trans = this.input.classifyWord(wordPair.translation);
+        const native = wordPair.native
 
-        const error = this.input.checkVocabInput(newWord);
-
-        // if != 7, there's an issue
-        if (error.code !== 7) {
-            alert(error.message);
-            throw new Error("syntactic error");
+        if (typeof trans !== "string" || typeof native !== "string") {
+            throw new Error("function addWord: Not a string");
         }
 
         const query1 = query(
             collection(firestore, "Users", userId, listname),
-            where("word", "==", newWord.native)
-        );
-        
-        const query2 = query(
-            collection(firestore, "Users", userId, listname),
-            where("translation", "==", newWord.translation)
+            where("word", "==", native)
         );
 
+
+        const query2 = query(
+            collection(firestore, "Users", userId, listname),
+            where("translation", "==", trans)
+        );
+
+        
         try {
             // check if word/translation already exists in collection
             const nativeSnapshot = await getDocs(query1);
@@ -173,8 +168,8 @@ export class Vocab {
             const vocabListRef = collection(firestore, "Users", userId, listname)
             
             await addDoc(vocabListRef, {
-                word: newWord.native,
-                translation: newWord.translation
+                word: native,
+                translation: trans
             }).catch((error) => {
                 console.error('Error caught while adding document:', error);
                 throw new Error("Error adding word to subcollection"); 

@@ -2,7 +2,7 @@ import { firestore } from '../firebase';
 import { setDoc, doc} from "firebase/firestore"; 
 import { getAuth, onAuthStateChanged, signOut,  createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, updateProfile,} from "firebase/auth";
-import { Input } from './input';
+import { InputCheck } from './input';
 /* TODO: 
 create a learner class
     it it's methods will be the user related functions in MyEventHandlers.js
@@ -13,7 +13,7 @@ export class Learner {
     // TODO: create a contstructor
         // TODO: this.input = new Input();
     constructor() {
-        this.input = new Input()
+        this.input = new InputCheck()
     }
 
     // ! not needed ?

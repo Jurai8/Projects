@@ -122,9 +122,9 @@ export default function AddWord ({ closeModal, eventHandler, updateVocab, newWor
                 </div>
     
                 <div id='confirm-word'>
-                    <Button variant="contained" onClick={() => {
+                    <Button variant="contained" onClick={async () => {
                         // updateRows and db
-                        updateVocab();
+                        await updateVocab();
                         // if it works it works ig
                         closeModal(1);
                     }}>

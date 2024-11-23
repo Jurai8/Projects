@@ -1,8 +1,9 @@
 // Manage various input events across the app
 
-export class Input {
+export class InputCheck {
     // no constructors needed
 
+    // When a user is creating an account
     passwordStrength(password) {
         function hasNumber(userString) {
             return /\d/.test(userString);
@@ -39,34 +40,36 @@ export class Input {
         // 7 chars minimun
         if (password.length < 7) {
             errorMessage.isValid = false;
-            errorMessage.errors.push("Password cannot be shorter than seven character");
+            throw new Error("Password cannot be shorter than seven character");
         }
         // at least one number
         if (!hasNumber(password)) {
             errorMessage.isValid = false;
-            errorMessage.errors.push("Password must contain at least one number");
+            throw new Error("Password must contain at least one number");
         }
         // upper case letter
         if (!hasUppercase(password)) {
             errorMessage.isValid = false;
-            errorMessage.errors.push("Password must contain an uppercase letter")
+            throw new Error("Password must contain an uppercase letter")
         } 
     
         // special char: !, @, #, $, ()
         if (!hasSpecialChars(password)) {
             errorMessage.isValid = false;
-            errorMessage.errors.push("Password must contain at least one special character")
+            throw new Error("Password must contain at least one special character")
         }
     
         // if contains anything besides theses warn user
         if (!checkForUnmentionedChars(password)) {
             errorMessage.isValid = false;
-            errorMessage.errors.push("Password should not contain any spaces. It should only contain what was specified before");
+            throw new Error("Password should not contain any spaces. It should only contain what was specified before");
         }
     
         return errorMessage;
     }
 
+    // When adding a word into the list. Used to find nouns 
+    //! everything else will be put into lower case though
     classifyWord(string) {
         function capitalizeFirstLetter(string) {
             const word = string.toLowerCase()
@@ -108,38 +111,26 @@ export class Input {
         }
     }
 
+    // verify the input
     checkVocabInput(word) {
-        const native = word.native;
-        const translation = word.translation;
+        console.log("heyy")
+        const native = word.native.trim();
+        const translation = word.translation.trim();
         const alpha = /^[a-zA-Z]+(\s[a-zA-Z]+)*$/;
-        const error = {
-            code: 7,
-            message: ""
-        }
 
         // string should only contain alphabet
         // what about "-"?
         // I only want to make sure there aren't any numbers/special chars 
         if (!alpha.test(native) || !alpha.test(translation)) {
-            error.code = 1;
-            error.message = "Input should only contain alphabetical characters"
-            return error;
+            throw new Error("Input should only contain alphabetical characters");
         }
 
         // if input is empty
-        if (native === '') {
-            error.code = 2;
-            error.message = "There is no word to be translated"
-            return error;
+        if (native === '' || translation === '') {
+            throw new Error("Both fields need to be filled in");
         }
 
-        if (translation === '') {
-            error.code = 3;
-            error.message = "There is no translation"
-            return error;
-        }
-
-        return error;
+        return true
     }
     
 }
