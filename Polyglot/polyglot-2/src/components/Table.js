@@ -12,7 +12,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Vocab } from '../functions/vocab';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 
 
@@ -156,12 +156,67 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
 
 export function ShowVocabLists ({ rows }) {
 
-  /*  on double click
-        send user to /heft
-        load the vocab
-  */
-
   const navigate = useNavigate();
+  const { state } = useLocation();
+
+  
+
+  function renderTablerows() {
+
+    if (rows.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={2} align="center"> 
+            Getting your lists...
+          </TableCell>
+        </TableRow> 
+      )
+    }
+  
+    if (state) {
+      return (
+        rows.map((row) => (
+          <TableRow
+            key={row.listName}
+            id="table-test-to-list"
+            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            onDoubleClick={() => {
+              //! not replace isn't working as intended
+              //TODO: change url to render testLearner
+              navigate('/test', { 
+                replace: true,
+                state: row
+              });
+            }}
+          >
+            <TableCell component="th" scope="row">
+              {row.listName}
+            </TableCell>
+            <TableCell align="right">{row.vocabCount}</TableCell>
+          </TableRow>
+        ))
+      )
+    } else {
+      return (
+        rows.map((row) => (
+          <TableRow
+            key={row.listName}
+            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            onDoubleClick={() => {
+              navigate(`/vocablists/${row.listName}`);
+            }}
+          >
+            <TableCell component="th" scope="row">
+              {row.listName}
+            </TableCell>
+            <TableCell align="right">{row.vocabCount}</TableCell>
+          </TableRow>
+        ))
+      )
+    }
+  }
+
+  console.log("state: ", state)
   
   return (
     <TableContainer component={Paper}>
@@ -173,34 +228,20 @@ export function ShowVocabLists ({ rows }) {
             </TableRow>
           </TableHead>
           <TableBody>
-          { rows.length === 0 ? 
-            <TableRow>
-              <TableCell colSpan={2} align="center"> 
-                Getting your lists...
-              </TableCell>
-            </TableRow> :
-
-              rows.map((row) => (
-                <TableRow
-                  key={row.listName}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  onDoubleClick={() =>{
-                    navigate(`/vocablists/${row.listName}`);
-                  }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.listName}
-                  </TableCell>
-                  <TableCell align="right">{row.vocabCount}</TableCell>
-                </TableRow>
-              ))
-          }
+          {renderTablerows()}
           </TableBody>
         </Table>
     </TableContainer>
   );
 }
 
+
+
 export function DisplayVocablists() {
   
 }
+
+
+             
+
+              

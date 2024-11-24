@@ -347,6 +347,7 @@ export default function Heft () {
     
     return (
         <>
+        <h1>{currList}</h1>
         <div id='table-position'>
             <div className='button-container'>
                 {/* only display button when showing a list */}

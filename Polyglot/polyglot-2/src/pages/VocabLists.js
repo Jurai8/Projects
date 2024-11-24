@@ -13,10 +13,12 @@ import { ShowVocabLists } from "../components/Table";
 import { Vocab } from "../functions/vocab";
 import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth";
+import { useLocation } from "react-router-dom";
 
 
 export default function VocabLists() {
   const { user } = useAuth();
+  const { state } = useLocation();
 
   const [rows, setRows] = useState([]);
   const [newVocabCollection, setNewVocabCollection] = useState(false);
@@ -60,29 +62,41 @@ export default function VocabLists() {
     }
   },[user])
 
-
+  // decide which version to render depending on whether the user is coming from test or not
   return (
     <>
       <div>
         <h1>Your vocab lists</h1>
 
-        <Button variant="contained" onClick={() => 
-          toggleNewCollectionModal(true)
-        }>          
-          New Collection 
-        </Button>
+        {
+          state ? 
+          <>
+            <h2> Select a list </h2>
+            <ShowVocabLists rows={rows} state={state} />
+          </>
+          :
+          <>
+            <Button variant="contained" onClick={() => 
+            toggleNewCollectionModal(true)
+            }>          
+              New Collection 
+            </Button>
 
-        <Button variant="contained">          
-          Schedule Test
-        </Button>
+            <Button variant="contained">          
+              Schedule Test
+            </Button>
 
-        {newVocabCollection && 
-          <NewCollection 
-            toggleNewCollectionModal={toggleNewCollectionModal}
-          />
+            {newVocabCollection && 
+              <NewCollection 
+                toggleNewCollectionModal={toggleNewCollectionModal}
+              />
+            }
+
+            <ShowVocabLists rows={rows} />
+          </>
         }
 
-        <ShowVocabLists rows={rows} />
+        
       </div>
     </>  
   );

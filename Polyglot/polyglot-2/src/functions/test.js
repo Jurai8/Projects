@@ -17,7 +17,8 @@ export class Test {
 
     // fetchvocab()
     // TODO: add variables for collection name
-    async getVocab() {
+    async getVocab(listName) {
+        // TODO: replace with useAuth
         const auth = getAuth();
         const user = auth.currentUser;
 
@@ -25,7 +26,7 @@ export class Test {
             const userId = user.uid;
             // get vocab 
             try {
-                const getVocabdocs = await getDocs(collection(firestore, "Users", userId, "Family")); 
+                const getVocabdocs = await getDocs(collection(firestore, "Users", userId, listName)); 
 
                 getVocabdocs.forEach((doc) => {
                     this.vocab.push({

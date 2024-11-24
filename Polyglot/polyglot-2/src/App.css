@@ -19,6 +19,10 @@ html, body, #root, .App {
   overflow: hidden;
 }
 
+#table-test-to-list:hover {
+  background-color: #D3D3D3;
+}
+
 .button-container {
   width: 50%;
   text-align: right;

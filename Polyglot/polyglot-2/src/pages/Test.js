@@ -2,29 +2,53 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import MyButton from "../components/Button";
-import { FetchVocab } from '../functions/MyEventHandlers';
+import { BeginTest } from '../components/Modal';
 import { Test } from '../functions/test';
 import { Vocab } from '../functions/vocab';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { MenuItem, Select, Typography } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
+import React, { useRef, useState, useEffect, useMemo} from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import { Typography } from '@mui/material';
 
-
-// This is the vocab test
-
-// compare the word that they write against the word that they have saved
-// if they are the same  +1 point else -1 point
-// at the end give them their score/percentage 
-// show words that they got incorrect
-
-// first hardcode
 
 //TODO: create a collection to store words that user wants to be tested on in the future. User should be able to select individual words to be tested on within a vocab collection (?) or they can get tested on the entire collection
 
-export default function TestLearner() {
-    const {testName} = useParams();
+// the "home page" so to speak
+export function TestIndex() {
+    // the user should see 2 buttons to schedule and start a test
+    // the user should a see a table of scheduled tests
+    const [open, setOpen] = useState(false);
+    const OpenBeginTestModal = () => setOpen(true);
+    const CloseBeginTestModal = () => setOpen(false);
+
+    // TODO: should i wrap the use location in a useMemo/useEffect?
+        //? useEffect causes the variable to be redefined each time i update the source code
+    // TODO: pass listname directly to TestLearner so that they can begin the test
+    const { state } = useLocation();
+
+    return (
+        <>
+            <h1>Test</h1>
+            {state && <h2>List: { state.listName }</h2>}
+
+            <BeginTest open={open} closeModal={CloseBeginTestModal} />
+            <div >
+                <Button onClick={OpenBeginTestModal}>Start a Test</Button>
+                <Button>Schedule Test</Button>
+            </div>
+        </>
+    );
+}
+
+
+
+
+
+
+export function TestLearner() {
+    const { state } = useLocation();
+
+    const { user } = useAuth();
 
     // current word to be displayed
     const [word, setWord] = useState('');
@@ -39,10 +63,10 @@ export default function TestLearner() {
     // vocab list to be tested against
     const vocabListRef = useRef([]);
 
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    const vocabTest = new Test(user);
+    const vocabTest = useMemo(() => {
+        return new Test(user);
+    }, [user])
+    
 
     useEffect(() => {
         console.log(vocabTest.getScore())
@@ -54,7 +78,7 @@ export default function TestLearner() {
     }, [count,vocabTest])
 
     const initializeVocab = async () => {
-        const newWords = await vocabTest.getVocab();
+        const newWords = await vocabTest.getVocab(state.listName);
         vocabListRef.current = newWords;
         // Reset count to 0 to start from the first word
         setCount(0);
@@ -115,8 +139,9 @@ export default function TestLearner() {
     )
 }
 
+
 //This is where the user will choose which test to write.
-function IndexTest(){
+function SelectTest(){
     const { user } = useAuth();
     const [options, setOptions] = useState([])
 
@@ -157,4 +182,4 @@ function IndexTest(){
 
 
 
-export {IndexTest}
+export {SelectTest}

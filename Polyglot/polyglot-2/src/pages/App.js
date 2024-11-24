@@ -1,15 +1,9 @@
-import { Routes, Route, Link } from 'react-router-dom'
-import { Button } from "@mui/material";
-import {useState, useEffect, useRef} from "react"
-import { getAuth, onAuthStateChanged} from "firebase/auth";
+import { Routes, Route } from 'react-router-dom'
 import SignUp, { SignIn } from "./SignUp.js";
 import Heft from "./Heft.js";
 import Home from './Home.js';
 import VocabLists from "./VocabLists.js";
-import MyButton from "../components/Button";
-import TestLearner,{IndexTest} from "./Test.js"
-import { Learner } from "../functions/Learner.js";
-import ErrorPage from './ErrorPage.js';
+import {TestLearner, SelectTest, TestIndex} from "./Test.js"
 import { AuthProvider } from '../hooks/useAuth.js';
 import { ProtectedRoute } from '../components/ProtectedRoute.js';
 import Layout from '../components/Layout.js';
@@ -62,7 +56,7 @@ function App() {
             <Route path="/test">
               <Route index element={
                   <ProtectedRoute>
-                     <IndexTest />
+                     <TestIndex />
                   </ProtectedRoute>
                 }
               />
