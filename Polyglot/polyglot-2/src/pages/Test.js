@@ -9,6 +9,7 @@ import { useAuth } from '../hooks/useAuth';
 import React, { useRef, useState, useEffect, useMemo} from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Typography } from '@mui/material';
+import e from 'express';
 
 
 //TODO: create a collection to store words that user wants to be tested on in the future. User should be able to select individual words to be tested on within a vocab collection (?) or they can get tested on the entire collection
@@ -24,12 +25,12 @@ export function TestIndex() {
     // TODO: should i wrap the use location in a useMemo/useEffect?
         //? useEffect causes the variable to be redefined each time i update the source code
     // TODO: pass listname directly to TestLearner so that they can begin the test
-    const { state } = useLocation();
+    // const { state } = useLocation();
+    // {state && <h2>List: { state.listName }</h2>}
 
     return (
         <>
             <h1>Test</h1>
-            {state && <h2>List: { state.listName }</h2>}
 
             <BeginTest open={open} closeModal={CloseBeginTestModal} />
             <div >
@@ -66,7 +67,6 @@ export function TestLearner() {
     const vocabTest = useMemo(() => {
         return new Test(user);
     }, [user])
-    
 
     useEffect(() => {
         console.log(vocabTest.getScore())
@@ -88,22 +88,29 @@ export function TestLearner() {
         setInput(event.target.value);
     };
 
-    const handleConfirmClick = () => {
+    const handleConfirmClick = (e) => {
         setInput(''); // Clear the input field after adding to the array
         setCount((prevCount) => prevCount + 1);
     };
 
    const compare = () => {
+        console.log("compare")
        if(vocabTest.checkAnswer(vocabListRef.current[count].translation, input)){
         setScore(score+1)
        }
-   }
+    }
+
+    const handleFormSubmit = (e) => {
+        e.preventDefault(); // Prevent form from submitting and causing a reload
+    };
+
+
     return (
         <div>
-            <MyButton to="" />
+            {state && <h1>{state.listName}</h1>}
 
             {count === (vocabListRef.current.length) ?
-                <h1> Score: {score} / 3</h1> : <h1> Word: {word} </h1>
+                <h1> Score: {score} / {vocabListRef.current.length} </h1> : <h1> Word: {word} </h1>
             }
              
             <Box
@@ -113,18 +120,21 @@ export function TestLearner() {
                 }}
                 noValidate
                 autoComplete="off"
+                onSubmit={handleFormSubmit}
                 >
                 <TextField id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}/> 
 
-                <Button variant="contained" 
-                onClick={() => {
-                    if (begin) {
-                        compare()
-                        handleConfirmClick()
-                    } else {
-                        return null;
-                    }        
-                }}>
+                <Button 
+                    variant="contained" 
+                    onClick={() => {
+                        if (begin) {
+                            compare()
+                            handleConfirmClick()
+                        } else {
+                            return null;
+                        }        
+                    }}
+                >
                     Confirm
                 </Button>
 

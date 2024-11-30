@@ -183,7 +183,7 @@ export function ShowVocabLists ({ rows }) {
             onDoubleClick={() => {
               //! not replace isn't working as intended
               //TODO: change url to render testLearner
-              navigate('/test', { 
+              navigate('/test/vocabtest', { 
                 replace: true,
                 state: row
               });
