@@ -45,7 +45,7 @@ export function TestIndex() {
 
 
 
-
+//! struggling to restart test
 export function TestLearner() {
     const { state } = useLocation();
 
@@ -69,36 +69,49 @@ export function TestLearner() {
     }, [user])
 
     useEffect(() => {
-        console.log(vocabTest.getScore())
+        console.log("score:", score, "Count: ", count, "Vocab:", vocabListRef.current.length)
         // Ensure vocabListRef.current is not empty before trying to access it
         if (vocabTest.verifyWordSet(vocabListRef.current, count)) {
             // when count changes show value at index "count"
             setWord(vocabListRef.current[count].native);
         }
-    }, [count,vocabTest])
+    }, [score,count,vocabTest])
+
+    const beginTest = () => {
+        setBegin(true);
+
+        // reset the score to 0
+        setScore(0);
+    }
 
     const initializeVocab = async () => {
+
         const newWords = await vocabTest.getVocab(state.listName);
+
+        // make sure the list is empty
+        vocabListRef.current.length = 0;
+
         vocabListRef.current = newWords;
-        // Reset count to 0 to start from the first word
+
         setCount(0);
     };
 
     const handleInputChange = (event) => {
+        
         setInput(event.target.value);
     };
 
-    const handleConfirmClick = (e) => {
+    const handleConfirmClick = () => {
+        console.log("compare")
+
+        // check if user input the correct
+        if(vocabTest.checkAnswer(vocabListRef.current[count].translation, input)) {
+            setScore(score+1)
+        }
+
         setInput(''); // Clear the input field after adding to the array
         setCount((prevCount) => prevCount + 1);
     };
-
-   const compare = () => {
-        console.log("compare")
-       if(vocabTest.checkAnswer(vocabListRef.current[count].translation, input)){
-        setScore(score+1)
-       }
-    }
 
     const handleFormSubmit = (e) => {
         e.preventDefault(); // Prevent form from submitting and causing a reload
@@ -128,7 +141,6 @@ export function TestLearner() {
                     variant="contained" 
                     onClick={() => {
                         if (begin) {
-                            compare()
                             handleConfirmClick()
                         } else {
                             return null;
@@ -139,8 +151,8 @@ export function TestLearner() {
                 </Button>
 
                 <Button variant="contained" onClick={() => {
-                    setBegin(true)
-                    initializeVocab()  
+                    initializeVocab()
+                    beginTest()
                 }}>
                     Begin
                 </Button>
