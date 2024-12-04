@@ -45,12 +45,10 @@ export function TestIndex() {
 
 
 
-//! struggling to restart test
 export function TestLearner() {
     const { state } = useLocation();
 
     const { user } = useAuth();
-
     // current word to be displayed
     const [word, setWord] = useState('');
     // move through vocablist indices
@@ -62,39 +60,59 @@ export function TestLearner() {
     // keep track of whether test has started or not
     const [begin, setBegin] = useState(false)
     // vocab list to be tested against
-    const vocabListRef = useRef([]);
+    const [vocabListRef,setVocabListRef] = useState([]);
 
+    // TODO: figure out what to do when test ends
+    // TODO: how to restart test
+    // TODO: and how to start a new test
     const vocabTest = useMemo(() => {
         return new Test(user);
     }, [user])
 
+    
     useEffect(() => {
-        console.log("score:", score, "Count: ", count, "Vocab:", vocabListRef.current.length)
-        // Ensure vocabListRef.current is not empty before trying to access it
-        if (vocabTest.verifyWordSet(vocabListRef.current, count)) {
-            // when count changes show value at index "count"
-            setWord(vocabListRef.current[count].native);
-        }
-    }, [score,count,vocabTest])
+        const getwords = async () => {
+            try {
+                const words = await vocabTest.getVocab(state.listName);
 
+                const uniqueWords = words.filter((word, index, self) =>
+                    index === self.findIndex(w => 
+                        w.native === word.native && w.translation === word.translation
+                    )
+                );
+
+                setVocabListRef(uniqueWords);
+
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
+        getwords();
+    },[vocabTest,state])
+
+    useEffect(() => {
+        console.log("score:", score, "Count: ", count, "Vocab:", vocabListRef.length)
+        // Ensure vocabListRef.current is not empty before trying to access it
+        if (count != null && vocabTest.verifyWordSet(vocabListRef, count)) {
+            // when count changes show value at index "count"
+            console.log("hello")
+            setWord(vocabListRef[count].native);
+        } 
+
+        if (count === vocabListRef.length) {
+            setBegin(false)
+        }
+    }, [score,count,vocabTest,vocabListRef])
+
+    // use to begin/restart a test
     const beginTest = () => {
         setBegin(true);
 
-        // reset the score to 0
+        setCount(0);
+
         setScore(0);
     }
-
-    const initializeVocab = async () => {
-
-        const newWords = await vocabTest.getVocab(state.listName);
-
-        // make sure the list is empty
-        vocabListRef.current.length = 0;
-
-        vocabListRef.current = newWords;
-
-        setCount(0);
-    };
 
     const handleInputChange = (event) => {
         
@@ -105,7 +123,7 @@ export function TestLearner() {
         console.log("compare")
 
         // check if user input the correct
-        if(vocabTest.checkAnswer(vocabListRef.current[count].translation, input)) {
+        if(vocabTest.checkAnswer(vocabListRef[count].translation, input)) {
             setScore(score+1)
         }
 
@@ -122,8 +140,9 @@ export function TestLearner() {
         <div>
             {state && <h1>{state.listName}</h1>}
 
-            {count === (vocabListRef.current.length) ?
-                <h1> Score: {score} / {vocabListRef.current.length} </h1> : <h1> Word: {word} </h1>
+            {begin ?
+                <h1> Word: {word} </h1> : 
+                <h1> Score: {score} / {vocabListRef.length} </h1>
             }
              
             <Box
@@ -151,7 +170,6 @@ export function TestLearner() {
                 </Button>
 
                 <Button variant="contained" onClick={() => {
-                    initializeVocab()
                     beginTest()
                 }}>
                     Begin
