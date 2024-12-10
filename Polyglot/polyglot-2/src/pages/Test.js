@@ -9,8 +9,7 @@ import { useAuth } from '../hooks/useAuth';
 import React, { useRef, useState, useEffect, useMemo} from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { Typography } from '@mui/material';
-import e from 'express';
-
+import { DisplayButtons } from '../hooks/renderButtons';
 
 //TODO: create a collection to store words that user wants to be tested on in the future. User should be able to select individual words to be tested on within a vocab collection (?) or they can get tested on the entire collection
 
@@ -58,13 +57,16 @@ export function TestLearner() {
     // user score
     const [score, setScore] = useState(0);
     // keep track of whether test has started or not
-    const [begin, setBegin] = useState(false)
+    const [begin, setBegin] = useState(null)
     // vocab list to be tested against
     const [vocabListRef,setVocabListRef] = useState([]);
 
     // TODO: figure out what to do when test ends
     // TODO: how to restart test
     // TODO: and how to start a new test
+
+    //! how do i ensure that the display buttons functions is called when it needs to be
+
     const vocabTest = useMemo(() => {
         return new Test(user);
     }, [user])
@@ -105,6 +107,10 @@ export function TestLearner() {
         }
     }, [score,count,vocabTest,vocabListRef])
 
+    useEffect(() => {
+
+    }, begin)
+
     // use to begin/restart a test
     const beginTest = () => {
         setBegin(true);
@@ -135,16 +141,80 @@ export function TestLearner() {
         e.preventDefault(); // Prevent form from submitting and causing a reload
     };
 
+    // control which buttons to display based on the state of begin
+    const displayButtons = () => {
+        // if begin === null
+        if (begin !== true || begin !== false) {
+            // include begin button
+            return (
+                <Button variant="contained" onClick={() => {
+                    beginTest()
+                }}>
+                    Begin
+                </Button>
+            )
+        }
+
+        // if begin === true 
+        if (begin) {
+            // include confirm button
+            return(
+                <Button 
+                    variant="contained" 
+                    onClick={() => {
+                        if (begin) {
+                            handleConfirmClick()
+                        } else {
+                            return null;
+                        }        
+                    }}>
+                    Confirm
+                </Button>
+            )
+            
+        }
+            
+        // if begin === false
+        if (!begin) {
+            // include restart & new test button
+            return(
+                <>
+                    <Button 
+                        variant="contained" 
+                        >
+                        restart
+                    </Button>
+
+                    <Button 
+                        variant="contained" 
+                        >
+                        new test
+                    </Button>
+                </>
+            )
+            
+        }
+    }
+
 
     return (
         <div>
             {state && <h1>{state.listName}</h1>}
 
-            {begin ?
-                <h1> Word: {word} </h1> : 
-                <h1> Score: {score} / {vocabListRef.length} </h1>
-            }
-             
+            {/* display "word" upon entering the page */}
+            {begin === null ? (
+                <h1> Word: {word} </h1>
+
+                // if begin != null 
+            ) : (
+                begin === true ? (
+                    <h1> Word: {word} </h1>
+                ): (
+                    <h1> Score: {score} / {vocabListRef.length} </h1>
+                )
+            )}
+
+
             <Box
                 component="form"
                 sx={{
@@ -156,24 +226,7 @@ export function TestLearner() {
                 >
                 <TextField id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}/> 
 
-                <Button 
-                    variant="contained" 
-                    onClick={() => {
-                        if (begin) {
-                            handleConfirmClick()
-                        } else {
-                            return null;
-                        }        
-                    }}
-                >
-                    Confirm
-                </Button>
-
-                <Button variant="contained" onClick={() => {
-                    beginTest()
-                }}>
-                    Begin
-                </Button>
+                {displayButtons(begin)}
             </Box>
         </div>
     )

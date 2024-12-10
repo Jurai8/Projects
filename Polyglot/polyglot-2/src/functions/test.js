@@ -43,8 +43,7 @@ export class Test {
 
         console.log(currentWord,currentAnswer, currentWord === currentAnswer)
         if (currentWord === currentAnswer) {
-            this.score = this.score + 1;
-            console.log(this.score)
+            // score is handled by state
             return true;
         } else {
             return false;
@@ -73,6 +72,7 @@ export class Test {
 
     // getscore
     getScore() {
+        // score is handled by state
         return this.score;
     }
 
