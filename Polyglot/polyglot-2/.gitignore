@@ -26,5 +26,6 @@ yarn-error.log*
 
 #firebase config
 /src/firebase.js
+firebase-debug.log
 # ignore the backend
 /server/
