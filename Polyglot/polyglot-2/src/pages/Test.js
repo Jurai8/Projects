@@ -1,15 +1,13 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import MyButton from "../components/Button";
 import { BeginTest } from '../components/Modal';
 import { Test } from '../functions/test';
 import { Vocab } from '../functions/vocab';
 import { useAuth } from '../hooks/useAuth';
-import React, { useRef, useState, useEffect, useMemo} from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import React, { useState, useEffect, useMemo} from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
-import { DisplayButtons } from '../hooks/renderButtons';
 
 //TODO: create a collection to store words that user wants to be tested on in the future. User should be able to select individual words to be tested on within a vocab collection (?) or they can get tested on the entire collection
 
@@ -41,11 +39,12 @@ export function TestIndex() {
 }
 
 
-
+// TODO: create test test scheduler
 
 
 export function TestLearner() {
     const { state } = useLocation();
+    const navigate = useNavigate();
 
     const { user } = useAuth();
     // current word to be displayed
@@ -61,11 +60,8 @@ export function TestLearner() {
     // vocab list to be tested against
     const [vocabListRef,setVocabListRef] = useState([]);
 
-    // TODO: figure out what to do when test ends
-    // TODO: how to restart test
-    // TODO: and how to start a new test
+    // TODO: check if i need to do any data cleanups
 
-    //! how do i ensure that the display buttons functions is called when it needs to be
 
     const vocabTest = useMemo(() => {
         return new Test(user);
@@ -108,8 +104,8 @@ export function TestLearner() {
     }, [score,count,vocabTest,vocabListRef])
 
     useEffect(() => {
-
-    }, begin)
+        console.log("begin", begin)
+    }, [begin])
 
     // use to begin/restart a test
     const beginTest = () => {
@@ -119,6 +115,25 @@ export function TestLearner() {
 
         setScore(0);
     }
+
+    const randomizeArray = (array) => {
+
+        const random = vocabListRef;
+
+        // Iterate over the array in reverse order
+        for (let i = random.length - 1; i > 0; i--) {
+    
+            // Generate Random Index
+            const j = Math.floor(Math.random() * (i + 1));
+    
+            // Swap elements
+            [random[i], random[j]] = [random[j], random[i]];
+        }
+
+        // update the original array
+        setVocabListRef(random);
+    }
+
 
     const handleInputChange = (event) => {
         
@@ -142,60 +157,51 @@ export function TestLearner() {
     };
 
     // control which buttons to display based on the state of begin
-    const displayButtons = () => {
-        // if begin === null
-        if (begin !== true || begin !== false) {
-            // include begin button
-            return (
-                <Button variant="contained" onClick={() => {
-                    beginTest()
-                }}>
-                    Begin
-                </Button>
-            )
-        }
-
-        // if begin === true 
-        if (begin) {
-            // include confirm button
-            return(
-                <Button 
-                    variant="contained" 
-                    onClick={() => {
-                        if (begin) {
-                            handleConfirmClick()
-                        } else {
-                            return null;
-                        }        
+    function DisplayButtons({begin}) { 
+        return (
+            <>
+                {begin === null ? (
+                    <Button variant="contained" onClick={() => {
+                        beginTest()
                     }}>
-                    Confirm
-                </Button>
-            )
-            
-        }
-            
-        // if begin === false
-        if (!begin) {
-            // include restart & new test button
-            return(
-                <>
-                    <Button 
-                        variant="contained" 
-                        >
-                        restart
+                        Begin
                     </Button>
+                ) : (
+                    begin === true ? (
+                        <Button 
+                            variant="contained" 
+                            onClick={() => {
+                                if (begin) {
+                                    handleConfirmClick()
+                                } else {
+                                    return null;
+                                }        
+                            }}>
+                            Confirm
+                        </Button>
+                    ) : (
+                        <>
+                            <Button variant="contained" onClick={() => {
+                                randomizeArray()
+                                beginTest()
+                            }}>
+                                restart
+                            </Button>
 
-                    <Button 
-                        variant="contained" 
-                        >
-                        new test
-                    </Button>
-                </>
-            )
-            
-        }
-    }
-
+                            {/* rout user to indexTest */}
+                            <Button variant="contained" onClick={() => {
+                                // ? don't allow the user to go back ?
+                                navigate("/test")
+                            }}
+                            >
+                                End
+                            </Button>
+                        </>
+                    )
+                )}
+            </>
+        )
+    }   
 
     return (
         <div>
@@ -226,7 +232,8 @@ export function TestLearner() {
                 >
                 <TextField id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}/> 
 
-                {displayButtons(begin)}
+                <DisplayButtons begin={begin}/>
+
             </Box>
         </div>
     )

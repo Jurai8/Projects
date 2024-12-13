@@ -183,6 +183,7 @@ export class Vocab {
             if (docSnap.exists()) {
                 console.log("Document data:", docSnap.data().Words || "0");
 
+                // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
                 // treat it as a number if it isn't already
                 const currTotalWords = docSnap.data().Words ? Number(docSnap.data().Words) : 0;
 
@@ -191,7 +192,7 @@ export class Vocab {
                 await updateDoc(docRef, {
                     Words: newTotalWords
                 }).catch((error) => {
-                    console.error(error);
+                    throw new Error(error); 
                 });
             } else {
             // docSnap.data() will be undefined in this case
@@ -412,26 +413,69 @@ export class Vocab {
             throw new Error("could not get words to delete");
         }
 
-        // query db to find doc that contains word AND translation
-        const q = query(collection(firestore, "Users", uid, collectionName),
-         where("word", "==", native), 
-         where("translation", "==", trans)
-        );
+        //! refactor using firestore transaction, to make sure that if one call fails, the entire execution stops
+        try {
+            // * 1. Delete the word
 
-        const querySnapshot = await getDocs(q);
+            // query db to find doc that contains word AND translation
+            const q = query(collection(firestore, "Users", uid, collectionName),
+            where("word", "==", native), 
+            where("translation", "==", trans)
+            );
 
-        if (!querySnapshot.empty) {
-            const docRef = querySnapshot.docs[0];
-            // get the doc id
-            const docId = docRef.id;
-            
-            // delete doc
-            await deleteDoc(doc(firestore, "Users", uid, collectionName, docId)).catch((error) => {
-                alert("Could not delete word");
-                throw new Error("could not delete doc"); 
-            });
-        } else {
-            console.log('No documents found');
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                const docRef = querySnapshot.docs[0];
+                // get the doc id
+                const docId = docRef.id;
+                
+                // delete doc (the word)
+                try {
+                    await deleteDoc(doc(firestore, "Users", uid, collectionName, docId))
+                } catch (error) {
+                    throw new Error(error);
+                }
+
+                // update word count
+
+                // find the list within All_Vocab_Lists
+                const documentRef = doc(firestore, "Users", uid, "All_Vocab_Lists", collectionName);
+                
+                const docSnap = await getDoc(documentRef);
+
+                if (docSnap.exists()) {
+                    // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
+                    // treat it as a number if it isn't already
+                    const currTotalWords = docSnap.data().Words ? Number(docSnap.data().Words) : 0;
+
+                    console.log("total before:", currTotalWords)
+                    // decrease total words
+                    const newTotalWords = currTotalWords - 1;
+
+                    console.log("total after:", newTotalWords)
+
+                    // update in db
+                    try {
+                        await updateDoc(documentRef, {
+                            Words: newTotalWords
+                        })
+                    } catch (error) {
+                        throw new Error(error);
+                    }
+
+                } else {
+                    console.error("Vocabulary list document does not exist");
+                    throw new Error("Vocabulary list document does not exist");
+                }
+
+            } else {
+                console.log('No documents found to delete');
+            }
+        } catch (error) {
+            console.error("Error during word deletion and update:", error);
+            alert("could not delete word");
         }
+       
     }
 }
