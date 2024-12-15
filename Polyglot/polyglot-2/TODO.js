@@ -5,4 +5,16 @@
 // add cleanup functions for useEffect where necessary
 
 
-// When i reload the page, it shows the state of when a user is not signed in, then corrects itself - //!fix it
+// TODO: Scheduler
+// display calendar
+// allow user to schedule a test for that date
+// show user all the tests they've scheduled
+// when the scheduled day has been reached
+    // ask the user if they would like start the test
+
+// can't use google/firebase scheduler because it's paid
+
+// create schedule function using python
+// save the function to firebase db
+// periodically check if there's a match in the time scheduled
+// call the function when there's a mtch
