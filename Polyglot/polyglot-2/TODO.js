@@ -18,3 +18,11 @@
 // save the function to firebase db
 // periodically check if there's a match in the time scheduled
 // call the function when there's a mtch
+
+
+
+// TODO: Create Dictionary
+
+// TODO: Create Profile page
+
+// TODO: Create Account page

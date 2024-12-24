@@ -20,7 +20,7 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function Navigation() {
   const navigate = useNavigate();
-  const { user } = useAuth()
+  const { user, logout } = useAuth();
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -43,6 +43,8 @@ function Navigation() {
   const navigateTo = (page) => {
     if (page === "Home") {
       navigate("/")
+    } else if (page === "Logout") {
+      logout()
     } else {
       navigate(`/${page}`)
     }
@@ -180,7 +182,10 @@ function Navigation() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={() => {
+                  handleCloseUserMenu()
+                  navigateTo(setting)
+                  }}>
                   <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
                 </MenuItem>
               ))}
