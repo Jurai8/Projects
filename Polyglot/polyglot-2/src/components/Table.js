@@ -55,6 +55,8 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
     event: 0
   });
 
+  const [wordInfoModal, setWordInfoModal] = useState(false)
+
   const open = Boolean(anchorEl);
 
   const auth = getAuth();
@@ -109,6 +111,13 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
     getOriginalWord(wordpair)
   };
 
+  // open modal to display info of word
+  const displayInfo = (bool) => {
+    if (bool === true) setWordInfoModal(true);
+
+    if (bool === false) setWordInfoModal(false);
+  }
+
   return (
     <TableRow
       key={row.word}
@@ -148,6 +157,12 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
           openDeleteVocab()
         }}>
           Delete
+        </MenuItem>
+        <MenuItem onClick={() => {
+          displayInfo(true)
+          handleClose()
+        }}>
+          Info
         </MenuItem>
       </Menu>
     </TableRow>

@@ -12,6 +12,7 @@ import { PosMenu } from './Menu';
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { Divider } from '@mui/material';
 
 
 // pass user if possible
@@ -405,4 +406,47 @@ export function BeginTest({ open, closeModal }) {
             
         </>
     )
+}
+
+// Display a modal which contains data pertaining to a specific word
+export function WordInfo() {
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+        };
+
+    return (
+        <>
+            <Modal
+            /* open  & close modal */ 
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+            >
+            <Box sx={style}>
+                <h3> Info </h3>
+
+                <label> Word </label> <label> Translation</label>
+                <span>placeholder word</span><span>placeholder word</span>
+
+                <Divider/>
+                <label> Definition </label>
+                <span>placeholder Definition</span>
+
+                <Divider/>
+                <label> POS </label>
+                <span>placeholder POS</span>
+
+            </Box>
+            </Modal>
+            
+        </>
+    )
+    
 }

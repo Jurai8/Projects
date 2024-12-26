@@ -22,9 +22,10 @@
 
 
 // TODO: Create Dictionary
-
+    //? get the modal to display (tabelrowwithmenu.js)
+    
 // TODO: Create Profile page
 
 // TODO: Create Account page
 
-// TODO: Allow user to adf DP
+// TODO: Allow user to add DP
