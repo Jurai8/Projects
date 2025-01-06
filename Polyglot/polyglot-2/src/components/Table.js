@@ -16,7 +16,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 
 
-export default function VocabBook({ vocab, openModal, getOriginalWord, openDeleteVocab}) {
+export default function VocabBook({ vocab, openModal, getOriginalWord, openDeleteVocab, displayInfo}) {
 
   useEffect(() => {
     console.log(vocab);
@@ -35,6 +35,7 @@ export default function VocabBook({ vocab, openModal, getOriginalWord, openDelet
         <TableBody>
           {vocab.map((row) => (
             <TableRowWithMenu key={row.word} row={row} openModal={openModal} getOriginalWord={getOriginalWord} openDeleteVocab={openDeleteVocab}
+            displayInfo={displayInfo}
             />
           ))}
         </TableBody>
@@ -44,7 +45,7 @@ export default function VocabBook({ vocab, openModal, getOriginalWord, openDelet
 }
 
 // TODO: Make it so that the menu shows up upon hover
-function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
+function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab, displayInfo}) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuPosition, setMenuPosition ] = useState({
     mouseX: null, mouseY: null 
@@ -54,8 +55,6 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
     translation: null, 
     event: 0
   });
-
-  const [wordInfoModal, setWordInfoModal] = useState(false)
 
   const open = Boolean(anchorEl);
 
@@ -112,12 +111,7 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab}) {
   };
 
   // open modal to display info of word
-  const displayInfo = (bool) => {
-    if (bool === true) setWordInfoModal(true);
-
-    if (bool === false) setWordInfoModal(false);
-  }
-
+  
   return (
     <TableRow
       key={row.word}

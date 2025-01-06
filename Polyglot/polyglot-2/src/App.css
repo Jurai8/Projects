@@ -64,3 +64,21 @@ html, body, #root, .App {
   background-color: rgba(0, 0, 0, 0.5); /* Adjust the last value for transparency */
   z-index: 1000;
 }
+
+#word-label-container{
+  display: flex;
+  flex-direction: row;
+  gap: 10px
+}
+
+#word-lable-left{
+  margin: 0;
+  padding: 0;
+  width: auto; 
+}
+
+#word-lable-right{
+  margin: 0;
+  padding: 0;
+  width: auto; 
+}

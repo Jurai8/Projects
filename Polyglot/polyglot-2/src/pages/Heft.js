@@ -1,6 +1,6 @@
 import { Button,  } from '@mui/material';
 import '../App.css';
-import { DeleteWord, NewCollection } from '../components/Modal';
+import { DeleteWord, NewCollection, WordInfoModal } from '../components/Modal';
 import { Vocab } from '../functions/vocab';
 import { InputCheck } from '../functions/input';
 import Sidebar from '../components/Sidebar';
@@ -344,6 +344,15 @@ export default function Heft () {
             console.error("unable to display vocab list", error);
         }
     }
+
+    // control modal for viewing info of a word
+    const [wordInfoModal, setWordInfoModal] = useState(false)
+
+    const displayInfo = (bool) => {
+        if (bool === true) setWordInfoModal(true);
+    
+        if (bool === false) setWordInfoModal(false);
+      }
     
     return (
         <>
@@ -363,7 +372,7 @@ export default function Heft () {
                 </Button>
             </div>
 
-            
+            {/* //TODO remove the sidebar? use the collections button to route baack to vocablists.js */}
             {isSidebarOpen &&
              <Sidebar toggleSidebar={toggleSidebar} 
              isSidebarOpen={isSidebarOpen} getListName={getListName}
@@ -406,12 +415,22 @@ export default function Heft () {
                 />
             }
 
+            {/* modal displaying word info */}
+            {
+                wordInfoModal && 
+                <WordInfoModal 
+                    displayInfo={displayInfo} 
+                    open={WordInfoModal} 
+                />
+            }
+
                 <VocabBook 
                     vocab={vocab} 
                     getOriginalWord={getOriginalWord}
                     // triggers EditWord
                     openModal={openModal}
                     openDeleteVocab={openDeleteVocab}
+                    displayInfo={displayInfo}
                 />
         </div>
         </>

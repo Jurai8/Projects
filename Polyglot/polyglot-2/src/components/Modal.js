@@ -13,6 +13,7 @@ import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Divider } from '@mui/material';
+import zIndex from '@mui/material/styles/zIndex';
 
 
 // pass user if possible
@@ -210,7 +211,7 @@ export function DeleteWord({closeDeleteVocab, deleteVocab, open}) {
       return (
         <Modal
             open={open}
-             onClose={closeDeleteVocab}
+            onClose={closeDeleteVocab}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
             >
@@ -409,7 +410,8 @@ export function BeginTest({ open, closeModal }) {
 }
 
 // Display a modal which contains data pertaining to a specific word
-export function WordInfo() {
+export function WordInfoModal({displayInfo, open}) {
+    //TODO: work on design of the box
     const style = {
         position: 'absolute',
         top: '50%',
@@ -423,30 +425,57 @@ export function WordInfo() {
         };
 
     return (
-        <>
+        <div aria-hidden="false" aria-modal="true">
             <Modal
-            /* open  & close modal */ 
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
+                open={open}
+                onClose={() => displayInfo(false)}
+                /* open  & close modal */ 
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
             >
             <Box sx={style}>
                 <h3> Info </h3>
 
-                <label> Word </label> <label> Translation</label>
-                <span>placeholder word</span><span>placeholder word</span>
+                <div className='word-label-container'>
+                    <div id='word-label-left'>
+                        <label> Word </label> 
+                        <span> hello </span>
+                    </div>
+
+                    <div id='word-label-right'>
+                        <label> Translation </label>
+                        <span> hello 2 </span>
+                    </div>
+                </div>
+                
 
                 <Divider/>
-                <label> Definition </label>
-                <span>placeholder Definition</span>
+                <div>
+                    <label> Definition </label>
+                </div>
+               
+                <div>
+                    <span>placeholder-def</span>
+                </div>
+                
 
                 <Divider/>
-                <label> POS </label>
-                <span>placeholder POS</span>
+                <div>
+                    <label> POS </label>
+                </div>
+                
+                <div>
+                    <span>placeholder-POS</span>
+                </div>
+                
+
+                <Button onClick={() => {displayInfo(false)}}>
+                    close
+                </Button>
 
             </Box>
             </Modal>
-            
-        </>
+        </div>
     )
     
 }
