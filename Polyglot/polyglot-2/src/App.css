@@ -65,20 +65,53 @@ html, body, #root, .App {
   z-index: 1000;
 }
 
+/* within the word info modal */
 #word-label-container{
   display: flex;
   flex-direction: row;
-  gap: 10px
+  position: relative;
+  gap: 10px;
+  margin-bottom: 5px;
 }
 
-#word-lable-left{
-  margin: 0;
-  padding: 0;
-  width: auto; 
+.word-label{
+  font-weight: bold;
 }
 
-#word-lable-right{
-  margin: 0;
-  padding: 0;
-  width: auto; 
+#word-label-right{
+  position: absolute;
+  right: 0;
+  text-align: center;
 }
+
+#word-sec-right{
+  padding-top: 3px;
+}
+
+#word-sec-left{
+  padding-top: 3px;
+}
+
+/* container for the definition within the word info modal */
+#def-container{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#definition{
+  padding-top: 2px;
+}
+
+.edit-icon{
+  visibility: hidden;
+  opacity: 0;
+  transition: 
+      visibility 0s, opacity 0.5s ease;
+}
+
+#definition:hover 
+        .edit-icon {
+            font-size: 15px;
+            visibility: visible;
+            opacity: 1;
+        }

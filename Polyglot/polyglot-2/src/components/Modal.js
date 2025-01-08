@@ -3,17 +3,17 @@ import Box from '@mui/material/Box';
 import { Learner } from '../functions/Learner';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Chip from '@mui/material';
 import { Vocab } from '../functions/vocab';
 import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import MenuListComposition from './Menu';
-import { PosMenu } from './Menu';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Divider } from '@mui/material';
-import zIndex from '@mui/material/styles/zIndex';
+import EditIcon from '@mui/icons-material/Edit';
 
 
 // pass user if possible
@@ -425,7 +425,7 @@ export function WordInfoModal({displayInfo, open}) {
         };
 
     return (
-        <div aria-hidden="false" aria-modal="true">
+        <div className='word-info-modal' aria-hidden="false" aria-modal="true">
             <Modal
                 open={open}
                 onClose={() => displayInfo(false)}
@@ -436,37 +436,44 @@ export function WordInfoModal({displayInfo, open}) {
             <Box sx={style}>
                 <h3> Info </h3>
 
-                <div className='word-label-container'>
+                <div id='word-label-container'>
                     <div id='word-label-left'>
-                        <label> Word </label> 
-                        <span> hello </span>
+                    <label className='word-label'> Word: </label> 
+                        <section id='word-sec-left'> Hello </section>
                     </div>
 
                     <div id='word-label-right'>
-                        <label> Translation </label>
-                        <span> hello 2 </span>
+                        <label className='word-label'> Translation: </label>
+                        <section id='word-sec-right'> Hallo </section>
                     </div>
                 </div>
                 
-
                 <Divider/>
-                <div>
-                    <label> Definition </label>
+                <div id='def-container'>
+                    <div>
+                        <label className='word-label'> Definition: </label>
+                    </div>
+                
+                    <div id='definition'>
+                        <span>Dolor cillum incididunt esse aliquip commodo culpa aute.</span>
+                        <EditIcon className='edit-icon' sx={{ fontSize: 15 }} />
+                    </div>
+
+                   
+
+                </div>
+                
+                <Divider/>
+                <div id='pos-container'>
+                    <div>
+                        <label className='word-label'> POS: </label>
+                    </div>
+                    
+                    <div id='POS'>
+                        <span>Noun</span>
+                    </div>
                 </div>
                
-                <div>
-                    <span>placeholder-def</span>
-                </div>
-                
-
-                <Divider/>
-                <div>
-                    <label> POS </label>
-                </div>
-                
-                <div>
-                    <span>placeholder-POS</span>
-                </div>
                 
 
                 <Button onClick={() => {displayInfo(false)}}>

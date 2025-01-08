@@ -420,7 +420,7 @@ export default function Heft () {
                 wordInfoModal && 
                 <WordInfoModal 
                     displayInfo={displayInfo} 
-                    open={WordInfoModal} 
+                    open={wordInfoModal} 
                 />
             }
 

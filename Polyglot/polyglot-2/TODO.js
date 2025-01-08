@@ -23,9 +23,14 @@
 
 // TODO: Create Dictionary
     //? get the modal to display (tabelrowwithmenu.js)
+    // when the user hovers over a section, a pen symbol should show up and the end of the section
+        // if the user wants to edit the section they need to click the pen
+    // POS would be some sort of drop down menu
     
 // TODO: Create Profile page
 
 // TODO: Create Account page
 
 // TODO: Allow user to add DP
+
+// TODO: fix the context menu
