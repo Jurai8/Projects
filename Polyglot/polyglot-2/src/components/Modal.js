@@ -9,11 +9,13 @@ import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import MenuListComposition from './Menu';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Divider } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { createElement } from 'react';
+import zIndex from '@mui/material/styles/zIndex';
 
 
 // pass user if possible
@@ -411,6 +413,14 @@ export function BeginTest({ open, closeModal }) {
 
 // Display a modal which contains data pertaining to a specific word
 export function WordInfoModal({displayInfo, open}) {
+    const [childModal, setChildModal] = useState(false);
+
+    const openChildModal = () => {
+        console.log("opening modal")
+        setChildModal(true)
+    };
+    const closeChildModal = () => setChildModal(false);
+
     //TODO: work on design of the box
     const style = {
         position: 'absolute',
@@ -422,10 +432,11 @@ export function WordInfoModal({displayInfo, open}) {
         border: '2px solid #000',
         boxShadow: 24,
         p: 4,
-        };
+    };
 
     return (
         <div className='word-info-modal' aria-hidden="false" aria-modal="true">
+
             <Modal
                 open={open}
                 onClose={() => displayInfo(false)}
@@ -434,17 +445,31 @@ export function WordInfoModal({displayInfo, open}) {
                 aria-describedby="modal-modal-description"
             >
             <Box sx={style}>
-                <h3> Info </h3>
+                <h2 onClick={() => {console.log("clicked")}}> Info </h2>
 
                 <div id='word-label-container'>
                     <div id='word-label-left'>
-                    <label className='word-label'> Word: </label> 
-                        <section id='word-sec-left'> Hello </section>
+                        <label className='word-label'> Word: </label>
+
+                        <div id='word-sec-left'> 
+                            <span > Hello </span>
+                            <EditIcon className='edit-icon' sx={{ fontSize: 15 }} />
+                        </div>
+                        
+ 
                     </div>
 
                     <div id='word-label-right'>
                         <label className='word-label'> Translation: </label>
-                        <section id='word-sec-right'> Hallo </section>
+
+                        <div id='word-sec-right'>
+                            <span id='test'> Hallo </span>
+                            <EditIcon 
+                                className='edit-icon' 
+                                sx={{ fontSize: 15 }} 
+                                onClick={() => {openChildModal()}}
+                            />
+                        </div>
                     </div>
                 </div>
                 
@@ -458,9 +483,6 @@ export function WordInfoModal({displayInfo, open}) {
                         <span>Dolor cillum incididunt esse aliquip commodo culpa aute.</span>
                         <EditIcon className='edit-icon' sx={{ fontSize: 15 }} />
                     </div>
-
-                   
-
                 </div>
                 
                 <Divider/>
@@ -471,18 +493,55 @@ export function WordInfoModal({displayInfo, open}) {
                     
                     <div id='POS'>
                         <span>Noun</span>
+                        <EditIcon className='edit-icon' sx={{ fontSize: 15 }} />
                     </div>
                 </div>
                
-                
+                <WordInfoModalChild open={childModal} close={closeChildModal}/>
 
                 <Button onClick={() => {displayInfo(false)}}>
                     close
                 </Button>
-
             </Box>
             </Modal>
         </div>
     )
     
+}
+
+export function WordInfoModalChild({open, close}) {
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        pt: 2,
+        px: 4,
+        pb: 3,
+    };
+      
+
+  return (
+    <div  aria-modal="true">
+      <Modal
+        open={open}
+        onClose={() => {close()}}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+      >
+        <Box sx={{ ...style, width: 200 }}>
+          <h2 id="child-modal-title">Text in a child modal</h2>
+          <p id="child-modal-description">
+            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+          </p>
+          <Button onClick={() => {close()}}>Close Child Modal</Button>
+        </Box>
+      </Modal>
+    </div>
+  );
 }

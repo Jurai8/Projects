@@ -25,7 +25,14 @@
     //? get the modal to display (tabelrowwithmenu.js)
     // when the user hovers over a section, a pen symbol should show up and the end of the section
         // if the user wants to edit the section they need to click the pen
-    // POS would be some sort of drop down menu
+        
+    // POS:
+        // if the user clicks the edit symbol:
+            // change the text to a drop down menu
+
+    // Definition:
+        // if the definition goes over 2 lines use elipsis.
+        // the user needs to click on it to view the full definition
     
 // TODO: Create Profile page
 

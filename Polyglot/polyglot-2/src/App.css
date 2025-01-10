@@ -68,9 +68,7 @@ html, body, #root, .App {
 /* within the word info modal */
 #word-label-container{
   display: flex;
-  flex-direction: row;
   position: relative;
-  gap: 10px;
   margin-bottom: 5px;
 }
 
@@ -85,10 +83,13 @@ html, body, #root, .App {
 }
 
 #word-sec-right{
+  display: flex;
+  justify-content: center;
   padding-top: 3px;
 }
 
 #word-sec-left{
+  display: flex;
   padding-top: 3px;
 }
 
@@ -109,9 +110,12 @@ html, body, #root, .App {
       visibility 0s, opacity 0.5s ease;
 }
 
-#definition:hover 
-        .edit-icon {
+#POS:hover .edit-icon, #definition:hover .edit-icon, #word-sec-left:hover .edit-icon, #word-sec-right:hover .edit-icon{
             font-size: 15px;
             visibility: visible;
             opacity: 1;
         }
+
+#POS{
+  padding-top: 2px;
+}
