@@ -453,7 +453,11 @@ export function WordInfoModal({displayInfo, open}) {
 
                         <div id='word-sec-left'> 
                             <span > Hello </span>
-                            <EditIcon className='edit-icon' sx={{ fontSize: 15 }} />
+                            <EditIcon 
+                                className='edit-icon' 
+                                sx={{ fontSize: 15 }}
+                                onClick={() => {openChildModal()}} 
+                            />
                         </div>
                         
  
@@ -463,7 +467,7 @@ export function WordInfoModal({displayInfo, open}) {
                         <label className='word-label'> Translation: </label>
 
                         <div id='word-sec-right'>
-                            <span id='test'> Hallo </span>
+                            <span > Hallo </span>
                             <EditIcon 
                                 className='edit-icon' 
                                 sx={{ fontSize: 15 }} 
@@ -481,7 +485,11 @@ export function WordInfoModal({displayInfo, open}) {
                 
                     <div id='definition'>
                         <span>Dolor cillum incididunt esse aliquip commodo culpa aute.</span>
-                        <EditIcon className='edit-icon' sx={{ fontSize: 15 }} />
+                        <EditIcon 
+                            className='edit-icon' 
+                            sx={{ fontSize: 15 }} 
+                            onClick={() => {openChildModal()}}
+                        />
                     </div>
                 </div>
                 
@@ -492,8 +500,22 @@ export function WordInfoModal({displayInfo, open}) {
                     </div>
                     
                     <div id='POS'>
-                        <span>Noun</span>
-                        <EditIcon className='edit-icon' sx={{ fontSize: 15 }} />
+                        <select>
+                            <option value="none">None</option>
+                            <option value="noun">Noun</option>
+                            <option value="verb">Verb</option>
+                            <option value="article">Article</option>
+                            <option value="adjective">Adjective</option>
+                            <option value="pronoun">Pronoun</option>
+                            <option value="adverb">Adverb</option>
+                            <option value="conjunction">Conjunction</option>
+                            <option value="preposition">Preposition</option>
+                            <option value="interjection">Interjection</option>
+                            <option value="contraction">Contraction</option>
+                            <option value="numeral">Numeral</option>
+                            <option value="proper-noun">Proper-Noun</option>
+                            
+                        </select>
                     </div>
                 </div>
                
@@ -512,6 +534,8 @@ export function WordInfoModal({displayInfo, open}) {
 export function WordInfoModalChild({open, close}) {
 
     const style = {
+        display: 'grid',
+        justifyContent: 'center',
         position: 'absolute',
         top: '50%',
         left: '50%',
@@ -527,19 +551,25 @@ export function WordInfoModalChild({open, close}) {
       
 
   return (
-    <div  aria-modal="true">
+    <div>
       <Modal
         open={open}
         onClose={() => {close()}}
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
       >
-        <Box sx={{ ...style, width: 200 }}>
-          <h2 id="child-modal-title">Text in a child modal</h2>
-          <p id="child-modal-description">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-          </p>
-          <Button onClick={() => {close()}}>Close Child Modal</Button>
+        <Box sx={{ ...style, width: 200, }}>
+            <div id='c-modal-title-container'>
+                <h2 id="child-modal-title">Translation</h2>
+            </div>
+            <TextField 
+                id="standard-basic"
+                variant="standard" 
+                size='small' 
+                placeholder='Hallo'
+                multiline
+          />
+          <Button onClick={() => {close()}}>Save</Button>
         </Box>
       </Modal>
     </div>

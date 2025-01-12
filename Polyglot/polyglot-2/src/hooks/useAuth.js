@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
 
     // Cleanup the listener when the component unmounts
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   // context value
   const value = useMemo(

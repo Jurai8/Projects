@@ -33,7 +33,12 @@
     // Definition:
         // if the definition goes over 2 lines use elipsis.
         // the user needs to click on it to view the full definition
-    
+
+    //? when the user edits a part of the info, it needs to update on the modal and in the db.
+        // add all the info of a word in the same doc that's stored in a collection
+        // when the user adds a word, automatically create the required fields for them and input the value "none", for them to edit
+
+
 // TODO: Create Profile page
 
 // TODO: Create Account page
@@ -41,3 +46,7 @@
 // TODO: Allow user to add DP
 
 // TODO: fix the context menu
+
+
+// TODO: Idea
+    // an exercise to remember the definition would be one where the user matches the word to the definition.

@@ -119,3 +119,9 @@ html, body, #root, .App {
 #POS{
   padding-top: 2px;
 }
+
+
+/* inside child modal */
+#c-modal-title-container{
+  text-align: center;
+}

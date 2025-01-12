@@ -154,22 +154,28 @@ export class Vocab {
             // check if word/translation already exists in collection
             const nativeSnapshot = await getDocs(query1);
             const translationSnapshot = await getDocs(query2);
-    
+            
+            // if the source word already exists
             if (!nativeSnapshot.empty) {
                 alert("This word already exists within this collection");
+                // throw an error
                 throw new Error("This word already exists within this collection"); 
             }
-    
+            // if the translation already exists
             if (!translationSnapshot.empty) {
                 alert("This translation already exists within this collection");
+                // throw an error
                 throw new Error("This translation already exists within this collection"); 
             }
+
             // add word / update vocab list
             const vocabListRef = collection(firestore, "Users", userId, listname)
             
             await addDoc(vocabListRef, {
                 word: native,
-                translation: trans
+                translation: trans,
+                definition: "none",
+                POS: "none"
             }).catch((error) => {
                 console.error('Error caught while adding document:', error);
                 throw new Error("Error adding word to subcollection"); 
