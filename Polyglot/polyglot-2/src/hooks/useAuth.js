@@ -5,8 +5,6 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const AuthContext = createContext();
 
-
-// TODO: create loading state
 export const AuthProvider = ({ children }) => {
   const learner = new Learner();
 
@@ -66,9 +64,9 @@ export const AuthProvider = ({ children }) => {
 
     // Cleanup the listener when the component unmounts
     return () => unsubscribe();
-  }, [user]);
+  }, [user]); //? i added user as a dependancy but haven't checked if it affected anything
 
-  // context value
+  // create object of values, which only update based on "user"
   const value = useMemo(
     () => ({
       user,
@@ -85,3 +83,4 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   return useContext(AuthContext);
 };
+

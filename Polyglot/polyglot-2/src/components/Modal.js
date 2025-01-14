@@ -3,19 +3,17 @@ import Box from '@mui/material/Box';
 import { Learner } from '../functions/Learner';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material';
 import { Vocab } from '../functions/vocab';
 import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import MenuListComposition from './Menu';
-import { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Divider } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { createElement } from 'react';
-import zIndex from '@mui/material/styles/zIndex';
+import useFetchVocab from '../hooks/useVocab';
 
 
 // pass user if possible
@@ -312,8 +310,6 @@ export function Register ({ setError, setMessage}) {
 export function LogIn({ setError, setMessage, setStatus }) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
-    const user = new Learner();
-    const navigation = useNavigate();
     const { login } = useAuth()
 
     const handleSubmit = async (e) => {
@@ -412,8 +408,38 @@ export function BeginTest({ open, closeModal }) {
 }
 
 // Display a modal which contains data pertaining to a specific word
-export function WordInfoModal({displayInfo, open}) {
+export function WordInfoModal({ displayInfo, wordInfo }) {
+    const { user } = useAuth();
+    // this function will get all the info on a specific word
+    const { getInfo } = useFetchVocab(user);
+
+    // get the name of the current list
+    const location = useLocation();
+    const pathname = location.pathname;
+    // make sure to only get the name of the list
+    const listName = pathname.slice(12);
+
+
+    // used to store all the info on the word
+    const vocabRef = useRef();
+
+    // regulate when getInfo should be called
+    useEffect(() => {
+        const callGetInfo = () => {
+            // if the modal should open, call getInfo
+            if (wordInfo.show === true) {
+                // vocabRef.current should have the values: POS, translation, word and definition
+                console.log("retrieving info on word")
+                vocabRef.current = getInfo(listName, wordInfo.word);
+            }
+        }
+
+        callGetInfo();
+        
+    }, [wordInfo, listName, getInfo])
+
     const [childModal, setChildModal] = useState(false);
+    
 
     const openChildModal = () => {
         console.log("opening modal")
@@ -438,36 +464,56 @@ export function WordInfoModal({displayInfo, open}) {
         <div className='word-info-modal' aria-hidden="false" aria-modal="true">
 
             <Modal
-                open={open}
+                open={wordInfo.show}
                 onClose={() => displayInfo(false)}
                 /* open  & close modal */ 
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
             <Box sx={style}>
-                <h2 onClick={() => {console.log("clicked")}}> Info </h2>
 
-                <div id='word-label-container'>
-                    <div id='word-label-left'>
-                        <label className='word-label'> Word: </label>
+                {vocabRef.current ? 
+                <>
+                    <h2 onClick={() => {console.log("clicked")}}> Info </h2>
 
-                        <div id='word-sec-left'> 
-                            <span > Hello </span>
-                            <EditIcon 
-                                className='edit-icon' 
-                                sx={{ fontSize: 15 }}
-                                onClick={() => {openChildModal()}} 
-                            />
+                    <div id='word-label-container'>
+                        <div id='word-label-left'>
+                            <label className='word-label'> Word: </label>
+
+                            <div id='word-sec-left'> 
+                                <span > {vocabRef.current.word} </span>
+                                <EditIcon 
+                                    className='edit-icon' 
+                                    sx={{ fontSize: 15 }}
+                                    onClick={() => {openChildModal()}} 
+                                />
+                            </div>
+                            
+    
                         </div>
-                        
- 
+
+                        <div id='word-label-right'>
+                            <label className='word-label'> Translation: </label>
+
+                            <div id='word-sec-right'>
+                                <span > {vocabRef.current.translation} </span>
+                                <EditIcon 
+                                    className='edit-icon' 
+                                    sx={{ fontSize: 15 }} 
+                                    onClick={() => {openChildModal()}}
+                                />
+                            </div>
+                        </div>
                     </div>
-
-                    <div id='word-label-right'>
-                        <label className='word-label'> Translation: </label>
-
-                        <div id='word-sec-right'>
-                            <span > Hallo </span>
+                    
+                    <Divider/>
+                    <div id='def-container'>
+                        <div>
+                            <label className='word-label'> Definition: </label>
+                        </div>
+                    
+                        <div id='definition'>
+                            <span>{vocabRef.current.defintion}</span>
                             <EditIcon 
                                 className='edit-icon' 
                                 sx={{ fontSize: 15 }} 
@@ -475,55 +521,47 @@ export function WordInfoModal({displayInfo, open}) {
                             />
                         </div>
                     </div>
-                </div>
-                
-                <Divider/>
-                <div id='def-container'>
-                    <div>
-                        <label className='word-label'> Definition: </label>
-                    </div>
-                
-                    <div id='definition'>
-                        <span>Dolor cillum incididunt esse aliquip commodo culpa aute.</span>
-                        <EditIcon 
-                            className='edit-icon' 
-                            sx={{ fontSize: 15 }} 
-                            onClick={() => {openChildModal()}}
-                        />
-                    </div>
-                </div>
-                
-                <Divider/>
-                <div id='pos-container'>
-                    <div>
-                        <label className='word-label'> POS: </label>
-                    </div>
                     
-                    <div id='POS'>
-                        <select>
-                            <option value="none">None</option>
-                            <option value="noun">Noun</option>
-                            <option value="verb">Verb</option>
-                            <option value="article">Article</option>
-                            <option value="adjective">Adjective</option>
-                            <option value="pronoun">Pronoun</option>
-                            <option value="adverb">Adverb</option>
-                            <option value="conjunction">Conjunction</option>
-                            <option value="preposition">Preposition</option>
-                            <option value="interjection">Interjection</option>
-                            <option value="contraction">Contraction</option>
-                            <option value="numeral">Numeral</option>
-                            <option value="proper-noun">Proper-Noun</option>
-                            
-                        </select>
+                    <Divider/>
+                    <div id='pos-container'>
+                        <div>
+                            <label className='word-label'> POS: </label>
+                        </div>
+                        
+                        <div id='POS'>
+                            <select>
+                                <option value="none">None</option>
+                                <option value="noun">Noun</option>
+                                <option value="verb">Verb</option>
+                                <option value="article">Article</option>
+                                <option value="adjective">Adjective</option>
+                                <option value="pronoun">Pronoun</option>
+                                <option value="adverb">Adverb</option>
+                                <option value="conjunction">Conjunction</option>
+                                <option value="preposition">Preposition</option>
+                                <option value="interjection">Interjection</option>
+                                <option value="contraction">Contraction</option>
+                                <option value="numeral">Numeral</option>
+                                <option value="proper-noun">Proper-Noun</option>
+                                
+                            </select>
+                        </div>
                     </div>
-                </div>
-               
-                <WordInfoModalChild open={childModal} close={closeChildModal}/>
+                
+                    <WordInfoModalChild open={childModal} close={closeChildModal}/>
 
-                <Button onClick={() => {displayInfo(false)}}>
-                    close
-                </Button>
+                    <Button onClick={() => {displayInfo(false)}}>
+                        close
+                    </Button>
+
+                </> : 
+                    <>
+                        {/* show a loading screen if vocabRef.current isn't initialized */}
+                        <h2> Loading....</h2>
+                    </>
+                    
+                }
+                
             </Box>
             </Modal>
         </div>

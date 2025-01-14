@@ -13,6 +13,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Vocab } from '../functions/vocab';
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from '../hooks/useAuth';
+import useFetchVocab from '../hooks/useVocab';
 
 
 
@@ -44,8 +46,11 @@ export default function VocabBook({ vocab, openModal, getOriginalWord, openDelet
   );
 }
 
-// TODO: Make it so that the menu shows up upon hover
+// TODO: complete the menu
 function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab, displayInfo}) {
+
+  const { user } = useAuth();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [menuPosition, setMenuPosition ] = useState({
     mouseX: null, mouseY: null 
@@ -58,8 +63,6 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab, di
 
   const open = Boolean(anchorEl);
 
-  const auth = getAuth();
-  const user = auth.currentUser;
   let updateWord;
 
   if (user) {
@@ -136,9 +139,7 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab, di
             : undefined
         }
         open={open}
-        onClose={handleClose}
-        BackdropProps={{ invisible: true }}
-    
+        onClose={handleClose}    
       >
         <MenuItem onClick={() => {
           handleClose();
@@ -153,7 +154,7 @@ function TableRowWithMenu({ row, openModal, getOriginalWord, openDeleteVocab, di
           Delete
         </MenuItem>
         <MenuItem onClick={() => {
-          displayInfo(true)
+          displayInfo(true, wordpair)
           handleClose()
         }}>
           Info

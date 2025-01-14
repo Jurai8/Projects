@@ -346,12 +346,20 @@ export default function Heft () {
     }
 
     // control modal for viewing info of a word
-    const [wordInfoModal, setWordInfoModal] = useState(false)
+    const [wordInfoModal, setWordInfoModal] = useState({show: null, word: null})
 
-    const displayInfo = (bool) => {
-        if (bool === true) setWordInfoModal(true);
+    // word = the chosen word whose info will be displayed
+    // bool regulates whether the modal will open or no
+    const displayInfo = (bool, word) => {
+        if (bool === true) setWordInfoModal({
+            show: true,
+            word: word
+        })
     
-        if (bool === false) setWordInfoModal(false);
+        if (bool === false) setWordInfoModal({
+            show: false, 
+            word: null
+          });
       }
     
     return (
@@ -417,10 +425,10 @@ export default function Heft () {
 
             {/* modal displaying word info */}
             {
-                wordInfoModal && 
+                wordInfoModal.show && 
                 <WordInfoModal 
                     displayInfo={displayInfo} 
-                    open={wordInfoModal} 
+                    wordInfo={wordInfoModal} 
                 />
             }
 
