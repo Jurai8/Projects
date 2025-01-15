@@ -411,7 +411,8 @@ export function BeginTest({ open, closeModal }) {
 export function WordInfoModal({ displayInfo, wordInfo }) {
     const { user } = useAuth();
     // this function will get all the info on a specific word
-    const { getInfo } = useFetchVocab(user);
+    const { getInfo, error } = useFetchVocab(user);
+    const [wordData, setWordData] = useState({})
 
     // get the name of the current list
     const location = useLocation();
@@ -421,20 +422,21 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
 
     // used to store all the info on the word
-    const vocabRef = useRef();
 
     // regulate when getInfo should be called
     useEffect(() => {
-        const callGetInfo = () => {
+        const callGetInfo = async () => {
             // if the modal should open, call getInfo
             if (wordInfo.show === true) {
                 // vocabRef.current should have the values: POS, translation, word and definition
                 console.log("retrieving info on word")
-                vocabRef.current = getInfo(listName, wordInfo.word);
+                const vocabInfo = await getInfo(listName, wordInfo.word);
+                
+                setWordData(vocabInfo)
             }
         }
 
-        callGetInfo();
+       return () => callGetInfo();
         
     }, [wordInfo, listName, getInfo])
 
@@ -472,7 +474,8 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
             >
             <Box sx={style}>
 
-                {vocabRef.current ? 
+                {/* display something if error is true */ }
+                {wordData ? 
                 <>
                     <h2 onClick={() => {console.log("clicked")}}> Info </h2>
 
@@ -481,7 +484,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                             <label className='word-label'> Word: </label>
 
                             <div id='word-sec-left'> 
-                                <span > {vocabRef.current.word} </span>
+                                <span > {wordData.word} </span>
                                 <EditIcon 
                                     className='edit-icon' 
                                     sx={{ fontSize: 15 }}
@@ -496,7 +499,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                             <label className='word-label'> Translation: </label>
 
                             <div id='word-sec-right'>
-                                <span > {vocabRef.current.translation} </span>
+                                <span > {wordData.translation} </span>
                                 <EditIcon 
                                     className='edit-icon' 
                                     sx={{ fontSize: 15 }} 
@@ -513,7 +516,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                         </div>
                     
                         <div id='definition'>
-                            <span>{vocabRef.current.defintion}</span>
+                            <span>{wordData.definition}</span>
                             <EditIcon 
                                 className='edit-icon' 
                                 sx={{ fontSize: 15 }} 
