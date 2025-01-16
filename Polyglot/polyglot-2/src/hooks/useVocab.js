@@ -1,12 +1,22 @@
 import { useEffect, useState, useCallback } from "react"
 import { firestore } from "../firebase";
-import { collection, getDocs, query, where } from "firebase/firestore"; 
+import { collection, doc, updateDoc, getDocs, query, where } from "firebase/firestore"; 
 
-// this function returns all the details on a word/translation
+
+//TODO: in the modal, there are a total of 4 changes that the user can make. The functions won't be called as soon as they set the changes, rather only when the click the save button. Therefore if a change has been made then the functions should be tracked/queued? once they click the save button, put a loading symbol and display the info again/close the modal once complete
+
+// Hook containing functions which read from the db
 export default function useFetchVocab(user) {
     // make the arg the users info?
-    const [error, setError] = useState(null)
-    const [wordInfo, setWordInfo] = useState("")
+    const [error, setError] = useState(null);
+
+    // make sure user is authenticated
+    useEffect(() => {
+        if (!user) {
+            setError(true)  
+        }
+
+    }, [user])
 
     // useCallback prevents the function from changing every render, unless the value in the dependancy changes
     const getInfo = useCallback(async (listName, word) => {
@@ -35,7 +45,6 @@ export default function useFetchVocab(user) {
 
             querySnapshot.forEach((doc) => {
                 retrievedWord = doc.data();
-                setWordInfo(retrievedWord);
             });   
 
            
@@ -52,6 +61,14 @@ export default function useFetchVocab(user) {
       }, [user]);
 
 
+    // make sure to return the functions or states themselves
+    return { user, getInfo, error}
+}
+
+// Hook containing functions which write to the db
+export function useSetVocab(user) {
+    //TODO: create loading state
+    const [error, setError] = useState();
 
     // make sure user is authenticated
     useEffect(() => {
@@ -61,7 +78,113 @@ export default function useFetchVocab(user) {
 
     }, [user])
 
+    // Edit existing vocab
+    const editVocab = (listname, prevWord, newWord) => {
+        // the paramater should have the prev and new versions
 
-    // make sure to return the functions or states themselves
-    return { user, getInfo, error}
+        const uid = user.uid;
+
+        //? can i combine the 4 edit functions into one ?
+        const editSource = async () => {
+            const newSource = newWord.native;
+            const oldSource = prevWord.native;
+
+           
+
+            // get the doc that contains the word
+            try {
+                const q = query(
+                    collection(firestore, "Users", uid, listname),
+                    where("word", "==", oldSource)
+                );
+
+                const nativeSnapshot = await getDocs(q);
+
+                if (!nativeSnapshot.empty) { 
+                    // get the doc(word) from the snapshpt
+                    const firstDoc = nativeSnapshot.docs[0];
+                    // get the id of the doc
+                    const wordref = firstDoc.id; 
+                
+                    // Reference the doc
+                    const docRef = doc(firestore, "Users", uid, listname, wordref);
+
+                    try {
+                        // update with user input
+                        await updateDoc(docRef, {
+                            word: newSource
+                        })
+                    } catch (error) {
+                        setError(true);
+                        console.error("Function editSource: could not update source word", error)
+                    }
+                    
+                } else {
+                    throw new Error("Function editSource: No matching documents found");
+                }
+            } catch (error) {
+                setError(true);
+                console.error("Function editSource: could not get doc to edit source word", error);
+            }
+            
+
+            
+
+        }
+
+        const editTrans = async () => {
+            const newTrans = newWord.translation;
+            const oldTrans = newWord.translation;
+
+            // get the doc that contains the word
+            try {
+                const q = query(
+                    collection(firestore, "Users", uid, listname),
+                    where("word", "==", oldTrans)
+                );
+
+                const nativeSnapshot = await getDocs(q);
+
+                if (!nativeSnapshot.empty) { 
+                    // get the doc(word) from the snapshpt
+                    const firstDoc = nativeSnapshot.docs[0];
+                    // get the id of the doc
+                    const wordref = firstDoc.id; 
+                
+                    // Reference the doc
+                    const docRef = doc(firestore, "Users", uid, listname, wordref);
+
+                    try {
+                        // update translation with user input
+                        await updateDoc(docRef, {
+                            translation: newTrans
+                        })
+                    } catch (error) {
+                        setError(true);
+                        console.error("Function editSource: could not update translation", error)
+                    }
+                    
+                } else {
+                    throw new Error("Function editSource: No matching documents found");
+                }
+            } catch (error) {
+                setError(true);
+                console.error("Function editSource: could not get doc to edit translation", error);
+            }
+        }
+
+        const editDefinition = async () => {
+
+        }
+
+        const editPOS = async () => {
+            
+        }
+
+        //? will this work?
+        // the idea is that the  user should be able to call either of these functions depending on the word they choose to edit
+        return { editSource, editTrans }
+    }
+
+    return {editVocab, error};
 }

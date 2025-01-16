@@ -14,6 +14,7 @@ import { useAuth } from '../hooks/useAuth';
 import { Divider } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import useFetchVocab from '../hooks/useVocab';
+import { useSetVocab } from '../hooks/useVocab';
 
 
 // pass user if possible
@@ -412,16 +413,29 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     const { user } = useAuth();
     // this function will get all the info on a specific word
     const { getInfo, error } = useFetchVocab(user);
+
     const [wordData, setWordData] = useState({})
+
+    const [childModal, setChildModal] = useState(false);
+
+    // track what the user is editing. e.g definition
+    const [edits, setEdits] = useState({
+        title: "",
+        value: ""
+    })
+
+    // set to true when the user begins making changes
+    const [isEditing, setIsEditing] = useState(null)
+
+    const [input, setInput] = useState(null)
 
     // get the name of the current list
     const location = useLocation();
     const pathname = location.pathname;
+
     // make sure to only get the name of the list
     const listName = pathname.slice(12);
 
-
-    // used to store all the info on the word
 
     // regulate when getInfo should be called
     useEffect(() => {
@@ -440,7 +454,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         
     }, [wordInfo, listName, getInfo])
 
-    const [childModal, setChildModal] = useState(false);
+   
     
 
     const openChildModal = () => {
@@ -488,10 +502,15 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                                 <EditIcon 
                                     className='edit-icon' 
                                     sx={{ fontSize: 15 }}
-                                    onClick={() => {openChildModal()}} 
+                                    onClick={() => {
+                                        setEdits({
+                                            title: "Source Word",
+                                            value: wordData.word
+                                        })
+                                        openChildModal()
+                                    }} 
                                 />
                             </div>
-                            
     
                         </div>
 
@@ -503,7 +522,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                                 <EditIcon 
                                     className='edit-icon' 
                                     sx={{ fontSize: 15 }} 
-                                    onClick={() => {openChildModal()}}
+                                    onClick={() => {
+                                        setEdits({
+                                            title: "Translation",
+                                            value: wordData.translation
+                                        })
+                                        openChildModal()
+                                    }}
                                 />
                             </div>
                         </div>
@@ -520,7 +545,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                             <EditIcon 
                                 className='edit-icon' 
                                 sx={{ fontSize: 15 }} 
-                                onClick={() => {openChildModal()}}
+                                onClick={() => {
+                                    setEdits({
+                                        title: "Definition",
+                                        value: wordData.definition
+                                    })
+                                    openChildModal()
+                                }}
                             />
                         </div>
                     </div>
@@ -551,11 +582,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                         </div>
                     </div>
                 
-                    <WordInfoModalChild open={childModal} close={closeChildModal}/>
+                    <WordInfoModalChild open={childModal} close={closeChildModal} edits={edits} isEditing={isEditing}/>
 
                     <Button onClick={() => {displayInfo(false)}}>
                         close
                     </Button>
+
+                    {isEditing && <Button>save</Button>}
 
                 </> : 
                     <>
@@ -572,7 +605,8 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     
 }
 
-export function WordInfoModalChild({open, close}) {
+// allows user to edit word data
+export function WordInfoModalChild({open, close, edits, isEditing}) {
 
     const style = {
         display: 'grid',
@@ -601,16 +635,22 @@ export function WordInfoModalChild({open, close}) {
       >
         <Box sx={{ ...style, width: 200, }}>
             <div id='c-modal-title-container'>
-                <h2 id="child-modal-title">Translation</h2>
+                <h2 id="child-modal-title">{edits.title}</h2>
             </div>
             <TextField 
                 id="standard-basic"
                 variant="standard" 
                 size='small' 
-                placeholder='Hallo'
+                placeholder={edits.value}
                 multiline
           />
-          <Button onClick={() => {close()}}>Save</Button>
+          {/* when the save button is clicked, start tracking changes */}
+            <Button onClick={() => {
+                isEditing(true)
+                close()
+            }}>
+                Save
+            </Button>
         </Box>
       </Modal>
     </div>
