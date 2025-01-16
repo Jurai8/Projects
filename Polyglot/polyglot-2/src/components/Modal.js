@@ -414,7 +414,8 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // this function will get all the info on a specific word
     const { getInfo, error } = useFetchVocab(user);
 
-    const [wordData, setWordData] = useState({})
+    const [wordData, setWordData] = useState({});
+    const [copyWordData, setCopyWordData] = useState({})
 
     const [childModal, setChildModal] = useState(false);
 
@@ -446,7 +447,8 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 console.log("retrieving info on word")
                 const vocabInfo = await getInfo(listName, wordInfo.word);
                 
-                setWordData(vocabInfo)
+                setWordData(vocabInfo);
+                setCopyWordData(vocabInfo);
             }
         }
 
@@ -577,12 +579,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                                 <option value="contraction">Contraction</option>
                                 <option value="numeral">Numeral</option>
                                 <option value="proper-noun">Proper-Noun</option>
-                                
                             </select>
                         </div>
                     </div>
                 
-                    <WordInfoModalChild open={childModal} close={closeChildModal} edits={edits} isEditing={isEditing}/>
+                    <WordInfoModalChild open={childModal} close={closeChildModal} edits={edits} setisEditing={setIsEditing}
+                    setWordData={setWordData}
+                    />
 
                     <Button onClick={() => {displayInfo(false)}}>
                         close
@@ -606,7 +609,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 }
 
 // allows user to edit word data
-export function WordInfoModalChild({open, close, edits, isEditing}) {
+export function WordInfoModalChild({open, close, edits, setIsEditing, setWordData}) {
 
     const style = {
         display: 'grid',
@@ -643,10 +646,10 @@ export function WordInfoModalChild({open, close, edits, isEditing}) {
                 size='small' 
                 placeholder={edits.value}
                 multiline
-          />
+            />
           {/* when the save button is clicked, start tracking changes */}
             <Button onClick={() => {
-                isEditing(true)
+                setIsEditing(true)
                 close()
             }}>
                 Save
