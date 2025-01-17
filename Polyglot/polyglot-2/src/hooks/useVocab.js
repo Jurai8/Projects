@@ -3,7 +3,7 @@ import { firestore } from "../firebase";
 import { collection, doc, updateDoc, getDocs, query, where } from "firebase/firestore"; 
 
 
-//TODO: in the modal, there are a total of 4 changes that the user can make. The functions won't be called as soon as they set the changes, rather only when the click the save button. Therefore if a change has been made then the functions should be tracked/queued? once they click the save button, put a loading symbol and display the info again/close the modal once complete
+// TODO: useContext. the functions will be used in multiple places
 
 // Hook containing functions which read from the db
 export default function useFetchVocab(user) {
@@ -65,6 +65,7 @@ export default function useFetchVocab(user) {
     return { user, getInfo, error}
 }
 
+// TODO: useContext. the functions will be used in multiple places
 // Hook containing functions which write to the db
 export function useSetVocab(user) {
     //TODO: create loading state

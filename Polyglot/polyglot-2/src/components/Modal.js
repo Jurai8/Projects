@@ -1,6 +1,5 @@
 import '../App.css';
 import Box from '@mui/material/Box';
-import { Learner } from '../functions/Learner';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { Vocab } from '../functions/vocab';
@@ -411,24 +410,6 @@ export function BeginTest({ open, closeModal }) {
 // Display a modal which contains data pertaining to a specific word
 export function WordInfoModal({ displayInfo, wordInfo }) {
     const { user } = useAuth();
-    // this function will get all the info on a specific word
-    const { getInfo, error } = useFetchVocab(user);
-
-    const [wordData, setWordData] = useState({});
-    const [copyWordData, setCopyWordData] = useState({})
-
-    const [childModal, setChildModal] = useState(false);
-
-    // track what the user is editing. e.g definition
-    const [edits, setEdits] = useState({
-        title: "",
-        value: ""
-    })
-
-    // set to true when the user begins making changes
-    const [isEditing, setIsEditing] = useState(null)
-
-    const [input, setInput] = useState(null)
 
     // get the name of the current list
     const location = useLocation();
@@ -436,6 +417,111 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
     // make sure to only get the name of the list
     const listName = pathname.slice(12);
+
+    // this function will get all the info on a specific word
+    const { getInfo, error } = useFetchVocab(user);
+
+    const { editSource, editTrans, 
+        editDefinition } = useSetVocab(user).editVocab();
+
+    const [wordData, setWordData] = useState({});
+
+    const [copyWordData, setCopyWordData] = useState({});
+
+    const [childModal, setChildModal] = useState(false);
+
+    const [isSaveChangesModal, setisSaveChangesModal] = useState(false);
+
+    // track which functions need to be called
+    // contains the names of the fields that need to be updated
+    const [trackChanges, setTrackChanges] = useState([])
+
+    // track what the user is editing. e.g definition
+    const [edits, setEdits] = useState({
+        title: "",
+        dbField: "",
+        placeholder: ""
+    })
+
+    // set to true when the user begins making changes
+    const [isEditing, setIsEditing] = useState(false);
+
+    const toggleIsEditing = () => setIsEditing(true);
+
+    const checkIsEditing = (isEditing) => {
+        // if there are changes which haven't been saved
+        if (isEditing) {
+            // display modal
+            openSaveChangesModal();
+        }
+
+        // if there are no changes
+        if (!isEditing) {
+            // close the modal
+            displayInfo(false)
+        }
+    }
+
+    // set everything back to original state, i.e revert all changes
+    const revertChanges = () => {
+        setWordData(copyWordData);
+        setTrackChanges([]);
+        setEdits({
+            title: "",
+            dbField: "",
+            placeholder: ""
+        })
+    }
+
+    // the user wants to save their changes
+    const saveChanges = () => {
+
+        console.log("saving changes")
+
+        console.log("Changes: ", trackChanges)
+        // use the functions from the hook to save changes to the db
+
+        trackChanges.forEach((change) => {
+            console.log(change);
+
+            //! why does it not see the conditions as true
+
+            switch (change) {
+                case change === "word":
+                    console.log("updating source word");
+                    break;
+                case change === "translation":
+                    console.log("updating translation");
+                    break;
+                
+                case change === "definition":
+                    console.log("updating definition");
+                    break;
+                    
+                case change === "POS":
+                    console.log("updating POS")
+                    break;
+
+                default:
+                    // set error true
+                    // throw error
+                    console.log("No changes");
+                    break;
+            }
+
+            setTrackChanges([]);
+        })
+        // ensure the neither word/translation is empty
+        // if dictionary is empty, set the value to "none"
+    }
+
+    const updateTrackChanges = (func) => {
+        setTrackChanges((prevFuncs) => [...prevFuncs, func])
+    }
+
+    // open and close the save changes modal 
+    const openSaveChangesModal = () => setisSaveChangesModal(true);
+    const closeSaveChangesModal = () =>  setisSaveChangesModal(false);
 
 
     // regulate when getInfo should be called
@@ -507,7 +593,8 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                                     onClick={() => {
                                         setEdits({
                                             title: "Source Word",
-                                            value: wordData.word
+                                            dbField: "word",
+                                            placeholder: wordData.word
                                         })
                                         openChildModal()
                                     }} 
@@ -527,7 +614,8 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                                     onClick={() => {
                                         setEdits({
                                             title: "Translation",
-                                            value: wordData.translation
+                                            dbField: "translation",
+                                            placeholder: wordData.translation
                                         })
                                         openChildModal()
                                     }}
@@ -550,7 +638,8 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                                 onClick={() => {
                                     setEdits({
                                         title: "Definition",
-                                        value: wordData.definition
+                                        dbField: "definition",
+                                        placeholder: wordData.definition
                                     })
                                     openChildModal()
                                 }}
@@ -583,15 +672,35 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                         </div>
                     </div>
                 
-                    <WordInfoModalChild open={childModal} close={closeChildModal} edits={edits} setisEditing={setIsEditing}
-                    setWordData={setWordData}
+                    <WordInfoModalChild 
+                        open={childModal} 
+                        close={closeChildModal} 
+                        edits={edits} 
+                        toggleIsEditing={toggleIsEditing}
+                        setWordData={setWordData}
+                        updateTrackChanges={updateTrackChanges}
                     />
 
-                    <Button onClick={() => {displayInfo(false)}}>
-                        close
-                    </Button>
+                    <SaveChangesModal 
+                        open={isSaveChangesModal}
+                        close={closeSaveChangesModal}
+                        reverChanges={revertChanges}
+                        saveChanges={saveChanges}
+                    />
 
-                    {isEditing && <Button>save</Button>}
+                    <div sx={{ display: 'flex'}}>
+                        <Button onClick={() => {checkIsEditing(isEditing)}}>
+                            close
+                        </Button>
+
+                        {isEditing &&
+                            <Button onClick={() => {saveChanges()}}>
+                                save
+                            </Button>
+                        }
+                        
+                    </div>
+                   
 
                 </> : 
                     <>
@@ -609,7 +718,14 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 }
 
 // allows user to edit word data
-export function WordInfoModalChild({open, close, edits, setIsEditing, setWordData}) {
+export function WordInfoModalChild({open, close, edits, toggleIsEditing, setWordData, updateTrackChanges }) {
+
+    // track input change when user wants to change word info
+    const [input, setInput] = useState('');
+    
+    const handleInputChange = (event) => {
+        setInput(event.target.value);
+    }
 
     const style = {
         display: 'grid',
@@ -629,13 +745,12 @@ export function WordInfoModalChild({open, close, edits, setIsEditing, setWordDat
       
 
   return (
-    <div>
-      <Modal
+    <Modal
         open={open}
         onClose={() => {close()}}
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
-      >
+    >
         <Box sx={{ ...style, width: 200, }}>
             <div id='c-modal-title-container'>
                 <h2 id="child-modal-title">{edits.title}</h2>
@@ -644,18 +759,78 @@ export function WordInfoModalChild({open, close, edits, setIsEditing, setWordDat
                 id="standard-basic"
                 variant="standard" 
                 size='small' 
-                placeholder={edits.value}
+                placeholder={edits.placeholder}
                 multiline
+                onChange={handleInputChange}
             />
-          {/* when the save button is clicked, start tracking changes */}
+            {/* when the save button is clicked, start tracking changes */}
+            {/* update wordData when user clicks save  */}
             <Button onClick={() => {
-                setIsEditing(true)
-                close()
+                toggleIsEditing(true);
+
+                setWordData((prevData) => ({
+                    ...prevData, // Preserve all existing fields
+                    [edits.dbField]: input, // Dynamically Update the specific field
+                }));
+
+                updateTrackChanges(edits.dbField);
+
+                close();
             }}>
-                Save
+                Done
             </Button>
         </Box>
-      </Modal>
-    </div>
+    </Modal>
+
   );
+}
+
+function SaveChangesModal({ open, close, revertWordData, saveChanges }) {
+
+    const style = {
+        display: 'grid',
+        justifyContent: 'center',
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        pt: 2,
+        px: 4,
+        pb: 3,
+    };
+
+
+    return (
+        <Modal
+        open={open}
+        onClose={() => {close()}}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+    >
+        <Box sx={{ ...style, width: 200, }}>
+            <div id='c-modal-title-container'>
+                <p> Close without saving changes? </p>
+            </div>
+           
+            <Button onClick={() => {
+                close();
+                revertWordData()
+            }}>
+                Yes
+            </Button>
+
+            <Button onClick={() => {
+                close();
+                saveChanges()
+            }}>
+                Save changes
+            </Button>
+        </Box>
+    </Modal>
+
+    )
 }
