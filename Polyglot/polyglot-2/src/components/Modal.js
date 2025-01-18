@@ -446,8 +446,6 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // set to true when the user begins making changes
     const [isEditing, setIsEditing] = useState(false);
 
-    const toggleIsEditing = () => setIsEditing(true);
-
     const checkIsEditing = (isEditing) => {
         // if there are changes which haven't been saved
         if (isEditing) {
@@ -464,6 +462,8 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
     // set everything back to original state, i.e revert all changes
     const revertChanges = () => {
+        // set wordData back to it's original state
+        //? do i need to? the state seems to go back to it's original version if I don't save the changes in the db
         setWordData(copyWordData);
         setTrackChanges([]);
         setEdits({
@@ -474,49 +474,74 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     }
 
     // the user wants to save their changes
-    const saveChanges = () => {
+    const saveChanges = async () => {
 
         console.log("saving changes")
-
-        console.log("Changes: ", trackChanges)
         // use the functions from the hook to save changes to the db
 
-        trackChanges.forEach((change) => {
-            console.log(change);
+        console.log("trackchanges", trackChanges);
+        
+        for (const field of trackChanges) {
 
-            //! why does it not see the conditions as true
-
-            switch (change) {
-                case change === "word":
+            switch (field) {
+                case "word":
                     console.log("updating source word");
+                    
+                    //! both old and new words are shown as undefined 
+                    await editSource(listName, copyWordData.word, wordData.word);
+
+                    break; 
+                case "translation":
+                    console.log("updating translation",);
                     break;
-                case change === "translation":
-                    console.log("updating translation");
-                    break;
-                
-                case change === "definition":
+                        
+                case "definition":
                     console.log("updating definition");
                     break;
                     
-                case change === "POS":
+                case "POS":
                     console.log("updating POS")
                     break;
 
                 default:
                     // set error true
                     // throw error
-                    console.log("No changes");
+                    console.log("No changes.");
                     break;
             }
+        }
 
-            setTrackChanges([]);
-        })
-        // ensure the neither word/translation is empty
-        // if dictionary is empty, set the value to "none"
+        // reset fields that have been updated 
+        setTrackChanges([]);
+
+        // after the changes have been saved reset edits
+        setIsEditing(false);
     }
 
-    const updateTrackChanges = (func) => {
-        setTrackChanges((prevFuncs) => [...prevFuncs, func])
+    const setUserInput = (field, input) => {
+        // if the user input is empty/ not a string
+        if (!input) {
+            // don't update anything
+            return;
+        } else {
+            console.log("setting user input")
+            setWordData((prevData) => ({
+                ...prevData, // Preserve all existing fields
+                [field]: input, // Dynamically Update the specific field
+            }));
+
+            // keep track of the whether the user is editing or not
+            if (!isEditing) {
+                setIsEditing(true);
+            }
+    
+            // track which fields are being updated
+            // ensure there's no duplicate field inputs
+            if (!trackChanges.includes(field)) {
+                setTrackChanges((prevField) => [...prevField, field])
+            }
+            
+        }
     }
 
     // open and close the save changes modal 
@@ -530,10 +555,11 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
             // if the modal should open, call getInfo
             if (wordInfo.show === true) {
                 // vocabRef.current should have the values: POS, translation, word and definition
-                console.log("retrieving info on word")
+                console.log("retrieving info on word");
                 const vocabInfo = await getInfo(listName, wordInfo.word);
                 
                 setWordData(vocabInfo);
+                // save a copy of the original state, as wordData will be updated
                 setCopyWordData(vocabInfo);
             }
         }
@@ -676,15 +702,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                         open={childModal} 
                         close={closeChildModal} 
                         edits={edits} 
-                        toggleIsEditing={toggleIsEditing}
-                        setWordData={setWordData}
-                        updateTrackChanges={updateTrackChanges}
-                    />
+                        setUserInput={setUserInput}
+                        />
 
                     <SaveChangesModal 
                         open={isSaveChangesModal}
                         close={closeSaveChangesModal}
-                        reverChanges={revertChanges}
+                        revertChanges={revertChanges}
                         saveChanges={saveChanges}
                     />
 
@@ -718,7 +742,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 }
 
 // allows user to edit word data
-export function WordInfoModalChild({open, close, edits, toggleIsEditing, setWordData, updateTrackChanges }) {
+export function WordInfoModalChild({open, close, edits, setUserInput }) {
 
     // track input change when user wants to change word info
     const [input, setInput] = useState('');
@@ -755,6 +779,8 @@ export function WordInfoModalChild({open, close, edits, toggleIsEditing, setWord
             <div id='c-modal-title-container'>
                 <h2 id="child-modal-title">{edits.title}</h2>
             </div>
+
+           
             <TextField 
                 id="standard-basic"
                 variant="standard" 
@@ -766,15 +792,9 @@ export function WordInfoModalChild({open, close, edits, toggleIsEditing, setWord
             {/* when the save button is clicked, start tracking changes */}
             {/* update wordData when user clicks save  */}
             <Button onClick={() => {
-                toggleIsEditing(true);
-
-                setWordData((prevData) => ({
-                    ...prevData, // Preserve all existing fields
-                    [edits.dbField]: input, // Dynamically Update the specific field
-                }));
-
-                updateTrackChanges(edits.dbField);
-
+                console.log("input:", input);
+                setUserInput(edits.dbField, input);
+                setInput('');
                 close();
             }}>
                 Done
@@ -785,7 +805,7 @@ export function WordInfoModalChild({open, close, edits, toggleIsEditing, setWord
   );
 }
 
-function SaveChangesModal({ open, close, revertWordData, saveChanges }) {
+function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
 
     const style = {
         display: 'grid',
@@ -818,12 +838,13 @@ function SaveChangesModal({ open, close, revertWordData, saveChanges }) {
            
             <Button onClick={() => {
                 close();
-                revertWordData()
+                revertChanges()
             }}>
                 Yes
             </Button>
 
             <Button onClick={() => {
+                //TODO: close or refresh the previous modal
                 close();
                 saveChanges()
             }}>

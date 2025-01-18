@@ -87,10 +87,11 @@ export function useSetVocab(user) {
 
         //? can i combine the 4 edit functions into one ?
         const editSource = async () => {
-            const newSource = newWord.native;
-            const oldSource = prevWord.native;
+            const newSource = newWord;
+            const oldSource = prevWord;
 
-           
+           console.log("new Word:", newWord);
+           console.log("old Word:", oldSource);
 
             // get the doc that contains the word
             try {
