@@ -9,6 +9,7 @@ import { collection, doc, updateDoc, getDocs, query, where } from "firebase/fire
 export default function useFetchVocab(user) {
     // make the arg the users info?
     const [error, setError] = useState(null);
+    
 
     // make sure user is authenticated
     useEffect(() => {
@@ -47,8 +48,8 @@ export default function useFetchVocab(user) {
                 retrievedWord = doc.data();
             });   
 
-           
-            console.log("getInfo: ", retrievedWord)
+            //! getInfo is undefined after updating the word
+            console.log("getInfo: ", retrievedWord);
             return retrievedWord;
             
             
@@ -70,6 +71,7 @@ export default function useFetchVocab(user) {
 export function useSetVocab(user) {
     //TODO: create loading state
     const [error, setError] = useState();
+    const [reload, setReload] = useState(false);
 
     // make sure user is authenticated
     useEffect(() => {
@@ -80,23 +82,20 @@ export function useSetVocab(user) {
     }, [user])
 
     // Edit existing vocab
-    const editVocab = (listname, prevWord, newWord) => {
+    const editVocab = (listName, prevWord, newWord) => {
         // the paramater should have the prev and new versions
 
         const uid = user.uid;
 
         //? can i combine the 4 edit functions into one ?
         const editSource = async () => {
-            const newSource = newWord;
-            const oldSource = prevWord;
-
-           console.log("new Word:", newWord);
-           console.log("old Word:", oldSource);
+            const newSource = newWord.word;
+            const oldSource = prevWord.word;
 
             // get the doc that contains the word
             try {
                 const q = query(
-                    collection(firestore, "Users", uid, listname),
+                    collection(firestore, "Users", uid, listName),
                     where("word", "==", oldSource)
                 );
 
@@ -109,13 +108,16 @@ export function useSetVocab(user) {
                     const wordref = firstDoc.id; 
                 
                     // Reference the doc
-                    const docRef = doc(firestore, "Users", uid, listname, wordref);
+                    const docRef = doc(firestore, "Users", uid, listName, wordref);
 
                     try {
                         // update with user input
                         await updateDoc(docRef, {
                             word: newSource
-                        })
+                        });
+
+                        console.log("successfully updated document");
+                        setReload(true);
                     } catch (error) {
                         setError(true);
                         console.error("Function editSource: could not update source word", error)
@@ -141,7 +143,7 @@ export function useSetVocab(user) {
             // get the doc that contains the word
             try {
                 const q = query(
-                    collection(firestore, "Users", uid, listname),
+                    collection(firestore, "Users", uid, listName),
                     where("word", "==", oldTrans)
                 );
 
@@ -154,7 +156,7 @@ export function useSetVocab(user) {
                     const wordref = firstDoc.id; 
                 
                     // Reference the doc
-                    const docRef = doc(firestore, "Users", uid, listname, wordref);
+                    const docRef = doc(firestore, "Users", uid, listName, wordref);
 
                     try {
                         // update translation with user input
@@ -175,10 +177,11 @@ export function useSetVocab(user) {
             }
         }
 
+        //TODO: complete
         const editDefinition = async () => {
 
         }
-
+        //TODO: complete
         const editPOS = async () => {
             
         }
@@ -188,5 +191,5 @@ export function useSetVocab(user) {
         return { editSource, editTrans }
     }
 
-    return {editVocab, error};
+    return {editVocab, reload, error};
 }

@@ -346,6 +346,7 @@ export default function Heft () {
     }
 
     // control modal for viewing info of a word
+    //? can this control when both vocab book and the modal reload, to show the updated data ?
     const [wordInfoModal, setWordInfoModal] = useState({show: null, word: null})
 
     // word = the chosen word whose info will be displayed

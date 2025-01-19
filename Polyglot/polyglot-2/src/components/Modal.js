@@ -419,10 +419,11 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     const listName = pathname.slice(12);
 
     // this function will get all the info on a specific word
-    const { getInfo, error } = useFetchVocab(user);
+    const { getInfo, error, reload } = useFetchVocab(user);
 
-    const { editSource, editTrans, 
-        editDefinition } = useSetVocab(user).editVocab();
+    const { editVocab } = useSetVocab(user);
+
+    const [storeWordInfo, setStoreWordInfo] = useState({});
 
     const [wordData, setWordData] = useState({});
 
@@ -476,6 +477,9 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // the user wants to save their changes
     const saveChanges = async () => {
 
+        const { editSource, editTrans, 
+            editDefinition } = editVocab(listName, copyWordData, wordData);
+
         console.log("saving changes")
         // use the functions from the hook to save changes to the db
 
@@ -487,15 +491,18 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 case "word":
                     console.log("updating source word");
                     
-                    //! both old and new words are shown as undefined 
-                    await editSource(listName, copyWordData.word, wordData.word);
+                    //! listname, old and new words are shown as undefined 
+                    await editSource();
 
                     break; 
                 case "translation":
+                    await editTrans();
                     console.log("updating translation",);
                     break;
                         
+                //? editDefinition is not complete: useVocab.js
                 case "definition":
+                    editDefinition();
                     console.log("updating definition");
                     break;
                     
@@ -552,11 +559,21 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // regulate when getInfo should be called
     useEffect(() => {
         const callGetInfo = async () => {
+            console.log(storeWordInfo);
             // if the modal should open, call getInfo
-            if (wordInfo.show === true) {
+            if (storeWordInfo.show === true) {
                 // vocabRef.current should have the values: POS, translation, word and definition
                 console.log("retrieving info on word");
-                const vocabInfo = await getInfo(listName, wordInfo.word);
+                //TODO: figure out how i can pass the updated word info to getInfo
+                //TODO: rethink the problem. read through react docs
+                /* 
+                ?useEffect
+                ?useReducer
+                ?any other useful tips
+                
+                ?redux if needed
+                */
+                const vocabInfo = await getInfo(listName, storeWordInfo.word);
                 
                 setWordData(vocabInfo);
                 // save a copy of the original state, as wordData will be updated
@@ -566,10 +583,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
        return () => callGetInfo();
         
-    }, [wordInfo, listName, getInfo])
+    }, [storeWordInfo, listName, getInfo])
 
-   
-    
+    // store wordInfo in a state variable
+    useEffect(() => {
+        setStoreWordInfo(wordInfo);
+        console.log("hello")
+    },[wordInfo])
 
     const openChildModal = () => {
         console.log("opening modal")
