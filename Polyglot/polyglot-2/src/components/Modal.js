@@ -7,7 +7,7 @@ import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import MenuListComposition from './Menu';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo} from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Divider } from '@mui/material';
@@ -558,8 +558,10 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
     // regulate when getInfo should be called
     useEffect(() => {
+        
         const callGetInfo = async () => {
-            console.log(storeWordInfo);
+            
+            console.log("hi: ",storeWordInfo);
             // if the modal should open, call getInfo
             if (storeWordInfo.show === true) {
                 // vocabRef.current should have the values: POS, translation, word and definition
@@ -567,11 +569,9 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 //TODO: figure out how i can pass the updated word info to getInfo
                 //TODO: rethink the problem. read through react docs
                 /* 
-                ?useEffect
-                ?useReducer
-                ?any other useful tips
                 
-                ?redux if needed
+                ?useReducer
+                
                 */
                 const vocabInfo = await getInfo(listName, storeWordInfo.word);
                 
@@ -579,17 +579,17 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 // save a copy of the original state, as wordData will be updated
                 setCopyWordData(vocabInfo);
             }
+
         }
 
        return () => callGetInfo();
         
-    }, [storeWordInfo, listName, getInfo])
+    }, [storeWordInfo, listName, getInfo ])
 
-    // store wordInfo in a state variable
     useEffect(() => {
+        console.log("hello");
         setStoreWordInfo(wordInfo);
-        console.log("hello")
-    },[wordInfo])
+    }, [wordInfo]);
 
     const openChildModal = () => {
         console.log("opening modal")
