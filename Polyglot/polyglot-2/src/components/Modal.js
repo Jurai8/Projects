@@ -7,7 +7,7 @@ import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import MenuListComposition from './Menu';
-import { useEffect, useRef, useState, useMemo} from 'react';
+import { useEffect, useRef, useState, useReducer } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Divider } from '@mui/material';
@@ -407,6 +407,7 @@ export function BeginTest({ open, closeModal }) {
     )
 }
 
+
 // Display a modal which contains data pertaining to a specific word
 export function WordInfoModal({ displayInfo, wordInfo }) {
     const { user } = useAuth();
@@ -558,6 +559,11 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
     // regulate when getInfo should be called
     useEffect(() => {
+
+        // TODO: pass wordInfo as an argument, not storeWordInfo
+            // after updating db, update wordInfo
+            // use reload state. set it to true so that useEffect runs again
+            // the getInfo function will be called again with the updated wordInfo as an arg
         
         const callGetInfo = async () => {
             
