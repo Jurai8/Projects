@@ -424,7 +424,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
     const { editVocab } = useSetVocab(user);
 
-    const [storeWordInfo, setStoreWordInfo] = useState({});
+    const [storeWordInfo, setStoreWordInfo] = useState({
+        show: false,
+        word: {
+            native: '',
+            translation: '',
+        }
+    });
 
     const [wordData, setWordData] = useState({});
 
@@ -560,24 +566,26 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // regulate when getInfo should be called
     useEffect(() => {
 
-        // TODO: pass wordInfo as an argument, not storeWordInfo
-            // after updating db, update wordInfo
-            // use reload state. set it to true so that useEffect runs again
-            // the getInfo function will be called again with the updated wordInfo as an arg
-        
+        // TODO: seperate modal state logic and state for wordInfo
+            // seperate wordInfo into two state handlers
+        if (!storeWordInfo || storeWordInfo.show === false) return;
+
         const callGetInfo = async () => {
             
-            console.log("hi: ",storeWordInfo);
+            console.log("hi: ", storeWordInfo);
             // if the modal should open, call getInfo
             if (storeWordInfo.show === true) {
+
+                
                 // vocabRef.current should have the values: POS, translation, word and definition
+
                 console.log("retrieving info on word");
-                //TODO: figure out how i can pass the updated word info to getInfo
-                //TODO: rethink the problem. read through react docs
+                // TODO: figure out how i can pass the updated word info to getInfo
+                // TODO: rethink the problem. read through react docs
                 /* 
                 
                 ?useReducer
-                
+
                 */
                 const vocabInfo = await getInfo(listName, storeWordInfo.word);
                 
@@ -588,15 +596,23 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
         }
 
-       return () => callGetInfo();
+        callGetInfo();
         
     }, [storeWordInfo, listName, getInfo ])
 
     useEffect(() => {
         console.log("hello");
+        if (!wordInfo || wordInfo.show === false) return;
+
         setStoreWordInfo(wordInfo);
+       
     }, [wordInfo]);
 
+     // TODO: pass wordInfo as an argument, not storeWordInfo
+            // after updating db, update wordInfo
+            // use reload state. set it to true so that useEffect runs again
+            // the getInfo function will be called again with the updated wordInfo as an arg
+            
     const openChildModal = () => {
         console.log("opening modal")
         setChildModal(true)
