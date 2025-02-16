@@ -59,11 +59,33 @@ export default function useFetchVocab(user) {
             console.error("Function getInfo: ", error);
         }
 
-      }, [user]);
+    }, [user]);
+
+    const getVocab = async (listName) => {
+
+        const vocab = [];
+        // get vocab from list
+        try {
+            const getVocabdocs = await getDocs(collection(firestore, "Users", user.uid, listName)); 
+
+            getVocabdocs.forEach((doc) => {
+                //append doc.data to array
+                vocab.push(doc.data());
+            });
+
+        } catch (error) {
+            console.error("could not get vocab for test", error);
+        }
+        
+        // how to return a randomized order of the array ?
+        return vocab;
+    }
+
+
 
 
     // make sure to return the functions or states themselves
-    return { user, getInfo, error}
+    return {getVocab, getInfo, error}
 }
 
 // TODO: useContext. the functions will be used in multiple places
