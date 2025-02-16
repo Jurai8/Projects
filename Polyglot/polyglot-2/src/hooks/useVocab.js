@@ -138,13 +138,16 @@ export function useSetVocab(user) {
 
         const editTrans = async () => {
             const newTrans = newWord.translation;
-            const oldTrans = newWord.translation;
+            const oldTrans = prevWord.translation;
 
             // get the doc that contains the word
+
+            console.log(listName, oldTrans);
+
             try {
                 const q = query(
                     collection(firestore, "Users", uid, listName),
-                    where("word", "==", oldTrans)
+                    where("translation", "==", oldTrans)
                 );
 
                 const nativeSnapshot = await getDocs(q);
@@ -179,7 +182,47 @@ export function useSetVocab(user) {
 
         //TODO: complete
         const editDefinition = async () => {
+            const newDef = newWord.definition;
+            const oldDef = prevWord.definition;
 
+            // get the doc that contains the word
+
+            console.log(listName, oldDef);
+
+            try {
+                const q = query(
+                    collection(firestore, "Users", uid, listName),
+                    where("definition", "==", oldDef)
+                );
+
+                const nativeSnapshot = await getDocs(q);
+
+                if (!nativeSnapshot.empty) { 
+                    // get the doc(word) from the snapshpt
+                    const firstDoc = nativeSnapshot.docs[0];
+                    // get the id of the doc (the word)
+                    const wordref = firstDoc.id; 
+                
+                    // Reference the doc
+                    const docRef = doc(firestore, "Users", uid, listName, wordref);
+
+                    try {
+                        // update definition with user input
+                        await updateDoc(docRef, {
+                            definition: newDef
+                        })
+                    } catch (error) {
+                        setError(true);
+                        console.error("Function editDefinition: could not update definition", error)
+                    }
+                    
+                } else {
+                    throw new Error("Function editDefinition: No matching documents found");
+                }
+            } catch (error) {
+                setError(true);
+                console.error("Function editDefinition: could not get doc to edit definition", error);
+            }
         }
         //TODO: complete
         const editPOS = async () => {
@@ -188,7 +231,7 @@ export function useSetVocab(user) {
 
         //? will this work?
         // the idea is that the  user should be able to call either of these functions depending on the word they choose to edit
-        return { editSource, editTrans }
+        return { editSource, editTrans, editDefinition }
     }
 
     return {editVocab, reload, error};

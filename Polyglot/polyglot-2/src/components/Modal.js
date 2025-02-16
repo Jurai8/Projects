@@ -424,13 +424,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
     const { editVocab } = useSetVocab(user);
 
-    const [storeWordInfo, setStoreWordInfo] = useState({
-        show: false,
-        word: {
-            native: '',
-            translation: '',
-        }
-    });
+    
 
     const [wordData, setWordData] = useState({});
 
@@ -438,6 +432,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
     const [childModal, setChildModal] = useState(false);
 
+    // open modal asking user to save changes
     const [isSaveChangesModal, setisSaveChangesModal] = useState(false);
 
     // track which functions need to be called
@@ -468,6 +463,17 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         }
     }
 
+    const handlePosChange = (e) => {
+        console.log(e.value);
+        // TODO: track changes, update wordData correctly
+        //? why does setEdits exists? 
+        setEdits({
+            title: "POS",
+            dbField: "pos",
+            placeholder: e.value
+        })
+    } 
+
     // set everything back to original state, i.e revert all changes
     const revertChanges = () => {
         // set wordData back to it's original state
@@ -484,8 +490,11 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // the user wants to save their changes
     const saveChanges = async () => {
 
-        const { editSource, editTrans, 
-            editDefinition } = editVocab(listName, copyWordData, wordData);
+        const { 
+            editSource, editTrans, editDefinition 
+        } = editVocab(listName, copyWordData, wordData);
+        // copyWordData = old version
+        // wordData = updated version
 
         console.log("saving changes")
         // use the functions from the hook to save changes to the db
@@ -498,7 +507,6 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 case "word":
                     console.log("updating source word");
                     
-                    //! listname, old and new words are shown as undefined 
                     await editSource();
 
                     break; 
@@ -528,7 +536,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         // reset fields that have been updated 
         setTrackChanges([]);
 
-        // after the changes have been saved reset edits
+        // after the changes have been saved reset isEditing
         setIsEditing(false);
     }
 
@@ -566,28 +574,19 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // regulate when getInfo should be called
     useEffect(() => {
 
-        // TODO: seperate modal state logic and state for wordInfo
-            // seperate wordInfo into two state handlers
-        if (!storeWordInfo || storeWordInfo.show === false) return;
+        if (!wordInfo || wordInfo === false) return;
 
         const callGetInfo = async () => {
             
-            console.log("hi: ", storeWordInfo);
+            console.log("hi: ", wordInfo);
             // if the modal should open, call getInfo
-            if (storeWordInfo.show === true) {
+            if (wordInfo.show === true) {
 
-                
                 // vocabRef.current should have the values: POS, translation, word and definition
 
                 console.log("retrieving info on word");
-                // TODO: figure out how i can pass the updated word info to getInfo
-                // TODO: rethink the problem. read through react docs
-                /* 
-                
-                ?useReducer
-
-                */
-                const vocabInfo = await getInfo(listName, storeWordInfo.word);
+            
+                const vocabInfo = await getInfo(listName, wordInfo.word);
                 
                 setWordData(vocabInfo);
                 // save a copy of the original state, as wordData will be updated
@@ -598,20 +597,9 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
         callGetInfo();
         
-    }, [storeWordInfo, listName, getInfo ])
+    }, [wordInfo, listName, getInfo ])
 
-    useEffect(() => {
-        console.log("hello");
-        if (!wordInfo || wordInfo.show === false) return;
 
-        setStoreWordInfo(wordInfo);
-       
-    }, [wordInfo]);
-
-     // TODO: pass wordInfo as an argument, not storeWordInfo
-            // after updating db, update wordInfo
-            // use reload state. set it to true so that useEffect runs again
-            // the getInfo function will be called again with the updated wordInfo as an arg
             
     const openChildModal = () => {
         console.log("opening modal")
@@ -722,8 +710,11 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                         </div>
                         
                         <div id='POS'>
-                            <select>
-                                <option value="none">None</option>
+                            <select name='selectedPOS' 
+                                defaultValue={wordData.POS} 
+                                onChange={(e) => handlePosChange(e)}
+                            >
+                                <option value="none">None</option> 
                                 <option value="noun">Noun</option>
                                 <option value="verb">Verb</option>
                                 <option value="article">Article</option>
@@ -879,6 +870,7 @@ function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
             </div>
            
             <Button onClick={() => {
+                // TODO: ensure that both modals close
                 close();
                 revertChanges()
             }}>
