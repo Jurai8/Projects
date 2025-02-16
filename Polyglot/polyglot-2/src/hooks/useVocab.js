@@ -180,14 +180,13 @@ export function useSetVocab(user) {
             }
         }
 
-        //TODO: complete
         const editDefinition = async () => {
             const newDef = newWord.definition;
             const oldDef = prevWord.definition;
 
             // get the doc that contains the word
 
-            console.log(listName, oldDef);
+            console.log(listName, "old:", oldDef, "new:", newDef);
 
             try {
                 const q = query(
@@ -226,12 +225,52 @@ export function useSetVocab(user) {
         }
         //TODO: complete
         const editPOS = async () => {
-            
+            const newPOS = newWord.POS;
+            const oldPOS = prevWord.POS;
+
+            // get the doc that contains the word
+
+            console.log(listName, "old:", oldPOS, "new:", newPOS);
+
+            try {
+                const q = query(
+                    collection(firestore, "Users", uid, listName),
+                    where("POS", "==", oldPOS)
+                );
+
+                const nativeSnapshot = await getDocs(q);
+
+                if (!nativeSnapshot.empty) { 
+                    // get the doc(word) from the snapshpt
+                    const firstDoc = nativeSnapshot.docs[0];
+                    // get the id of the doc (the word)
+                    const wordref = firstDoc.id; 
+                
+                    // Reference the doc
+                    const docRef = doc(firestore, "Users", uid, listName, wordref);
+
+                    try {
+                        // update definition with user input
+                        await updateDoc(docRef, {
+                            POS: newPOS
+                        })
+
+                        console.log("Update POS: Success");
+                    } catch (error) {
+                        setError(true);
+                        console.error("Function editPOS: could not update POS", error)
+                    }
+                    
+                } else {
+                    throw new Error("Function editPOS: No matching documents found");
+                }
+            } catch (error) {
+                setError(true);
+                console.error("Function editPOS: could not get doc to edit POS", error);
+            }
         }
 
-        //? will this work?
-        // the idea is that the  user should be able to call either of these functions depending on the word they choose to edit
-        return { editSource, editTrans, editDefinition }
+        return { editSource, editTrans, editDefinition, editPOS }
     }
 
     return {editVocab, reload, error};

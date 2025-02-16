@@ -439,7 +439,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // contains the names of the fields that need to be updated
     const [trackChanges, setTrackChanges] = useState([])
 
-    // track what the user is editing. e.g definition
+    // used to create a dynamic modal. if they're editing translation, the heading title will be translation and the placholder will be the current word
     const [edits, setEdits] = useState({
         title: "",
         dbField: "",
@@ -464,14 +464,31 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     }
 
     const handlePosChange = (e) => {
-        console.log(e.value);
+        console.log(e.target.value);
         // TODO: track changes, update wordData correctly
-        //? why does setEdits exists? 
-        setEdits({
-            title: "POS",
-            dbField: "pos",
-            placeholder: e.value
-        })
+        // Make sure i'm not updating with the exact same value
+        if (edits.placeholder !== e.target.value) {
+            setEdits({
+                title: "POS",
+                dbField: "POS",
+                placeholder: e.target.value
+            })
+
+            setWordData((prevData) => ({
+                ...prevData, // Preserve all existing fields
+                POS: e.target.value, 
+            }));
+        }
+       
+
+        // if isEditing not true, set it to true
+        if (!isEditing) setIsEditing(true);
+
+        // if the pos field is not yet included
+        if (!trackChanges.includes("POS")) {
+            // track changes
+            setTrackChanges((prevField) => [...prevField, "POS"])
+        }
     } 
 
     // set everything back to original state, i.e revert all changes
@@ -482,16 +499,18 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         setTrackChanges([]);
         setEdits({
             title: "",
+            // used to dynamically update a field in the db (check setUserInput)
             dbField: "",
             placeholder: ""
         })
+        setIsEditing(false);
     }
 
     // the user wants to save their changes
     const saveChanges = async () => {
 
         const { 
-            editSource, editTrans, editDefinition 
+            editSource, editTrans, editDefinition, editPOS
         } = editVocab(listName, copyWordData, wordData);
         // copyWordData = old version
         // wordData = updated version
@@ -505,24 +524,23 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
             switch (field) {
                 case "word":
-                    console.log("updating source word");
-                    
                     await editSource();
-
+                    console.log("updated source word successfully");
                     break; 
                 case "translation":
                     await editTrans();
-                    console.log("updating translation",);
+                    console.log("updated translation successfully",);
                     break;
                         
-                //? editDefinition is not complete: useVocab.js
+    
                 case "definition":
-                    editDefinition();
-                    console.log("updating definition");
+                    await editDefinition();
+                    console.log("updated definition successfully");
                     break;
                     
                 case "POS":
-                    console.log("updating POS")
+                    await editPOS();
+                    console.log("updated POS successfully")
                     break;
 
                 default:
@@ -540,6 +558,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         setIsEditing(false);
     }
 
+    // Dynamically update wordInfo per field
     const setUserInput = (field, input) => {
         // if the user input is empty/ not a string
         if (!input) {
@@ -574,7 +593,10 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // regulate when getInfo should be called
     useEffect(() => {
 
+        //TODO store wordInfo in a state variable? 
         if (!wordInfo || wordInfo === false) return;
+
+        console.log("wordInfo:", wordInfo);
 
         const callGetInfo = async () => {
             
@@ -635,7 +657,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 {/* display something if error is true */ }
                 {wordData ? 
                 <>
-                    <h2 onClick={() => {console.log("clicked")}}> Info </h2>
+                    <h2> Info </h2>
 
                     <div id='word-label-container'>
                         <div id='word-label-left'>
