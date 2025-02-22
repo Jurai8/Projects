@@ -14,6 +14,7 @@ import { Divider } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import useFetchVocab from '../hooks/useVocab';
 import { useSetVocab } from '../hooks/useVocab';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 
 // pass user if possible
@@ -424,7 +425,6 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
     const { editVocab } = useSetVocab(user);
 
-    
 
     const [wordData, setWordData] = useState({});
 
@@ -510,7 +510,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     const saveChanges = async () => {
 
         const { 
-            editSource, editTrans, editDefinition, editPOS
+            editSource, editTrans, editDefinition, editPOS, editExample
         } = editVocab(listName, copyWordData, wordData);
         // copyWordData = old version
         // wordData = updated version
@@ -541,6 +541,11 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 case "POS":
                     await editPOS();
                     console.log("updated POS successfully")
+                    break;
+
+                case "example":
+                    await editExample();
+                    console.log("updated example successfully")
                     break;
 
                 default:
@@ -596,14 +601,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         //TODO store wordInfo in a state variable? 
         if (!wordInfo || wordInfo === false) return;
 
-        console.log("wordInfo:", wordInfo);
-
         const callGetInfo = async () => {
             
             console.log("hi: ", wordInfo);
             // if the modal should open, call getInfo
             if (wordInfo.show === true) {
 
+                console.log("wordInfo:", wordInfo);
                 // vocabRef.current should have the values: POS, translation, word and definition
 
                 console.log("retrieving info on word");
@@ -652,11 +656,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
+
             <Box sx={style}>
 
                 {/* display something if error is true */ }
                 {wordData ? 
                 <>
+
                     <h2> Info </h2>
 
                     <div id='word-label-container'>
@@ -718,6 +724,29 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                                         title: "Definition",
                                         dbField: "definition",
                                         placeholder: wordData.definition
+                                    })
+                                    openChildModal()
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <Divider/>
+                    <div id='def-container'>
+                        <div>
+                            <label className='word-label'> Example: </label>
+                        </div>
+                    
+                        <div id='example'>
+                            <span>{wordData.example}</span>
+                            <EditIcon 
+                                className='edit-icon' 
+                                sx={{ fontSize: 15 }} 
+                                onClick={() => {
+                                    setEdits({
+                                        title: "Example",
+                                        dbField: "example",
+                                        placeholder: wordData.example
                                     })
                                     openChildModal()
                                 }}

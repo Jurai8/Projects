@@ -7,7 +7,6 @@ html, body, #root, .App {
 #table-position {
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
   height: 100%;
 }
@@ -17,6 +16,24 @@ html, body, #root, .App {
   width: 50%;
   /*spacing on the sides isn't nice */
   overflow: hidden;
+}
+
+#vocab-table.MuiTable-root{
+  width: 100%; /* Ensure the table stretches to fit its container */
+  table-layout: auto; /* Allow columns to adjust dynamically */
+}
+
+/* table rows */
+.vocab-table-row {
+  width: 100%; /* Ensure rows stretch */
+  display: table-row;
+}
+
+.MuiTableCell-root.MuiTableCell-body.MuiTableCell-alignRight.MuiTableCell-sizeMedium.vocab-table-cell {
+  display: flex;
+  color: blueviolet;
+  width: auto; /* Allow cells to adjust */
+  word-wrap: break-word; /* Prevent overflow */
 }
 
 #table-test-to-list:hover {
@@ -110,7 +127,7 @@ html, body, #root, .App {
       visibility 0s, opacity 0.5s ease;
 }
 
-#POS:hover .edit-icon, #definition:hover .edit-icon, #word-sec-left:hover .edit-icon, #word-sec-right:hover .edit-icon{
+#POS:hover .edit-icon, #definition:hover .edit-icon, #word-sec-left:hover .edit-icon, #word-sec-right:hover .edit-icon, #example:hover .edit-icon{
             font-size: 15px;
             visibility: visible;
             opacity: 1;
@@ -125,3 +142,6 @@ html, body, #root, .App {
 #c-modal-title-container{
   text-align: center;
 }
+
+
+/* vocab table */

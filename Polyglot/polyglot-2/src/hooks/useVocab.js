@@ -103,6 +103,7 @@ export function useSetVocab(user) {
 
     }, [user])
 
+    //? Can i combine these instead of repeating the code?
     // Edit existing vocab
     const editVocab = (listName, prevWord, newWord) => {
         // the paramater should have the prev and new versions
@@ -245,14 +246,12 @@ export function useSetVocab(user) {
                 console.error("Function editDefinition: could not get doc to edit definition", error);
             }
         }
-        //TODO: complete
+
         const editPOS = async () => {
             const newPOS = newWord.POS;
             const oldPOS = prevWord.POS;
 
             // get the doc that contains the word
-
-            console.log(listName, "old:", oldPOS, "new:", newPOS);
 
             try {
                 const q = query(
@@ -292,7 +291,51 @@ export function useSetVocab(user) {
             }
         }
 
-        return { editSource, editTrans, editDefinition, editPOS }
+        const editExample = async () => {
+            const newEx = newWord.example;
+            const oldEx = prevWord.example;
+
+            // get the doc that contains the word
+
+            try {
+                const q = query(
+                    collection(firestore, "Users", uid, listName),
+                    where("example", "==", oldEx)
+                );
+
+                const nativeSnapshot = await getDocs(q);
+
+                if (!nativeSnapshot.empty) { 
+                    // get the doc(word) from the snapshpt
+                    const firstDoc = nativeSnapshot.docs[0];
+                    // get the id of the doc (the word)
+                    const wordref = firstDoc.id; 
+                
+                    // Reference the doc
+                    const docRef = doc(firestore, "Users", uid, listName, wordref);
+
+                    try {
+                        // update definition with user input
+                        await updateDoc(docRef, {
+                            example: newEx
+                        })
+
+                        console.log("Update Example: Success");
+                    } catch (error) {
+                        setError(true);
+                        console.error("Function editExample: could not update Example", error)
+                    }
+                    
+                } else {
+                    throw new Error("Function editExample: No matching documents found");
+                }
+            } catch (error) {
+                setError(true);
+                console.error("Function editExample: could not get doc to edit Example", error);
+            }
+        }
+
+        return { editSource, editTrans, editDefinition, editPOS, editExample }
     }
 
     return {editVocab, reload, error};

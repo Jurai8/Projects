@@ -11,6 +11,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import EditIcon from '@mui/icons-material/Edit';
 import { Vocab } from '../functions/vocab';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from '../hooks/useAuth';
@@ -20,13 +23,19 @@ import useFetchVocab from '../hooks/useVocab';
 
 export default function VocabBook({ vocab, openModal, getOriginalWord, openDeleteVocab, displayInfo}) {
 
-  useEffect(() => {
-    console.log(vocab);
-  },[])
+  // keep track of the row that the user is on
+  const [currWordPair, setCurrWordPair] = useState({});
+
+  // keep wordInfo modal
+  // allow user to delete and edit word within wordInfo modal. Check readera
+
+  const displayMenu = () => {
+    
+  }
 
   return (
     <TableContainer id='table-container' component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table sx={{ minWidth: 650 }} aria-label="simple table" id="vocab-table">
         <TableHead>
           <TableRow>
             {/* replace with variables in future */}
@@ -36,9 +45,21 @@ export default function VocabBook({ vocab, openModal, getOriginalWord, openDelet
         </TableHead>
         <TableBody>
           {vocab.map((row) => (
-            <TableRowWithMenu key={row.word} row={row} openModal={openModal} getOriginalWord={getOriginalWord} openDeleteVocab={openDeleteVocab}
-            displayInfo={displayInfo}
-            />
+            <TableRow
+              key={row.word}
+              className='vocab-table-row'
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              <TableCell component="th" className="native" scope="row" >
+                {row.word}
+              </TableCell>
+              
+              {/* //?can't add the menu icon inside the table cell? */}
+              <TableCell align="right" className="vocab-table-cell">
+                {row.translation}
+              </TableCell>            
+             
+            </TableRow>
           ))}
         </TableBody>
       </Table>
