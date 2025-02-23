@@ -29,14 +29,14 @@ export default function useFetchVocab(user) {
                 throw new Error("word is undefined, null, or not an object");
             }
     
-            if (!word.native || !word.translation) {
+            if (!word.word || !word.translation) {
                 setError(true);
                 throw new Error("word.native or word.translation is undefined");
             }
     
             const q = query(
                 collection(firestore, "Users", user.uid, listName),
-                where("word", "==", word.native),
+                where("word", "==", word.word),
                 where("translation", "==", word.translation)
             );
     

@@ -411,6 +411,10 @@ export function BeginTest({ open, closeModal }) {
 
 // Display a modal which contains data pertaining to a specific word
 export function WordInfoModal({ displayInfo, wordInfo }) {
+
+    // TODO: make sure the user can't edit unless they click "edit"
+        // manipulate the css?
+        
     const { user } = useAuth();
 
     // get the name of the current list
@@ -449,6 +453,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // set to true when the user begins making changes
     const [isEditing, setIsEditing] = useState(false);
 
+    // TODO: replace with trackchanges? track if any changes have been made
     const checkIsEditing = (isEditing) => {
         // if there are changes which haven't been saved
         if (isEditing) {
@@ -481,6 +486,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         }
        
 
+        // TODO: remove. only need to track changes
         // if isEditing not true, set it to true
         if (!isEditing) setIsEditing(true);
 
@@ -499,7 +505,6 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         setTrackChanges([]);
         setEdits({
             title: "",
-            // used to dynamically update a field in the db (check setUserInput)
             dbField: "",
             placeholder: ""
         })
@@ -508,6 +513,12 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
     // the user wants to save their changes
     const saveChanges = async () => {
+
+
+        // TODO: If trackchanges is empty 
+            // set isEditing to false
+            // return
+
 
         const { 
             editSource, editTrans, editDefinition, editPOS, editExample
@@ -576,6 +587,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 [field]: input, // Dynamically Update the specific field
             }));
 
+            //TODO: remove this
             // keep track of the whether the user is editing or not
             if (!isEditing) {
                 setIsEditing(true);
@@ -651,6 +663,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
             <Modal
                 open={wordInfo.show}
+                // TODO: check if user has made any edits
                 onClose={() => displayInfo(false)}
                 /* open  & close modal */ 
                 aria-labelledby="modal-modal-title"
@@ -660,6 +673,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
             <Box sx={style}>
 
                 {/* display something if error is true */ }
+                {/* //TODO: include "x" at the top left corner for user to exit modal. track whether any changes have been made */}
                 {wordData ? 
                 <>
 
@@ -797,14 +811,28 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                     />
 
                     <div sx={{ display: 'flex'}}>
+                        {/* //TODO: Relace text with "Edit"
+                            When the user clicks edits
+                            Show two buttons: "Delete" + "Done"
+                         */}
                         <Button onClick={() => {checkIsEditing(isEditing)}}>
                             close
                         </Button>
 
                         {isEditing &&
-                            <Button onClick={() => {saveChanges()}}>
-                                save
-                            </Button>
+                            <>
+                                {/* //TODO: first check if any changes have been made when executing the function */}
+                                <Button onClick={() => {saveChanges()}}>
+                                    Done
+                                </Button>
+
+                                {/* // TODO: add functionality to delete word*/}
+                                <Button onClick={() => {saveChanges()}}>
+                                    Delete
+                                </Button>
+                            </>
+                           
+                            
                         }
                         
                     </div>

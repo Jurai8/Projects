@@ -37,10 +37,14 @@ html, body, #root, .App {
 }
 
 /* Style table cells */
-.native, .trans {
+.vocab-source {
   padding: 12px;
   text-align: left;
   word-wrap: break-word; /* Prevents text overflow */
+}
+
+.vocab-translation {
+  word-wrap: break-word;
 }
 
 /* Align German words to the right */
@@ -51,6 +55,15 @@ html, body, #root, .App {
     width: 90%; /* Make the table wider on smaller screens */
   }
 }
+
+#more-icon {
+  padding: 0%;
+  margin: 0%;
+  width: 0%;
+  max-width: 0%;
+}
+
+
 
 #table-test-to-list:hover {
   background-color: #D3D3D3;

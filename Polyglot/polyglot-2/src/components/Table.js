@@ -41,7 +41,7 @@ export default function VocabBook({ vocab, openModal, getOriginalWord, openDelet
           <TableRow>
             {/* replace with variables in future */}
             <TableCell>English</TableCell>
-            <TableCell align="right">German</TableCell>
+            <TableCell align="right" colSpan={2}>German</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -51,18 +51,22 @@ export default function VocabBook({ vocab, openModal, getOriginalWord, openDelet
               className='vocab-table-row'
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell component="th" className="native" scope="row" >
+              <TableCell component="th" className="vocab-source" scope="row" >
                 {row.word}
               </TableCell>
               
-              <TableCell align="right" className='trans' >
+              <TableCell 
+                align="right" 
+                className='vocab-translation' 
+                sx={{ paddingRight: "0px !important" }}
+              >
                 {row.translation}
               </TableCell>    
 
 
               {/* change the sizing of the margin/padding etc */}
-              <TableCell align="right">
-                <IconButton onClick={console.log("hello")}>
+              <TableCell align="right" id='more-icon' >
+                <IconButton onClick={() => {displayInfo(true, row)}}>
                   <MoreVertIcon />
                 </IconButton>
               </TableCell>
