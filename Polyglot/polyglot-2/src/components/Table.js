@@ -14,6 +14,7 @@ import Paper from '@mui/material/Paper';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditIcon from '@mui/icons-material/Edit';
+import { IconButton } from '@mui/material';
 import { Vocab } from '../functions/vocab';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from '../hooks/useAuth';
@@ -54,11 +55,18 @@ export default function VocabBook({ vocab, openModal, getOriginalWord, openDelet
                 {row.word}
               </TableCell>
               
-              {/* //?can't add the menu icon inside the table cell? */}
-              <TableCell align="right" className="vocab-table-cell">
+              <TableCell align="right" className='trans' >
                 {row.translation}
-              </TableCell>            
-             
+              </TableCell>    
+
+
+              {/* change the sizing of the margin/padding etc */}
+              <TableCell align="right">
+                <IconButton onClick={console.log("hello")}>
+                  <MoreVertIcon />
+                </IconButton>
+              </TableCell>
+
             </TableRow>
           ))}
         </TableBody>

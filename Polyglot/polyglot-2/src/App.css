@@ -14,26 +14,42 @@ html, body, #root, .App {
 /* when there's a certain amount of words make the table scrollable*/
 #table-container {
   width: 50%;
-  /*spacing on the sides isn't nice */
-  overflow: hidden;
+  max-width: 100%;
+  overflow-x: auto; /* Enables horizontal scrolling if needed */
+  overflow-y: auto;
+  margin: auto;
 }
 
-#vocab-table.MuiTable-root{
-  width: 100%; /* Ensure the table stretches to fit its container */
-  table-layout: auto; /* Allow columns to adjust dynamically */
+#vocab-table {
+  width: 100%;
+  border-collapse: collapse; /* Ensures proper table formatting */
+  table-layout: auto; /* Makes columns resize based on content */
 }
 
-/* table rows */
-.vocab-table-row {
-  width: 100%; /* Ensure rows stretch */
-  display: table-row;
+.vocab-table-row:last-child td,
+.vocab-table-row:last-child th {
+  border-bottom: none;
 }
 
-.MuiTableCell-root.MuiTableCell-body.MuiTableCell-alignRight.MuiTableCell-sizeMedium.vocab-table-cell {
-  display: flex;
-  color: blueviolet;
-  width: auto; /* Allow cells to adjust */
-  word-wrap: break-word; /* Prevent overflow */
+/* Optional: Add striped rows for better readability */
+.vocab-table-row:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Style table cells */
+.native, .trans {
+  padding: 12px;
+  text-align: left;
+  word-wrap: break-word; /* Prevents text overflow */
+}
+
+/* Align German words to the right */
+
+/* Make table responsive */
+@media (max-width: 900px) {
+  #table-container {
+    width: 90%; /* Make the table wider on smaller screens */
+  }
 }
 
 #table-test-to-list:hover {
