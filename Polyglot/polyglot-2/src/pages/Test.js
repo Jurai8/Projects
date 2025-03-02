@@ -8,6 +8,15 @@ import { useAuth } from '../hooks/useAuth';
 import React, { useState, useEffect, useMemo} from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
+import Modal from '@mui/material/Modal';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+import InboxIcon from '@mui/icons-material/Inbox';
+import DraftsIcon from '@mui/icons-material/Drafts';
 
 //TODO: create a collection to store words that user wants to be tested on in the future. User should be able to select individual words to be tested on within a vocab collection (?) or they can get tested on the entire collection
 
@@ -15,7 +24,15 @@ import { Typography } from '@mui/material';
 export function TestIndex() {
     // the user should see 2 buttons to schedule and start a test
     // the user should a see a table of scheduled tests
+
     const [open, setOpen] = useState(false);
+
+    //pass to TestType function
+    const [testType, setTestType] = useState({
+        testType: "",
+        list: ""
+    });
+
     const OpenBeginTestModal = () => setOpen(true);
     const CloseBeginTestModal = () => setOpen(false);
 
@@ -283,3 +300,65 @@ function SelectTest(){
 
 
 export {SelectTest}
+
+// after the user selects the test, they then select the list
+function TestType() {
+    // modal
+    // options:
+        // Pos test
+        // definition test
+        // translation test
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+      };
+      
+
+    return (
+        <div>
+            <Button onClick={handleOpen}>Open modal</Button>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                    Select test type
+                    </Typography>
+                    <Divider />
+                    <nav aria-label="secondary mailbox folders">
+                        <List>
+                        <ListItem disablePadding>
+                            <ListItemButton>
+                            <ListItemText/>
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton component="a" href="#simple-list">
+                            <ListItemText primary="Spam" />
+                            </ListItemButton>
+                        </ListItem>
+                        </List>
+                    </nav>
+                </Box>
+            </Modal>
+        </div>
+    );
+
+    
+}

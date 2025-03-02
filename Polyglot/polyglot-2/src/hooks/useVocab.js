@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react"
 import { firestore } from "../firebase";
-import { collection, doc, updateDoc, getDocs, query, where } from "firebase/firestore"; 
+import { collection, doc, updateDoc, getDocs, query, where, deleteDoc, getDoc } from "firebase/firestore"; 
 
 
 // TODO: useContext. the functions will be used in multiple places
@@ -338,5 +338,85 @@ export function useSetVocab(user) {
         return { editSource, editTrans, editDefinition, editPOS, editExample }
     }
 
-    return {editVocab, reload, error};
+
+    const deleteVocab = async(listName, wordPair) => {
+        const uid = user.uid;
+        
+        const native = wordPair.word;
+        const trans =  wordPair.translation;
+        const vocabList = listName;
+
+        console.log("native:", native)
+
+
+        if (!trans || !native) {
+            throw new Error("could not get words to delete");
+        }
+
+        //TODO: use FIRESTORE TRANSACTION, to make sure that if one call fails, the entire execution stops
+        try {
+            // * 1. Delete the word
+
+            // query db to find doc that contains word AND translation
+            const q = query(collection(firestore, "Users", uid, vocabList),
+            where("word", "==", native), 
+            where("translation", "==", trans)
+            );
+
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                const docRef = querySnapshot.docs[0];
+                // get the doc id
+                const docId = docRef.id;
+                
+                // delete doc (the word)
+                try {
+                    await deleteDoc(doc(firestore, "Users", uid, vocabList, docId))
+                } catch (error) {
+                    throw new Error(error);
+                }
+
+                // * 2. update word count:
+
+                // find the list within All_Vocab_Lists
+                const documentRef = doc(firestore, "Users", uid, "All_Vocab_Lists", vocabList);
+                
+                const docSnap = await getDoc(documentRef);
+
+                if (docSnap.exists()) {
+                    // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
+                    // treat it as a number if it isn't already
+                    const currTotalWords = docSnap.data().Words ? Number(docSnap.data().Words) : 0;
+
+                    console.log("total before:", currTotalWords)
+                    // decrease total words
+                    const newTotalWords = currTotalWords - 1;
+
+                    console.log("total after:", newTotalWords)
+
+                    // update in db
+                    try {
+                        await updateDoc(documentRef, {
+                            Words: newTotalWords
+                        })
+                    } catch (error) {
+                        throw new Error(error);
+                    }
+
+                } else {
+                    console.error("Vocabulary list document does not exist");
+                    throw new Error("Vocabulary list document does not exist");
+                }
+
+            } else {
+                console.log('No documents found to delete');
+            }
+        } catch (error) {
+            console.error("Error during word deletion and update:", error);
+            alert("could not delete word");
+        }
+    }
+
+    return {editVocab, deleteVocab, reload, error};
 }

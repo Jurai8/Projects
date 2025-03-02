@@ -139,6 +139,7 @@ export default function AddWord ({ closeModal, eventHandler, updateVocab, newWor
     )
 }
 
+// TODO: remove
 export function EditWord({closeModal, eventHandler, newWord, closeUpdateWord, editVocab}) {
 
     return (
@@ -427,7 +428,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // this function will get all the info on a specific word
     const { getInfo, error, reload } = useFetchVocab(user);
 
-    const { editVocab } = useSetVocab(user);
+    const { editVocab, deleteVocab } = useSetVocab(user);
 
 
     const [wordData, setWordData] = useState({});
@@ -454,15 +455,16 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     const [isEditing, setIsEditing] = useState(false);
 
     // TODO: replace with trackchanges? track if any changes have been made
-    const checkIsEditing = (isEditing) => {
+    const unsavedEdits = (trackchanges) => {
         // if there are changes which haven't been saved
-        if (isEditing) {
+        if (trackChanges) {
             // display modal
             openSaveChangesModal();
+            // set displayInfo(false);
         }
 
         // if there are no changes
-        if (!isEditing) {
+        if (!trackChanges || trackChanges.length === 0) {
             // close the modal
             displayInfo(false)
         }
@@ -484,11 +486,6 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 POS: e.target.value, 
             }));
         }
-       
-
-        // TODO: remove. only need to track changes
-        // if isEditing not true, set it to true
-        if (!isEditing) setIsEditing(true);
 
         // if the pos field is not yet included
         if (!trackChanges.includes("POS")) {
@@ -516,8 +513,11 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
 
         // TODO: If trackchanges is empty 
-            // set isEditing to false
-            // return
+        if (!trackChanges || trackChanges.length === 0) {
+            setIsEditing(false);
+            return;
+        }
+       
 
 
         const { 
@@ -586,12 +586,6 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                 ...prevData, // Preserve all existing fields
                 [field]: input, // Dynamically Update the specific field
             }));
-
-            //TODO: remove this
-            // keep track of the whether the user is editing or not
-            if (!isEditing) {
-                setIsEditing(true);
-            }
     
             // track which fields are being updated
             // ensure there's no duplicate field inputs
@@ -685,18 +679,21 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
                             <div id='word-sec-left'> 
                                 <span > {wordData.word} </span>
-                                <EditIcon 
-                                    className='edit-icon' 
-                                    sx={{ fontSize: 15 }}
-                                    onClick={() => {
-                                        setEdits({
-                                            title: "Source Word",
-                                            dbField: "word",
-                                            placeholder: wordData.word
-                                        })
-                                        openChildModal()
-                                    }} 
-                                />
+                                {/* only render if isEditing is true */}
+                               { isEditing &&
+                                    <EditIcon 
+                                        className='edit-icon' 
+                                        sx={{ fontSize: 15 }}
+                                        onClick={() => {
+                                            setEdits({
+                                                title: "Source Word",
+                                                dbField: "word",
+                                                placeholder: wordData.word
+                                            })
+                                            openChildModal()
+                                        }} 
+                                    />
+                                }
                             </div>
     
                         </div>
@@ -706,18 +703,21 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
                             <div id='word-sec-right'>
                                 <span > {wordData.translation} </span>
-                                <EditIcon 
-                                    className='edit-icon' 
-                                    sx={{ fontSize: 15 }} 
-                                    onClick={() => {
-                                        setEdits({
-                                            title: "Translation",
-                                            dbField: "translation",
-                                            placeholder: wordData.translation
-                                        })
-                                        openChildModal()
-                                    }}
-                                />
+                                {/* only render if isEditing is true */}
+                               {isEditing &&
+                                    <EditIcon 
+                                        className='edit-icon' 
+                                        sx={{ fontSize: 15 }} 
+                                        onClick={() => {
+                                            setEdits({
+                                                title: "Translation",
+                                                dbField: "translation",
+                                                placeholder: wordData.translation
+                                            })
+                                            openChildModal()
+                                        }}
+                                    />
+                                }
                             </div>
                         </div>
                     </div>
@@ -730,18 +730,23 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                     
                         <div id='definition'>
                             <span>{wordData.definition}</span>
-                            <EditIcon 
-                                className='edit-icon' 
-                                sx={{ fontSize: 15 }} 
-                                onClick={() => {
-                                    setEdits({
-                                        title: "Definition",
-                                        dbField: "definition",
-                                        placeholder: wordData.definition
-                                    })
-                                    openChildModal()
-                                }}
-                            />
+
+                            {/* //: only render if isEditing is true */}
+                            {isEditing &&  
+                                <EditIcon 
+                                    className='edit-icon' 
+                                    sx={{ fontSize: 15 }} 
+                                    onClick={() => {
+                                        setEdits({
+                                            title: "Definition",
+                                            dbField: "definition",
+                                            placeholder: wordData.definition
+                                        })
+                                        openChildModal()
+                                    }}
+                                />
+                            }
+                           
                         </div>
                     </div>
 
@@ -753,18 +758,21 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                     
                         <div id='example'>
                             <span>{wordData.example}</span>
-                            <EditIcon 
-                                className='edit-icon' 
-                                sx={{ fontSize: 15 }} 
-                                onClick={() => {
-                                    setEdits({
-                                        title: "Example",
-                                        dbField: "example",
-                                        placeholder: wordData.example
-                                    })
-                                    openChildModal()
-                                }}
-                            />
+                            {/* only render if isEditing is true */}
+                            {isEditing && 
+                                <EditIcon 
+                                    className='edit-icon' 
+                                    sx={{ fontSize: 15 }} 
+                                    onClick={() => {
+                                        setEdits({
+                                            title: "Example",
+                                            dbField: "example",
+                                            placeholder: wordData.example
+                                        })
+                                        openChildModal()
+                                    }}
+                                />
+                            }
                         </div>
                     </div>
                     
@@ -811,28 +819,32 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                     />
 
                     <div sx={{ display: 'flex'}}>
-                        {/* //TODO: Relace text with "Edit"
-                            When the user clicks edits
-                            Show two buttons: "Delete" + "Done"
-                         */}
-                        <Button onClick={() => {checkIsEditing(isEditing)}}>
-                            close
-                        </Button>
 
-                        {isEditing &&
+                        {isEditing  ? (
                             <>
                                 {/* //TODO: first check if any changes have been made when executing the function */}
-                                <Button onClick={() => {saveChanges()}}>
+                                <Button onClick={() => {unsavedEdits(trackChanges)}}>
                                     Done
                                 </Button>
 
                                 {/* // TODO: add functionality to delete word*/}
-                                <Button onClick={() => {saveChanges()}}>
+                                <Button onClick={() => {deleteVocab(listName, copyWordData)}}>
                                     Delete
                                 </Button>
+                            </> 
+                        ):(
+                            <>
+                                <Button onClick={() => {displayInfo(false)}}>
+                                    close
+                                </Button>
+
+                                <Button onClick={() => setIsEditing(true)}>
+                                    edit
+                                </Button>
                             </>
-                           
-                            
+
+                        )
+
                         }
                         
                     </div>
