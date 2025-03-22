@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { BeginTest } from '../components/Modal';
 import { Test } from '../functions/test';
 import { Vocab } from '../functions/vocab';
 import { useAuth } from '../hooks/useAuth';
@@ -25,16 +24,21 @@ export function TestIndex() {
     // the user should see 2 buttons to schedule and start a test
     // the user should a see a table of scheduled tests
 
-    const [open, setOpen] = useState(false);
+    const [TestTypeModal, setTestTypeModal] = useState(false);
+
+    const openTestTypeModal = () => {
+        setTestTypeModal(true);
+    }
+
+    const closeTestTypemodal = () => {
+        setTestTypeModal(false);
+    }
 
     //pass to TestType function
     const [testType, setTestType] = useState({
         testType: "",
         list: ""
     });
-
-    const OpenBeginTestModal = () => setOpen(true);
-    const CloseBeginTestModal = () => setOpen(false);
 
     // TODO: should i wrap the use location in a useMemo/useEffect?
         //? useEffect causes the variable to be redefined each time i update the source code
@@ -46,9 +50,10 @@ export function TestIndex() {
         <>
             <h1>Test</h1>
 
-            <BeginTest open={open} closeModal={CloseBeginTestModal} />
+            <TestType open={TestTypeModal} close={closeTestTypemodal}></TestType>
+
             <div >
-                <Button onClick={OpenBeginTestModal}>Start a Test</Button>
+                <Button onClick={openTestTypeModal}>Start a Test</Button>
                 <Button>Schedule Test</Button>
             </div>
         </>
@@ -56,7 +61,7 @@ export function TestIndex() {
 }
 
 
-// TODO: create test test scheduler
+// TODO: create test scheduler
 
 
 export function TestLearner() {
@@ -85,11 +90,13 @@ export function TestLearner() {
     }, [user])
 
     
+    // get the vocab to be tested on
     useEffect(() => {
         const getwords = async () => {
             try {
                 const words = await vocabTest.getVocab(state.listName);
 
+                // * the vocab list shouldn't have duplicates anyways
                 const uniqueWords = words.filter((word, index, self) =>
                     index === self.findIndex(w => 
                         w.native === word.native && w.translation === word.translation
@@ -222,6 +229,9 @@ export function TestLearner() {
 
     return (
         <div>
+            {/* should be variable */}
+            <h1>Test: Parts of Speech</h1>
+
             {state && <h1>{state.listName}</h1>}
 
             {/* display "word" upon entering the page */}
@@ -258,9 +268,13 @@ export function TestLearner() {
 
 
 //This is where the user will choose which test to write.
-function SelectTest(){
+function SelectTest() {
     const { user } = useAuth();
+    const location = useLocation();
+
     const [options, setOptions] = useState([])
+
+    console.log("SelectTest", location.state);
 
     useEffect(() => {
         const getLists = async () => {
@@ -284,13 +298,19 @@ function SelectTest(){
        return () => getLists();
     },[])
     
-    
     return (
         <div>
             <Typography variant='h5'> Select your vocab list</Typography>
             {options.map((list,index)=>(
                 <li key={index}>
-                    <Link to={'/test/'+ list.listName}>{list.listName}</Link>
+                    {/*pass test type and listName to TestLearner */}
+
+                    <Link 
+                        to={{ pathname: `/test/${list.listName}`, 
+                            state: { testType: location.state }
+                    }}>   
+                        {list.listName}
+                    </Link>
                 </li>
             ))}
         </div>
@@ -302,17 +322,12 @@ function SelectTest(){
 export {SelectTest}
 
 // after the user selects the test, they then select the list
-function TestType() {
+function TestType({ open, close }) {
     // modal
     // options:
         // Pos test
         // definition test
         // translation test
-
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
 
     const style = {
         position: 'absolute',
@@ -329,30 +344,46 @@ function TestType() {
 
     return (
         <div>
-            <Button onClick={handleOpen}>Open modal</Button>
             <Modal
                 open={open}
-                onClose={handleClose}
+                onClose={close}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
-                    Select test type
+                        Select test type
                     </Typography>
+
                     <Divider />
-                    <nav aria-label="secondary mailbox folders">
+                    <nav aria-label="test types">
+                        {/*go to page where user selects list to be tested on
+                            pass the test type too so that i can be used when getting the vocab
+                         */}
                         <List>
-                        <ListItem disablePadding>
-                            <ListItemButton>
-                            <ListItemText/>
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton component="a" href="#simple-list">
-                            <ListItemText primary="Spam" />
-                            </ListItemButton>
-                        </ListItem>
+                            <ListItem disablePadding>
+                                <ListItemButton component={Link} 
+                                    to={{ pathname: ":Select-List", state: { testType: "Translation" }
+                                }}>
+                                    <ListItemText primary="Translation"/>
+                                </ListItemButton>
+                            </ListItem>
+
+                            <ListItem disablePadding>
+                                <ListItemButton component={Link} 
+                                    to={{ pathname: ":Select-List", state: { testType: "POS" }
+                                }}>
+                                    <ListItemText primary="Parts of Speech"/>
+                                </ListItemButton>
+                            </ListItem>
+
+                            <ListItem disablePadding>
+                                <ListItemButton component={Link} 
+                                    to={{ pathname: ":Select-List", state: { testType: "Definitions" }
+                                }}>
+                                    <ListItemText primary="Definitions" />
+                                </ListItemButton>
+                            </ListItem>
                         </List>
                     </nav>
                 </Box>
@@ -362,3 +393,5 @@ function TestType() {
 
     
 }
+
+

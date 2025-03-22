@@ -371,43 +371,6 @@ export function LogIn({ setError, setMessage, setStatus }) {
 
 
 
-export function BeginTest({ open, closeModal }) {
-
-    const navigate = useNavigate();
-  
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-      };
-
-    return (
-        <>
-            <Modal
-            open={open}
-            onClose={closeModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            >
-            <Box sx={style}>
-                <Button onClick={() => 
-                    navigate('/vocablists', { state: true }
-                    )}>
-                    Start new Test
-                </Button>
-                <Button>Check Schedule</Button>
-            </Box>
-            </Modal>
-            
-        </>
-    )
-}
 
 
 // Display a modal which contains data pertaining to a specific word
