@@ -34,11 +34,6 @@ export function TestIndex() {
         setTestTypeModal(false);
     }
 
-    //pass to TestType function
-    const [testType, setTestType] = useState({
-        testType: "",
-        list: ""
-    });
 
     // TODO: should i wrap the use location in a useMemo/useEffect?
         //? useEffect causes the variable to be redefined each time i update the source code
@@ -84,6 +79,8 @@ export function TestLearner() {
 
     // TODO: check if i need to do any data cleanups
 
+
+    console.log("Testlearner:", state);
 
     const vocabTest = useMemo(() => {
         return new Test(user);
@@ -230,9 +227,14 @@ export function TestLearner() {
     return (
         <div>
             {/* should be variable */}
-            <h1>Test: Parts of Speech</h1>
+            
 
-            {state && <h1>{state.listName}</h1>}
+            {state && 
+                <>
+                    <h1>Test: {state.testType}</h1>
+                    <h1>List: {state.listName}</h1>
+                </>
+            }
 
             {/* display "word" upon entering the page */}
             {begin === null ? (
@@ -270,16 +272,25 @@ export function TestLearner() {
 //This is where the user will choose which test to write.
 function SelectTest() {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const location = useLocation();
 
     const [options, setOptions] = useState([])
 
-    console.log("SelectTest", location.state);
+    const handleNavigation = (listName) => {
+        navigate(`/test/${listName}`, {
+            state: {
+                testType: location.state.testType,
+                listName: listName
+            },
+            replace: true  // This prevents going back
+        });
+    };
 
     useEffect(() => {
         const getLists = async () => {
-            if (user) { 
-                const vocab = new Vocab(user)
+            if (user) {
+                const vocab = new Vocab(user);
 
                 try {
                     const vocabLists = await vocab.getAllVocabLists();
@@ -288,30 +299,29 @@ function SelectTest() {
                     console.error("Error fetching vocab lists:", error);
                 }
             } else {
-                
                 console.log("User is signed out");
-                // TODO: use an alert or a redirect, for the user?
                 alert("Test: not signed in yet");
             }
-        }
-        
-       return () => getLists();
-    },[])
+        };
+
+        getLists(); 
+    }, []);
     
     return (
         <div>
             <Typography variant='h5'> Select your vocab list</Typography>
             {options.map((list,index)=>(
-                <li key={index}>
+                <List key={index}>
                     {/*pass test type and listName to TestLearner */}
 
-                    <Link 
-                        to={{ pathname: `/test/${list.listName}`, 
-                            state: { testType: location.state }
-                    }}>   
-                        {list.listName}
-                    </Link>
-                </li>
+                    <ListItem disablePadding>
+                        <ListItemButton 
+                            onClick={() => {handleNavigation(list.listName)}}
+                        >
+                            <ListItemText primary={list.listName}/>
+                        </ListItemButton>
+                    </ListItem>
+                </List>
             ))}
         </div>
     )
@@ -329,6 +339,13 @@ function TestType({ open, close }) {
         // definition test
         // translation test
 
+        const navigate = useNavigate();
+
+        const handleNavigate = (testType) => {
+            navigate("/test/select-list", { state: { testType: testType } });
+        }
+
+
     const style = {
         position: 'absolute',
         top: '50%',
@@ -340,6 +357,8 @@ function TestType({ open, close }) {
         boxShadow: 24,
         p: 4,
       };
+
+      
       
 
     return (
@@ -362,24 +381,24 @@ function TestType({ open, close }) {
                          */}
                         <List>
                             <ListItem disablePadding>
-                                <ListItemButton component={Link} 
-                                    to={{ pathname: ":Select-List", state: { testType: "Translation" }
+                                <ListItemButton onClick={() => {
+                                    handleNavigate("Translation")
                                 }}>
                                     <ListItemText primary="Translation"/>
                                 </ListItemButton>
                             </ListItem>
 
                             <ListItem disablePadding>
-                                <ListItemButton component={Link} 
-                                    to={{ pathname: ":Select-List", state: { testType: "POS" }
+                                <ListItemButton onClick={() => {
+                                    handleNavigate("POS")
                                 }}>
                                     <ListItemText primary="Parts of Speech"/>
                                 </ListItemButton>
                             </ListItem>
 
                             <ListItem disablePadding>
-                                <ListItemButton component={Link} 
-                                    to={{ pathname: ":Select-List", state: { testType: "Definitions" }
+                                <ListItemButton onClick={() => {
+                                    handleNavigate("Definitions")
                                 }}>
                                     <ListItemText primary="Definitions" />
                                 </ListItemButton>

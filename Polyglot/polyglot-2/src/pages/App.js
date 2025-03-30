@@ -61,14 +61,19 @@ function App() {
                 }
               />
 
-              <Route 
-                path=":Select-List" 
-                element={<ProtectedRoute><SelectTest /></ProtectedRoute>}>
+              <Route
+                path="select-list" 
+                element={<ProtectedRoute><SelectTest /></ProtectedRoute>}
+              />
 
-                  <Route path=":testName" 
-                    element={<ProtectedRoute><TestLearner /></ProtectedRoute>} />
-                  </Route>     
-              </Route>
+              <Route 
+                path=":testName" 
+                element={<ProtectedRoute><TestLearner /></ProtectedRoute>} 
+              />  
+
+
+            </Route>
+              
           </Route>
         </Routes>  
       </AuthProvider>
