@@ -61,20 +61,57 @@ export default function useFetchVocab(user) {
 
     }, [user]);
 
-    const getVocab = async (listName) => {
+    const getVocab = async (listName, field) => {
 
+        // field = what the user wants, e.g. pos, definition etc
         const vocab = [];
         // get vocab from list
-        try {
-            const getVocabdocs = await getDocs(collection(firestore, "Users", user.uid, listName)); 
+        
 
-            getVocabdocs.forEach((doc) => {
-                //append doc.data to array
-                vocab.push(doc.data());
-            });
+        switch (field) {
+            case "POS":
+                // get every words translation and it's corresponding POS
+                try {
+                    const getVocabdocs = await getDocs(collection(firestore, "Users", user.uid, listName)); 
+        
+                    getVocabdocs.forEach((doc) => {
+                        console.log("getVocab: ",doc.data().translation, doc.data().POS)
+                        //append doc.data to array
+                        vocab.push({
+                            trans: doc.data().translation,
+                            pos: doc.data().POS
+                        });
+                    });
+        
+                } catch (error) {
+                    console.error("could not get POS for test", error);
+                }
+                break;
 
-        } catch (error) {
-            console.error("could not get vocab for test", error);
+            case "translation":
+                // get both the word and translation
+                break;
+
+            case "definition":
+                // get every words translation and it's corresponding def 
+                break;
+
+            // if the user doesn't request a specific field
+            default:
+                // get all data in vocab list
+                try {
+                    const getVocabdocs = await getDocs(collection(firestore, "Users", user.uid, listName)); 
+        
+                    getVocabdocs.forEach((doc) => {
+                        //append doc.data to array
+                        vocab.push(doc.data());
+                    });
+        
+                } catch (error) {
+                    console.error("could not get vocab for test", error);
+                }
+
+                break;
         }
         
         // how to return a randomized order of the array ?

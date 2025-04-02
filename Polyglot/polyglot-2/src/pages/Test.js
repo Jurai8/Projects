@@ -1,21 +1,19 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import { Test } from '../functions/test';
-import { Vocab } from '../functions/vocab';
-import { useAuth } from '../hooks/useAuth';
-import React, { useState, useEffect, useMemo} from 'react';
+import Divider from '@mui/material/Divider';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Typography } from '@mui/material';
-import Modal from '@mui/material/Modal';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import Divider from '@mui/material/Divider';
-import InboxIcon from '@mui/icons-material/Inbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
+import Modal from '@mui/material/Modal';
+import React, { useState, useEffect, useMemo} from 'react';
+import { useAuth } from '../hooks/useAuth';
+import useFetchVocab from '../hooks/useVocab';
+import { Test } from '../functions/test';
+import TextField from '@mui/material/TextField';
+import { Typography } from '@mui/material';
+import { Vocab } from '../functions/vocab';
 
 //TODO: create a collection to store words that user wants to be tested on in the future. User should be able to select individual words to be tested on within a vocab collection (?) or they can get tested on the entire collection
 
@@ -63,6 +61,8 @@ export function TestLearner() {
     const { state } = useLocation();
     const navigate = useNavigate();
 
+    const { getVocab } = useFetchVocab();
+
     const { user } = useAuth();
     // current word to be displayed
     const [word, setWord] = useState('');
@@ -77,8 +77,6 @@ export function TestLearner() {
     // vocab list to be tested against
     const [vocabListRef,setVocabListRef] = useState([]);
 
-    // TODO: check if i need to do any data cleanups
-
 
     console.log("Testlearner:", state);
 
@@ -91,7 +89,9 @@ export function TestLearner() {
     useEffect(() => {
         const getwords = async () => {
             try {
-                const words = await vocabTest.getVocab(state.listName);
+                const words = await getVocab(state.listName, state.testType);
+
+                console.log("words: ", words)
 
                 // * the vocab list shouldn't have duplicates anyways
                 const uniqueWords = words.filter((word, index, self) =>
@@ -108,7 +108,7 @@ export function TestLearner() {
         }
 
         getwords();
-    },[vocabTest,state])
+    },[vocabTest, state, getVocab])
 
     useEffect(() => {
         console.log("score:", score, "Count: ", count, "Vocab:", vocabListRef.length)
