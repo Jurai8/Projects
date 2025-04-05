@@ -61,11 +61,13 @@ export default function useFetchVocab(user) {
 
     }, [user]);
 
-    const getVocab = async (listName, field) => {
+    const getVocab = useCallback(async (listName, field) => {
 
         // field = what the user wants, e.g. pos, definition etc
         const vocab = [];
         // get vocab from list
+
+        console.log("test data: ListName - " + listName + "field: " + field);
         
 
         switch (field) {
@@ -85,6 +87,7 @@ export default function useFetchVocab(user) {
         
                 } catch (error) {
                     console.error("could not get POS for test", error);
+                    throw new Error("could not get vocab for test");
                 }
                 break;
 
@@ -109,6 +112,8 @@ export default function useFetchVocab(user) {
         
                 } catch (error) {
                     console.error("could not get vocab for test", error);
+                    throw new Error("could not get vocab for test");
+                    
                 }
 
                 break;
@@ -116,7 +121,7 @@ export default function useFetchVocab(user) {
         
         // how to return a randomized order of the array ?
         return vocab;
-    }
+    }, [user])
 
 
 

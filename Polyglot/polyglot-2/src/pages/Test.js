@@ -61,9 +61,10 @@ export function TestLearner() {
     const { state } = useLocation();
     const navigate = useNavigate();
 
-    const { getVocab } = useFetchVocab();
-
     const { user } = useAuth();
+
+    const { getVocab } = useFetchVocab(user);
+
     // current word to be displayed
     const [word, setWord] = useState('');
     // move through vocablist indices
@@ -74,15 +75,11 @@ export function TestLearner() {
     const [score, setScore] = useState(0);
     // keep track of whether test has started or not
     const [begin, setBegin] = useState(null)
-    // vocab list to be tested against
-    const [vocabListRef,setVocabListRef] = useState([]);
+    // vocab to be tested against
+    const [vocabulary,setVocabulary] = useState([]);
 
 
     console.log("Testlearner:", state);
-
-    const vocabTest = useMemo(() => {
-        return new Test(user);
-    }, [user])
 
     
     // get the vocab to be tested on
@@ -93,36 +90,33 @@ export function TestLearner() {
 
                 console.log("words: ", words)
 
-                // * the vocab list shouldn't have duplicates anyways
-                const uniqueWords = words.filter((word, index, self) =>
-                    index === self.findIndex(w => 
-                        w.native === word.native && w.translation === word.translation
-                    )
-                );
-
-                setVocabListRef(uniqueWords);
+                setVocabulary(words);
 
             } catch (error) {
-                console.error(error)
+                // send user to an error page?
+                throw new Error(error);
             }
         }
 
         getwords();
-    },[vocabTest, state, getVocab])
 
+    },[state.listName, getVocab, state.testType])
+
+    // update which word is being shown and end the test when all values have been shown
     useEffect(() => {
-        console.log("score:", score, "Count: ", count, "Vocab:", vocabListRef.length)
+        console.log( "Count: ", count, "Vocab:", vocabulary.length)
         // Ensure vocabListRef.current is not empty before trying to access it
         if (count != null && vocabTest.verifyWordSet(vocabListRef, count)) {
-            // when count changes show value at index "count"
-            console.log("hello")
+            // when count changes show the word at index "count"
             setWord(vocabListRef[count].native);
         } 
 
+        // the test would be over
         if (count === vocabListRef.length) {
             setBegin(false)
         }
-    }, [score,count,vocabTest,vocabListRef])
+
+    }, [count,vocabTest,vocabListRef])
 
     useEffect(() => {
         console.log("begin", begin)
@@ -164,7 +158,7 @@ export function TestLearner() {
     const handleConfirmClick = () => {
         console.log("compare")
 
-        // check if user input the correct
+        // check if user input the correct answer
         if(vocabTest.checkAnswer(vocabListRef[count].translation, input)) {
             setScore(score+1)
         }
