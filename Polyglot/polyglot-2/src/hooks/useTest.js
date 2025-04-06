@@ -1,51 +1,60 @@
-import { use } from 'react';
 import { useState, useEffect} from 'react';
 import { useFetchVocab } from 'useSetVocab.js'
 
 
 
 // hook to initialize different tests
-export default async function useTest(user, listname) {
-    const { getVocab } = useFetchVocab(user);
+export default async function useTest(list) {
+    const [score, setScore] = useState();
 
-    // first decide which test the user will write
-    const [testType, setTestType] = useState('');
+    // questions that were answered incorrectly
+    const [mistakes, setMistakes] = useState([]);
 
-    // state to iterate through array
-    const [vocab, setVocab] = useState([]);
+    const [count, setCount] = useState(0);
 
-    // state to track score
-    const [score, setScore] =  useState();
+    const increment = () => setCount(count + 1);
 
-    // begin test using useEffect
-    const [isTesting, setIsTesting] = useState(false);
+    const addScore = () => setScore(score + 1)
 
-    useEffect(() => {
-        if (isTesting) {
-            const sourceTransTest = () => {
-
+    const saveMistake = (userInput, answer) => {
+        setMistakes(prevInput => [
+            ...prevInput,
+            {
+                userAnswer: userInput,
+                correctAnswer: answer,
             }
+        ]);
+    };
+
+
+    // compare user input against the word they were supposed to write
+    const isCorrect = (vocab, userInput) => {
+        // if they got the correct answer
+        if (vocab[count] === userInput) {
+            // increase score
+            addScore();
+
+            // move to the next word
+            increment();
+        } else {
+
+            // save the mistake/ incorrect answer
+            saveMistake(userInput, vocab[count]);
+
+            // increment without increasing score
+            increment();
         }
-    }, [isTesting, testType])
+    }
 
-    
-    useEffect(() => {
-        const getvocablist = async () => {
-           const vocablist = await getVocab(listname);
-
-           setVocab(vocablist);
-        }
-
-        getvocablist();
-        
-    }, [getVocab, listname])
+    // reset function ?
+        // set values back to zero
 
 
-    // Match word to pos
-
-    // Match definition to word
-
-    // Match word to translation and vice versa
-        // fetchvocab()
-       // getVocab
+        // isCorrect will increment and add score for me
+    return {
+        isCorrect,
+        score,
+        count,
+        mistakes,
+    };
 }
