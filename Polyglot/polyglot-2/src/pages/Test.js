@@ -14,6 +14,7 @@ import { Test } from '../functions/test';
 import TextField from '@mui/material/TextField';
 import { Typography } from '@mui/material';
 import { Vocab } from '../functions/vocab';
+import useTest from '../hooks/useTest';
 
 //TODO: create a collection to store words that user wants to be tested on in the future. User should be able to select individual words to be tested on within a vocab collection (?) or they can get tested on the entire collection
 
@@ -65,14 +66,17 @@ export function TestLearner() {
 
     const { getVocab } = useFetchVocab(user);
 
+    // Check if user is correct. Iterate through vocab. Manage scores
+    const { isCorrect, count, score, reset } = useTest(state.listName);
+
     // current word to be displayed
     const [word, setWord] = useState('');
     // move through vocablist indices
-    const [count, setCount] = useState(null);
+    // * const [count, setCount] = useState(null);
     // user answer
     const [input, setInput] = useState('');
     // user score
-    const [score, setScore] = useState(0);
+    // * const [score, setScore] = useState(0);
     // keep track of whether test has started or not
     const [begin, setBegin] = useState(null)
     // vocab to be tested against
@@ -106,34 +110,31 @@ export function TestLearner() {
     useEffect(() => {
         console.log( "Count: ", count, "Vocab:", vocabulary.length)
         // Ensure vocabListRef.current is not empty before trying to access it
-        if (count != null && vocabTest.verifyWordSet(vocabListRef, count)) {
+        if (vocabulary.length > 0) {
             // when count changes show the word at index "count"
-            setWord(vocabListRef[count].native);
+            // ? The word shown needs to correspond to the test.
+            setWord(vocabulary[count].native);
         } 
 
         // the test would be over
-        if (count === vocabListRef.length) {
+        if (count === vocabulary.length) {
             setBegin(false)
         }
 
-    }, [count,vocabTest,vocabListRef])
+    }, [count,vocabulary])
 
-    useEffect(() => {
-        console.log("begin", begin)
-    }, [begin])
 
     // use to begin/restart a test
     const beginTest = () => {
         setBegin(true);
 
-        setCount(0);
-
-        setScore(0);
+        // set count and score to 0
+        reset();
     }
 
     const randomizeArray = (array) => {
 
-        const random = vocabListRef;
+        const random = vocabulary;
 
         // Iterate over the array in reverse order
         for (let i = random.length - 1; i > 0; i--) {
@@ -146,7 +147,7 @@ export function TestLearner() {
         }
 
         // update the original array
-        setVocabListRef(random);
+        vocabulary(random);
     }
 
 
@@ -159,12 +160,10 @@ export function TestLearner() {
         console.log("compare")
 
         // check if user input the correct answer
-        if(vocabTest.checkAnswer(vocabListRef[count].translation, input)) {
-            setScore(score+1)
-        }
+        isCorrect(vocabulary[count].translation,input);
+
 
         setInput(''); // Clear the input field after adding to the array
-        setCount((prevCount) => prevCount + 1);
     };
 
     const handleFormSubmit = (e) => {
@@ -239,7 +238,7 @@ export function TestLearner() {
                 begin === true ? (
                     <h1> Word: {word} </h1>
                 ): (
-                    <h1> Score: {score} / {vocabListRef.length} </h1>
+                    <h1> Score: {score} / {vocabulary.length} </h1>
                 )
             )}
 

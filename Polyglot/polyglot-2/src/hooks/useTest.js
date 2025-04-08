@@ -1,11 +1,9 @@
 import { useState, useEffect} from 'react';
-import { useFetchVocab } from 'useSetVocab.js'
-
 
 
 // hook to initialize different tests
 export default async function useTest(list) {
-    const [score, setScore] = useState();
+    const [score, setScore] = useState(0);
 
     // questions that were answered incorrectly
     const [mistakes, setMistakes] = useState([]);
@@ -47,10 +45,13 @@ export default async function useTest(list) {
     }
 
     // reset function ?
+    const reset = () => {
         // set values back to zero
+        score(0)
+        count(0);
+    }
+       
 
-
-        // isCorrect will increment and add score for me
     return {
         isCorrect,
         score,
