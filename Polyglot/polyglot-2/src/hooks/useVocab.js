@@ -80,7 +80,9 @@ export default function useFetchVocab(user) {
                         console.log("getVocab: ",doc.data().translation, doc.data().POS)
                         //append doc.data to array
                         vocab.push({
-                            trans: doc.data().translation,
+                            // main = what the user sees
+                            main: doc.data().translation,
+                            // value they're being tested
                             pos: doc.data().POS
                         });
                     });

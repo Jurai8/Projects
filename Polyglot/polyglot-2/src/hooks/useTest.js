@@ -2,7 +2,7 @@ import { useState, useEffect} from 'react';
 
 
 // hook to initialize different tests
-export default async function useTest(list) {
+export default function useTest(list) {
     const [score, setScore] = useState(0);
 
     // questions that were answered incorrectly
@@ -27,6 +27,8 @@ export default async function useTest(list) {
 
     // compare user input against the word they were supposed to write
     const isCorrect = (vocab, userInput) => {
+
+        console.log("Vocab: ", vocab, "Input: ", userInput)
         // if they got the correct answer
         if (vocab[count] === userInput) {
             // increase score
@@ -47,8 +49,8 @@ export default async function useTest(list) {
     // reset function ?
     const reset = () => {
         // set values back to zero
-        score(0)
-        count(0);
+        setScore(0)
+        setCount(0);
     }
        
 
@@ -57,5 +59,6 @@ export default async function useTest(list) {
         score,
         count,
         mistakes,
+        reset
     };
 }

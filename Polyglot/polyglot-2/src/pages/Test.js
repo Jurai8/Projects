@@ -109,15 +109,17 @@ export function TestLearner() {
     // update which word is being shown and end the test when all values have been shown
     useEffect(() => {
         console.log( "Count: ", count, "Vocab:", vocabulary.length)
+
         // Ensure vocabListRef.current is not empty before trying to access it
-        if (vocabulary.length > 0) {
+        // also make sure count doesn't reach an undefined index
+        if (vocabulary.length > 0 && count < vocabulary.length) {
             // when count changes show the word at index "count"
             // ? The word shown needs to correspond to the test.
-            setWord(vocabulary[count].native);
+            setWord(vocabulary[count].main);
         } 
 
-        // the test would be over
-        if (count === vocabulary.length) {
+        // end test after going through the list
+        if (vocabulary.length > 0 && count === vocabulary.length) {
             setBegin(false)
         }
 
@@ -160,7 +162,8 @@ export function TestLearner() {
         console.log("compare")
 
         // check if user input the correct answer
-        isCorrect(vocabulary[count].translation,input);
+        //! "vocabulary[count].pos" - this also depends on the type of test
+        isCorrect(vocabulary[count].pos, input);
 
 
         setInput(''); // Clear the input field after adding to the array
@@ -231,8 +234,7 @@ export function TestLearner() {
 
             {/* display "word" upon entering the page */}
             {begin === null ? (
-                <h1> Word: {word} </h1>
-
+                <h1>Goodluck</h1>
                 // if begin != null 
             ) : (
                 begin === true ? (
