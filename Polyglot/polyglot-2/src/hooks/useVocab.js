@@ -71,7 +71,7 @@ export default function useFetchVocab(user) {
         
 
         switch (field) {
-            case "POS":
+            case "pos":
                 // get every words translation and it's corresponding POS
                 try {
                     const getVocabdocs = await getDocs(collection(firestore, "Users", user.uid, listName)); 

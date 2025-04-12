@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect, useCallback} from 'react';
 
 
 // hook to initialize different tests
@@ -15,6 +15,10 @@ export default function useTest(list) {
     const addScore = () => setScore(score + 1)
 
     const saveMistake = (userInput, answer) => {
+        if (!userInput) {
+            userInput = "..."
+        };
+
         setMistakes(prevInput => [
             ...prevInput,
             {
@@ -27,30 +31,44 @@ export default function useTest(list) {
 
     // compare user input against the word they were supposed to write
     const isCorrect = (vocab, userInput) => {
-
-        console.log("Vocab: ", vocab, "Input: ", userInput)
         // if they got the correct answer
-        if (vocab[count] === userInput) {
+        if (vocab === userInput) {
             // increase score
             addScore();
 
             // move to the next word
             increment();
         } else {
-
             // save the mistake/ incorrect answer
-            saveMistake(userInput, vocab[count]);
+            saveMistake(userInput, vocab);
 
             // increment without increasing score
             increment();
         }
     }
 
+    const randomize = useCallback((vocab) => {
+
+        const random = vocab;
+        // Iterate over the array in reverse order
+        for (let i = random.length - 1; i > 0; i--) {
+    
+            // Generate Random Index
+            const j = Math.floor(Math.random() * (i + 1));
+    
+            // Swap elements
+            [random[i], random[j]] = [random[j], random[i]];
+        }
+
+        return random;
+    }, [])
+
     // reset function ?
     const reset = () => {
-        // set values back to zero
-        setScore(0)
+        // set values back to original state
+        setScore(0);
         setCount(0);
+        setMistakes([])
     }
        
 
@@ -59,6 +77,7 @@ export default function useTest(list) {
         score,
         count,
         mistakes,
+        randomize,
         reset
     };
 }

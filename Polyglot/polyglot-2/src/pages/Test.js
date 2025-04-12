@@ -7,14 +7,22 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Modal from '@mui/material/Modal';
-import React, { useState, useEffect, useMemo} from 'react';
+import React, { useState, useEffect, useMemo, useCallback} from 'react';
 import { useAuth } from '../hooks/useAuth';
 import useFetchVocab from '../hooks/useVocab';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 import { Test } from '../functions/test';
 import TextField from '@mui/material/TextField';
 import { Typography } from '@mui/material';
 import { Vocab } from '../functions/vocab';
 import useTest from '../hooks/useTest';
+
 
 //TODO: create a collection to store words that user wants to be tested on in the future. User should be able to select individual words to be tested on within a vocab collection (?) or they can get tested on the entire collection
 
@@ -67,21 +75,22 @@ export function TestLearner() {
     const { getVocab } = useFetchVocab(user);
 
     // Check if user is correct. Iterate through vocab. Manage scores
-    const { isCorrect, count, score, reset } = useTest(state.listName);
+    const { isCorrect, count, score, randomize, reset, mistakes
+    } = useTest(state.listName);
 
     // current word to be displayed
     const [word, setWord] = useState('');
-    // move through vocablist indices
-    // * const [count, setCount] = useState(null);
+
     // user answer
     const [input, setInput] = useState('');
-    // user score
-    // * const [score, setScore] = useState(0);
+
     // keep track of whether test has started or not
-    const [begin, setBegin] = useState(null)
+    const [begin, setBegin] = useState(null);
+
     // vocab to be tested against
     const [vocabulary,setVocabulary] = useState([]);
 
+    const [vocabType, setVocabType] = useState("")
 
     console.log("Testlearner:", state);
 
@@ -94,7 +103,8 @@ export function TestLearner() {
 
                 console.log("words: ", words)
 
-                setVocabulary(words);
+                setVocabType(state.testType);
+                setVocabulary(randomize(words));
 
             } catch (error) {
                 // send user to an error page?
@@ -104,11 +114,10 @@ export function TestLearner() {
 
         getwords();
 
-    },[state.listName, getVocab, state.testType])
+    },[state.listName, getVocab, state.testType, randomize])
 
     // update which word is being shown and end the test when all values have been shown
     useEffect(() => {
-        console.log( "Count: ", count, "Vocab:", vocabulary.length)
 
         // Ensure vocabListRef.current is not empty before trying to access it
         // also make sure count doesn't reach an undefined index
@@ -134,36 +143,16 @@ export function TestLearner() {
         reset();
     }
 
-    const randomizeArray = (array) => {
-
-        const random = vocabulary;
-
-        // Iterate over the array in reverse order
-        for (let i = random.length - 1; i > 0; i--) {
-    
-            // Generate Random Index
-            const j = Math.floor(Math.random() * (i + 1));
-    
-            // Swap elements
-            [random[i], random[j]] = [random[j], random[i]];
-        }
-
-        // update the original array
-        vocabulary(random);
-    }
-
 
     const handleInputChange = (event) => {
-        
         setInput(event.target.value);
     };
 
     const handleConfirmClick = () => {
-        console.log("compare")
-
         // check if user input the correct answer
-        //! "vocabulary[count].pos" - this also depends on the type of test
-        isCorrect(vocabulary[count].pos, input);
+        // compare the value they're being tested against with their answer
+        // state.testType could be "translation", "pos" etc
+        isCorrect(vocabulary[count][vocabType], input);
 
 
         setInput(''); // Clear the input field after adding to the array
@@ -199,8 +188,8 @@ export function TestLearner() {
                     ) : (
                         <>
                             <Button variant="contained" onClick={() => {
-                                randomizeArray()
-                                beginTest()
+                                setVocabulary(randomize(vocabulary));
+                                beginTest();
                             }}>
                                 restart
                             </Button>
@@ -220,6 +209,40 @@ export function TestLearner() {
         )
     }   
 
+    function DisplayMistakes() {
+        return (
+            <>
+                <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                    <TableRow>
+                        <TableCell align="left">Your answer</TableCell>
+                        <TableCell align="right">Correct answer</TableCell>
+                    </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    {mistakes.map((row, index) => (
+                        <TableRow
+                        key={index}
+                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        >
+                        <TableCell component="th" scope="row">
+                            {row.userAnswer}
+                        </TableCell>
+
+                        <TableCell align="right">
+                            {row.correctAnswer}
+                        </TableCell>
+                        </TableRow>
+                    ))}
+                    </TableBody>
+                    
+                </Table>
+                </TableContainer>
+            </>
+        )
+    }
+
     return (
         <div>
             {/* should be variable */}
@@ -238,9 +261,21 @@ export function TestLearner() {
                 // if begin != null 
             ) : (
                 begin === true ? (
-                    <h1> Word: {word} </h1>
+                    <>
+                        <h1> Word: {word} </h1>
+                    </>
+                    
                 ): (
-                    <h1> Score: {score} / {vocabulary.length} </h1>
+                    <>
+                        <h1> Score: {score} / {vocabulary.length} </h1>
+
+                        {/* only show if they've made any mistake */}
+                        {mistakes.length > 1 &&
+                            <DisplayMistakes />
+                        }
+                        
+                    </>
+                   
                 )
             )}
 
@@ -254,11 +289,16 @@ export function TestLearner() {
                 autoComplete="off"
                 onSubmit={handleFormSubmit}
                 >
-                <TextField id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}/> 
+
+                {begin &&
+                    <TextField id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}/> 
+                }
+                
 
                 <DisplayButtons begin={begin}/>
 
             </Box>
+
         </div>
     )
 }
@@ -377,7 +417,7 @@ function TestType({ open, close }) {
                         <List>
                             <ListItem disablePadding>
                                 <ListItemButton onClick={() => {
-                                    handleNavigate("Translation")
+                                    handleNavigate("translation")
                                 }}>
                                     <ListItemText primary="Translation"/>
                                 </ListItemButton>
@@ -385,7 +425,7 @@ function TestType({ open, close }) {
 
                             <ListItem disablePadding>
                                 <ListItemButton onClick={() => {
-                                    handleNavigate("POS")
+                                    handleNavigate("pos")
                                 }}>
                                     <ListItemText primary="Parts of Speech"/>
                                 </ListItemButton>
@@ -393,7 +433,7 @@ function TestType({ open, close }) {
 
                             <ListItem disablePadding>
                                 <ListItemButton onClick={() => {
-                                    handleNavigate("Definitions")
+                                    handleNavigate("definition")
                                 }}>
                                     <ListItemText primary="Definitions" />
                                 </ListItemButton>
