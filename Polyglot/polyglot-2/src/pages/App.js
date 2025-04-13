@@ -7,6 +7,7 @@ import {TestLearner, SelectTest, TestIndex} from "./Test.js"
 import { AuthProvider } from '../hooks/useAuth.js';
 import { ProtectedRoute } from '../components/ProtectedRoute.js';
 import Layout from '../components/Layout.js';
+import Profile from './Profile.js';
 
 
 // TODO make sure the data (/state?) persists after refresh
@@ -71,8 +72,13 @@ function App() {
                 element={<ProtectedRoute><TestLearner /></ProtectedRoute>} 
               />  
 
-
             </Route>
+            
+            {/* "/profile-[username]" */}
+            <Route path="/profile" element={
+                <Profile />
+              }
+            /> 
               
           </Route>
         </Routes>  

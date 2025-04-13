@@ -40,6 +40,8 @@ export default function useTest(list) {
             increment();
         } else {
             // save the mistake/ incorrect answer
+            console.log("Mistake:", userInput, "Correction:", vocab);
+            
             saveMistake(userInput, vocab);
 
             // increment without increasing score

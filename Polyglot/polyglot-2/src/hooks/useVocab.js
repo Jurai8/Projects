@@ -77,7 +77,6 @@ export default function useFetchVocab(user) {
                     const getVocabdocs = await getDocs(collection(firestore, "Users", user.uid, listName)); 
         
                     getVocabdocs.forEach((doc) => {
-                        console.log("getVocab: ",doc.data().translation, doc.data().POS)
                         //append doc.data to array
                         vocab.push({
                             // main = what the user sees
@@ -95,10 +94,42 @@ export default function useFetchVocab(user) {
 
             case "translation":
                 // get both the word and translation
+                try {
+                    const getVocabdocs = await getDocs(collection(firestore, "Users", user.uid, listName)); 
+        
+                    getVocabdocs.forEach((doc) => {
+                        //append doc.data to array
+                        vocab.push({
+                            // main = what the user sees during the test
+                            main: doc.data().word,
+                            // value they're being tested (they're answer must match this)
+                            translation: doc.data().translation
+                        });
+                    });
+        
+                } catch (error) {
+                    throw new Error("could not get vocab for test", error);
+                }
                 break;
 
             case "definition":
                 // get every words translation and it's corresponding def 
+                try {
+                    const getVocabdocs = await getDocs(collection(firestore, "Users", user.uid, listName)); 
+        
+                    getVocabdocs.forEach((doc) => {
+                        //append doc.data to array
+                        vocab.push({
+                            // main = what the user sees during the test
+                            main: doc.data().definition,
+                            // value they're being tested (they're answer must match this)
+                            translation: doc.data().translation
+                        });
+                    });
+        
+                } catch (error) {
+                    throw new Error("could not get vocab for test", error);
+                }
                 break;
 
             // if the user doesn't request a specific field
@@ -113,9 +144,7 @@ export default function useFetchVocab(user) {
                     });
         
                 } catch (error) {
-                    console.error("could not get vocab for test", error);
-                    throw new Error("could not get vocab for test");
-                    
+                    throw new Error("could not get vocab for test", error);
                 }
 
                 break;

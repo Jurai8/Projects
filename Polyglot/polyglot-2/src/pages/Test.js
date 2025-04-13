@@ -92,8 +92,6 @@ export function TestLearner() {
 
     const [vocabType, setVocabType] = useState("")
 
-    console.log("Testlearner:", state);
-
     
     // get the vocab to be tested on
     useEffect(() => {
@@ -103,7 +101,14 @@ export function TestLearner() {
 
                 console.log("words: ", words)
 
-                setVocabType(state.testType);
+                if (state.testType === "definition") {
+                    // definition the user is being compared against the word the give per definition.
+                    setVocabType("translation");
+                } else {
+                    setVocabType(state.testType);
+                }
+
+                
                 setVocabulary(randomize(words));
 
             } catch (error) {
@@ -149,6 +154,9 @@ export function TestLearner() {
     };
 
     const handleConfirmClick = () => {
+
+        console.log("VocabType:", vocabType, typeof vocabType);
+
         // check if user input the correct answer
         // compare the value they're being tested against with their answer
         // state.testType could be "translation", "pos" etc
@@ -246,7 +254,6 @@ export function TestLearner() {
     return (
         <div>
             {/* should be variable */}
-            
 
             {state && 
                 <>
@@ -264,7 +271,6 @@ export function TestLearner() {
                     <>
                         <h1> Word: {word} </h1>
                     </>
-                    
                 ): (
                     <>
                         <h1> Score: {score} / {vocabulary.length} </h1>
