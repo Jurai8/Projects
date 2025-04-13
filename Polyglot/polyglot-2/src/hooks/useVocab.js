@@ -228,8 +228,6 @@ export function useSetVocab(user) {
             }
             
 
-            
-
         }
 
         const editTrans = async () => {
@@ -459,6 +457,7 @@ export function useSetVocab(user) {
 
                 if (docSnap.exists()) {
                     // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
+                    
                     // treat it as a number if it isn't already
                     const currTotalWords = docSnap.data().Words ? Number(docSnap.data().Words) : 0;
 
@@ -475,6 +474,35 @@ export function useSetVocab(user) {
                         })
                     } catch (error) {
                         throw new Error(error);
+                    }
+
+                    // * 3. update total words across entire profile
+
+                    const userDocRef = doc(firestore, "Users", uid);
+
+                    const userDocSnap = await getDoc(userDocRef);
+
+                    if (userDocSnap.exists()) {
+                        // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
+
+                        // treat it as a number if it isn't already
+                        const currTotalWords = userDocSnap.data().Total_Words ? Number(userDocSnap.data().Total_Words) : 0;
+    
+                        console.log("total before:", currTotalWords);
+
+                        // decrease total words
+                        const newTotalWords = currTotalWords - 1;
+    
+                        console.log("total after:", newTotalWords)
+    
+                        // update in db
+                        try {
+                            await updateDoc(userDocRef, {
+                                Total_Words: newTotalWords
+                            })
+                        } catch (error) {
+                            throw new Error(error);
+                        }
                     }
 
                 } else {

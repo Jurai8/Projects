@@ -1,8 +1,13 @@
 import { useState, useEffect, useCallback} from 'react';
+import { useAuth } from './useAuth';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { firestore } from '../firebase';
 
 
 // hook to initialize different tests
 export default function useTest(list) {
+    const { user } =  useAuth();
+
     const [score, setScore] = useState(0);
 
     // questions that were answered incorrectly
@@ -41,7 +46,7 @@ export default function useTest(list) {
         } else {
             // save the mistake/ incorrect answer
             console.log("Mistake:", userInput, "Correction:", vocab);
-            
+
             saveMistake(userInput, vocab);
 
             // increment without increasing score
@@ -72,6 +77,50 @@ export default function useTest(list) {
         setCount(0);
         setMistakes([])
     }
+
+    const updatedTotalTests = async (perfects) => {
+        const userDocRef = doc(firestore, "Users", user.uid);
+        
+        const docSnap = await getDoc(userDocRef);
+        
+        let testsDone = 0;
+        let totalPerfects = 0;
+
+        // if the user (doc) exists
+        if (docSnap.exists()) {
+
+            // get current number of tests done from db
+            testsDone = docSnap.data().Tests + 1;
+            totalPerfects = docSnap.data().Perfects + 1;
+            
+        } else {
+            // Throw an Error?
+            console.log("No such document!");
+        }
+
+        // update number of tests done
+            // if they got a perfect score, update that too
+        if (perfects === true) {
+            try {
+                updateDoc(userDocRef, {
+                    Tests: testsDone,
+                    Perfects: totalPerfects
+                })
+            } catch (error) {
+                throw new Error(error);  
+            }
+        } else {
+            try {
+                updateDoc(userDocRef, {
+                    Tests: testsDone,
+                })
+            } catch (error) {
+                throw new Error(error);  
+            }
+        }
+        
+        
+    }
        
 
     return {
@@ -80,6 +129,12 @@ export default function useTest(list) {
         count,
         mistakes,
         randomize,
-        reset
+        reset,
+        updatedTotalTests,
     };
+}
+
+export function useScheduleTest(date, testType, listName) {
+
+    // return true false if a test is scheduled for today
 }

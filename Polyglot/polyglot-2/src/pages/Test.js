@@ -33,6 +33,9 @@ export function TestIndex() {
 
     const [TestTypeModal, setTestTypeModal] = useState(false);
 
+    // decide whether the user will schedule a test or not.
+    const [schedule, setSchedule] = useState(false);
+
     const openTestTypeModal = () => {
         setTestTypeModal(true);
     }
@@ -42,21 +45,33 @@ export function TestIndex() {
     }
 
 
-    // TODO: should i wrap the use location in a useMemo/useEffect?
-        //? useEffect causes the variable to be redefined each time i update the source code
-    // TODO: pass listname directly to TestLearner so that they can begin the test
-    // const { state } = useLocation();
-    // {state && <h2>List: { state.listName }</h2>}
-
     return (
         <>
             <h1>Test</h1>
 
-            <TestType open={TestTypeModal} close={closeTestTypemodal}></TestType>
+            <TestType 
+                open={TestTypeModal} 
+                close={closeTestTypemodal} 
+                schedule={schedule}
+            >
+            </TestType>
 
             <div >
-                <Button onClick={openTestTypeModal}>Start a Test</Button>
-                <Button>Schedule Test</Button>
+                <Button onClick={() => {
+                    
+                    setSchedule(false);
+
+                    openTestTypeModal()
+                }}>
+                    Quickstart a Test
+                </Button>
+
+                <Button onClick={() => {
+                    setSchedule(true)
+                    openTestTypeModal()
+                }}>
+                    Schedule Test 
+                </Button>
             </div>
         </>
     );
@@ -75,7 +90,7 @@ export function TestLearner() {
     const { getVocab } = useFetchVocab(user);
 
     // Check if user is correct. Iterate through vocab. Manage scores
-    const { isCorrect, count, score, randomize, reset, mistakes
+    const { isCorrect, count, score, randomize, reset, mistakes, updatedTotalTests,
     } = useTest(state.listName);
 
     // current word to be displayed
@@ -134,10 +149,22 @@ export function TestLearner() {
 
         // end test after going through the list
         if (vocabulary.length > 0 && count === vocabulary.length) {
-            setBegin(false)
+
+            setBegin(false);
+        
+            // update number of tests user has done
+            // if the user got a perfect score
+            if (mistakes.length === 0) {
+                // record the perfect score
+                updatedTotalTests(true);
+            } else {
+                // don't record the perfect score
+                updatedTotalTests();
+            }
+            
         }
 
-    }, [count,vocabulary])
+    }, [count,vocabulary, updatedTotalTests, mistakes])
 
 
     // use to begin/restart a test
@@ -316,8 +343,16 @@ function SelectTest() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const [options, setOptions] = useState([])
+    const [options, setOptions] = useState([]);
 
+    const [pathname, setPathname] = useState(null);
+
+    const [scheduleModal, setScheduleModal] = useState(false);
+
+    const open = () => setScheduleModal(true);
+    const close = () => setScheduleModal(false);
+
+    // redirection depends on whether the user is scheduling or starting a test
     const handleNavigation = (listName) => {
         navigate(`/test/${listName}`, {
             state: {
@@ -329,6 +364,14 @@ function SelectTest() {
     };
 
     useEffect(() => {
+        setPathname(location.pathname);
+
+        if (location.pathname === "/test/schedule-test/select-list") {
+            console.log("scheduling...")
+        } else {
+            console.log("not scheduling...Pathname:", location.pathname )
+        }
+        
         const getLists = async () => {
             if (user) {
                 const vocab = new Vocab(user);
@@ -346,22 +389,77 @@ function SelectTest() {
         };
 
         getLists(); 
-    }, []);
+    }, [user, location]);
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+      };
+
+
+    const ScheduleTestModal = () => {
+
+        return (
+            <Modal
+                open={scheduleModal}
+                onClose={close}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Select a date
+                    </Typography>
+
+                    <Divider />
+                    <nav aria-label="test types">
+                        <input type="date" id="schedule-test" name="schedule-test" />
+
+                        {/*onClick = schedule test and redirect user back to test home page 
+                        
+                        */}
+                        <Button>submit</Button>
+                    </nav>
+                </Box>
+            </Modal>    
+        )
+    }
     
     return (
         <div>
+
+            <ScheduleTestModal />
+
             <Typography variant='h5'> Select your vocab list</Typography>
             {options.map((list,index)=>(
                 <List key={index}>
                     {/*pass test type and listName to TestLearner */}
 
-                    <ListItem disablePadding>
-                        <ListItemButton 
-                            onClick={() => {handleNavigation(list.listName)}}
-                        >
-                            <ListItemText primary={list.listName}/>
-                        </ListItemButton>
-                    </ListItem>
+                    {pathname === "/test/schedule-test/select-list" ?
+                        <ListItem disablePadding>
+                            <ListItemButton 
+                                onClick={() => {open()}}
+                            >
+                                <ListItemText primary={list.listName}/>
+                            </ListItemButton>
+                        </ListItem> :
+
+                        <ListItem disablePadding>
+                            <ListItemButton 
+                                onClick={() => {handleNavigation(list.listName)}}
+                            >
+                                <ListItemText primary={list.listName}/>
+                            </ListItemButton>
+                        </ListItem>
+                    }
+                    
                 </List>
             ))}
         </div>
@@ -373,7 +471,7 @@ function SelectTest() {
 export {SelectTest}
 
 // after the user selects the test, they then select the list
-function TestType({ open, close }) {
+function TestType({ open, close, schedule}) {
     // modal
     // options:
         // Pos test
@@ -383,7 +481,12 @@ function TestType({ open, close }) {
         const navigate = useNavigate();
 
         const handleNavigate = (testType) => {
-            navigate("/test/select-list", { state: { testType: testType } });
+            if (schedule) {
+                navigate("/test/schedule-test/select-list", { state: { testType: testType } });
+            } else {
+                navigate("/test/select-list", { state: { testType: testType } });
+
+            }
         }
 
 

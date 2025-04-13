@@ -67,6 +67,11 @@ function App() {
                 element={<ProtectedRoute><SelectTest /></ProtectedRoute>}
               />
 
+              <Route
+                path="schedule-test/select-list" 
+                element={<ProtectedRoute><SelectTest /></ProtectedRoute>}
+              />
+
               <Route 
                 path=":testName" 
                 element={<ProtectedRoute><TestLearner /></ProtectedRoute>} 
