@@ -1,15 +1,19 @@
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import dayjs from 'dayjs';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import Modal from '@mui/material/Modal';
-import React, { useState, useEffect, useMemo, useCallback} from 'react';
 import { useAuth } from '../hooks/useAuth';
 import useFetchVocab from '../hooks/useVocab';
+import React, { useState, useEffect, useMemo, useCallback} from 'react';
+import { StaticDateTimePicker } from '@mui/x-date-pickers/StaticDateTimePicker';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -349,8 +353,17 @@ function SelectTest() {
 
     const [scheduleModal, setScheduleModal] = useState(false);
 
+    const [input, setInput] = useState();
+
+
+
     const open = () => setScheduleModal(true);
     const close = () => setScheduleModal(false);
+
+    const updateInput = (input) => {
+        console.log("Input: ", input.target.value);
+        setInput(input.target.value);
+    }
 
     // redirection depends on whether the user is scheduling or starting a test
     const handleNavigation = (listName) => {
@@ -406,6 +419,26 @@ function SelectTest() {
 
     const ScheduleTestModal = () => {
 
+        function DynamicButton({ text }) {
+
+            const buttonFunctions = () => {
+                if (text === "Cancel") {
+                    // close modal
+                    close();
+                } else if (text === "Ok") {
+                    // submit results
+                    // close modal
+                } else {
+                    console.log("error");
+                }
+            }
+
+            return (
+                <p onClick={() => buttonFunctions()}>{text}</p>
+            )
+        }
+
+
         return (
             <Modal
                 open={scheduleModal}
@@ -414,19 +447,21 @@ function SelectTest() {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Select a date
-                    </Typography>
-
-                    <Divider />
-                    <nav aria-label="test types">
-                        <input type="date" id="schedule-test" name="schedule-test" />
-
-                        {/*onClick = schedule test and redirect user back to test home page 
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDateTimePicker 
+                            defaultValue={dayjs('2022-04-17T15:30')} 
+                            localeText={{
+                                okButtonLabel: "Ok" ,
+                                cancelButtonLabel: "cancel",
+                            }}
+                            onCancel={() => {"Helloo"}}
+                                                        
+                        />
+ 
+                    </LocalizationProvider>
                         
-                        */}
-                        <Button>submit</Button>
-                    </nav>
+
+                    <Button>submit</Button>
                 </Box>
             </Modal>    
         )

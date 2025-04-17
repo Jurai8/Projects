@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback} from 'react';
 import { useAuth } from './useAuth';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { firestore } from '../firebase';
 
 
@@ -134,7 +134,23 @@ export default function useTest(list) {
     };
 }
 
-export function useScheduleTest(date, testType, listName) {
+export function useScheduleTest(user) {
 
+    const timestamp = new Timestamp(0, 0);
+    
+    const scheduleTest = async (timestamp, testType, listName) => {
+
+        /* 
+            await addDoc(collection(firestore, "Users", user.uid, "Test_Schedule"), {
+                testType: testType,
+                collection: listName,
+                date: timestamp,
+            });
+        */
+    }
+
+
+    // if the test due on the current date/time, email the user
+    // if I can't email the user. save an alert in the app
     // return true false if a test is scheduled for today
 }
