@@ -2,6 +2,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import '@fontsource/inter';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -19,11 +20,6 @@ root.render(
   </React.StrictMode>
 );
 
-/* 
-<Routes>
-  <Route path="/*" element={<App />} />
-</Routes>
-*/
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
@@ -31,19 +27,3 @@ root.render(
 reportWebVitals();
 
 
-// ! old version
-/* 
-  <Router> 
-    
-    <Routes> 
-      <Route path="/signup" element={<SignUp />} /> 
-      <Route path="/" element={<Home />} /> 
-      <Route path="/heft" element={<Heft />} />
-      <Route path="/vocablists" element={<VocabLists />}/>
-      <Route path="/test">
-        <Route index element={<IndexTest />}/>
-        <Route path=":testName" element={<TestLearner />}/>
-      </Route>
-    </Routes> 
-  </Router> 
-*/

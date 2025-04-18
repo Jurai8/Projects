@@ -138,8 +138,11 @@ export function useScheduleTest(user) {
 
     const timestamp = new Timestamp(0, 0);
     
-    const scheduleTest = async (timestamp, testType, listName) => {
+    const scheduleTest = async (date) => {
 
+        // * don't allow the user to schedule on or before the current day
+
+        console.log("User Input:", date.$d);
         /* 
             await addDoc(collection(firestore, "Users", user.uid, "Test_Schedule"), {
                 testType: testType,
@@ -150,6 +153,9 @@ export function useScheduleTest(user) {
     }
 
 
+    return {
+        scheduleTest,
+    }
     // if the test due on the current date/time, email the user
     // if I can't email the user. save an alert in the app
     // return true false if a test is scheduled for today

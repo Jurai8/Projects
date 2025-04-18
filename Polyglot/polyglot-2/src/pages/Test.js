@@ -10,10 +10,13 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import Modal from '@mui/material/Modal';
+import ModalClose from '@mui/joy/ModalClose';
 import { useAuth } from '../hooks/useAuth';
 import useFetchVocab from '../hooks/useVocab';
 import React, { useState, useEffect, useMemo, useCallback} from 'react';
 import { StaticDateTimePicker } from '@mui/x-date-pickers/StaticDateTimePicker';
+import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
+import { useScheduleTest } from '../hooks/useTest';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -357,14 +360,11 @@ function SelectTest() {
 
 
 
+
     const open = () => setScheduleModal(true);
     const close = () => setScheduleModal(false);
 
-    const updateInput = (input) => {
-        console.log("Input: ", input.target.value);
-        setInput(input.target.value);
-    }
-
+    
     // redirection depends on whether the user is scheduling or starting a test
     const handleNavigation = (listName) => {
         navigate(`/test/${listName}`, {
@@ -419,25 +419,7 @@ function SelectTest() {
 
     const ScheduleTestModal = () => {
 
-        function DynamicButton({ text }) {
-
-            const buttonFunctions = () => {
-                if (text === "Cancel") {
-                    // close modal
-                    close();
-                } else if (text === "Ok") {
-                    // submit results
-                    // close modal
-                } else {
-                    console.log("error");
-                }
-            }
-
-            return (
-                <p onClick={() => buttonFunctions()}>{text}</p>
-            )
-        }
-
+        const { scheduleTest } = useScheduleTest(user);
 
         return (
             <Modal
@@ -446,22 +428,35 @@ function SelectTest() {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <StaticDateTimePicker 
-                            defaultValue={dayjs('2022-04-17T15:30')} 
-                            localeText={{
-                                okButtonLabel: "Ok" ,
-                                cancelButtonLabel: "cancel",
-                            }}
-                            onCancel={() => {"Helloo"}}
-                                                        
-                        />
- 
-                    </LocalizationProvider>
-                        
 
-                    <Button>submit</Button>
+                <Box sx={style}>
+                    <ModalClose 
+                        variant="plain" 
+                        sx={{ m: 1 }}
+                        onClick={() => close()}
+                    />
+                    
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <StaticDatePicker 
+                            defaultValue={dayjs('2025-04-17')} 
+                            // customize what button shows in the actionbar
+                            slotProps={{
+                                actionBar: {
+                                  actions: ['accept'],
+                                },
+                            }}
+                            // change the text of the buttons in the actionbar
+                            localeText={{
+                                okButtonLabel: "Confirm" ,
+                            }}
+                            
+                            //  Onclick "Confirm"
+                            onAccept={(e) => {
+                                scheduleTest(e);
+                                close();
+                            }}
+                        />
+                    </LocalizationProvider>          
                 </Box>
             </Modal>    
         )
