@@ -135,20 +135,36 @@ export default function useTest(list) {
 }
 
 export function useScheduleTest(user) {
-
-    const timestamp = new Timestamp(0, 0);
     
-    const scheduleTest = async (date) => {
+    const scheduleTest = async (date, testType, listName) => {
+
+        const today = new Date();
+
+        let day = today.getDate().toString().padStart(2, '0');
+        let month = (today.getMonth() + 1).toString().padStart(2, '0');
+        let year = today.getFullYear();
+
+        const currentDate = `${year}/${month}/${day}`;
+
+        // make sure that the current date is not before or on the current date
+        if (date === currentDate) {
+            console.log("can't schedule for current day");
+        } else {
+           
+        }
 
         // * don't allow the user to schedule on or before the current day
-
-        console.log("User Input:", date.$d);
         /* 
-            await addDoc(collection(firestore, "Users", user.uid, "Test_Schedule"), {
+        try {
+            await addDoc(collection(firestore, "Users", user.uid, "Test_Schedule"),{
                 testType: testType,
                 collection: listName,
-                date: timestamp,
+                date: date,
             });
+        } catch (error) {
+            throw new Error("Couldn't schedule test", error);
+            
+        }
         */
     }
 

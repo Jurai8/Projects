@@ -1,4 +1,5 @@
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import de from 'date-fns/locale/de';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -356,7 +357,7 @@ function SelectTest() {
 
     const [scheduleModal, setScheduleModal] = useState(false);
 
-    const [input, setInput] = useState();
+    const [selectedList, setSelectedList] = useState("");
 
 
 
@@ -436,9 +437,11 @@ function SelectTest() {
                         onClick={() => close()}
                     />
                     
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <LocalizationProvider 
+                        dateAdapter={AdapterDayjs} adapterLocale={de}
+                    >
                         <StaticDatePicker 
-                            defaultValue={dayjs('2025-04-17')} 
+                            defaultValue={dayjs('2025/04/17')} 
                             // customize what button shows in the actionbar
                             slotProps={{
                                 actionBar: {
@@ -452,7 +455,7 @@ function SelectTest() {
                             
                             //  Onclick "Confirm"
                             onAccept={(e) => {
-                                scheduleTest(e);
+                                scheduleTest(e.format("YYYY/MM/DD"),location.state.testType, selectedList);
                                 close();
                             }}
                         />
@@ -475,7 +478,10 @@ function SelectTest() {
                     {pathname === "/test/schedule-test/select-list" ?
                         <ListItem disablePadding>
                             <ListItemButton 
-                                onClick={() => {open()}}
+                                onClick={() => {
+                                    setSelectedList(list.listName);
+                                    open()
+                                }}
                             >
                                 <ListItemText primary={list.listName}/>
                             </ListItemButton>
