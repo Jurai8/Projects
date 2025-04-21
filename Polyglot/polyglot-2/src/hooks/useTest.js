@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback} from 'react';
 import { useAuth } from './useAuth';
-import { addDoc, collection, doc, getDoc, Timestamp, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocFromServer, getDocs, Timestamp, updateDoc } from 'firebase/firestore';
 import { firestore } from '../firebase';
 
 
@@ -134,43 +134,70 @@ export default function useTest(list) {
     };
 }
 
+
 export function useScheduleTest(user) {
-    
+
+    // change to "setTestSchedule"
     const scheduleTest = async (date, testType, listName) => {
 
         const today = new Date();
+        const userDate = new Date(date);
 
-        let day = today.getDate().toString().padStart(2, '0');
-        let month = (today.getMonth() + 1).toString().padStart(2, '0');
-        let year = today.getFullYear();
+        today.setHours(0, 0, 0, 0);
+        userDate.setHours(0, 0, 0, 0);
 
-        const currentDate = `${year}/${month}/${day}`;
+        // ensure that the user does not schedule on or before the current date
+        if (today.getTime() === userDate.getTime()) {
+            alert("schedule after the current date");
+            return false;
 
-        // make sure that the current date is not before or on the current date
-        if (date === currentDate) {
-            console.log("can't schedule for current day");
+        } else if (today.getTime() > userDate.getTime()) {
+            alert("schedule after the current date");
+            return false;
+
         } else {
-           
-        }
+            try {
+                await addDoc(collection(firestore, "Users", user.uid, "Test_Schedule"),{
+                    testType: testType,
+                    collection: listName,
+                    date: date,
+                });
 
-        // * don't allow the user to schedule on or before the current day
-        /* 
-        try {
-            await addDoc(collection(firestore, "Users", user.uid, "Test_Schedule"),{
-                testType: testType,
-                collection: listName,
-                date: date,
-            });
-        } catch (error) {
-            throw new Error("Couldn't schedule test", error);
-            
+                alert("test has been scheduled");
+                return true;
+            } catch (error) {
+                throw new Error("Couldn't schedule test", error);   
+            }
         }
-        */
+        
     }
 
+    const getTestSchedule = useCallback(async () => {
+
+        const testSchedule = [];
+
+        try {
+            const scheduleSnapshot = await getDocs(collection(firestore, "Users", user.uid, "Test_Schedule"));
+
+            // store the details for each scheduled test
+            scheduleSnapshot.forEach((doc) => {
+                testSchedule.push({
+                    collection: doc.data().collection,
+                    testType: doc.data().testType,
+                    date: doc.data().date
+                })
+            });
+
+            return testSchedule;
+            
+        } catch (error) {
+            throw new Error("could not get test schedule", error);  
+        }
+    }, [user]);
 
     return {
         scheduleTest,
+        getTestSchedule,
     }
     // if the test due on the current date/time, email the user
     // if I can't email the user. save an alert in the app

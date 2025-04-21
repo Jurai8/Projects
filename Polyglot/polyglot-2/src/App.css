@@ -3,6 +3,10 @@ html, body, #root, .App {
   overflow: hidden;
 }
 
+#schedule-table-header {
+  /* make the column spacing better */
+  width: 33.33%;
+}
 
 #table-position {
   display: flex;
@@ -19,6 +23,8 @@ html, body, #root, .App {
   overflow-y: auto;
   margin: auto;
 }
+
+
 
 #vocab-table {
   width: 100%;

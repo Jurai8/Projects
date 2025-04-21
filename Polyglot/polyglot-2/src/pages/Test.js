@@ -27,7 +27,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Test } from '../functions/test';
 import TextField from '@mui/material/TextField';
-import { Typography } from '@mui/material';
+import { Tab, Typography } from '@mui/material';
 import { Vocab } from '../functions/vocab';
 import useTest from '../hooks/useTest';
 
@@ -36,10 +36,13 @@ import useTest from '../hooks/useTest';
 
 // the "home page" so to speak
 export function TestIndex() {
-    // the user should see 2 buttons to schedule and start a test
-    // the user should a see a table of scheduled tests
+    const { user } = useAuth();
+
+    const { getTestSchedule } = useScheduleTest(user);
 
     const [TestTypeModal, setTestTypeModal] = useState(false);
+
+    const [scheduleTable, setScheduleTable] = useState();
 
     // decide whether the user will schedule a test or not.
     const [schedule, setSchedule] = useState(false);
@@ -52,35 +55,116 @@ export function TestIndex() {
         setTestTypeModal(false);
     }
 
+    useEffect(() => {
+        const getschedule = async () => {
+            const testSchedule = await getTestSchedule();
+
+            setScheduleTable(testSchedule);
+        }
+
+        getschedule();
+
+    },[getTestSchedule]);
+
 
     return (
         <>
-            <h1>Test</h1>
+            <div>
+                <h1>Test</h1>
 
-            <TestType 
-                open={TestTypeModal} 
-                close={closeTestTypemodal} 
-                schedule={schedule}
-            >
-            </TestType>
+                <TestType 
+                    open={TestTypeModal} 
+                    close={closeTestTypemodal} 
+                    schedule={schedule}
+                >
+                </TestType>
 
-            <div >
-                <Button onClick={() => {
-                    
-                    setSchedule(false);
+                <div >
+                    <Button onClick={() => {
+                        
+                        setSchedule(false);
 
-                    openTestTypeModal()
-                }}>
-                    Quickstart a Test
-                </Button>
+                        openTestTypeModal()
+                    }}>
+                        Quickstart a Test
+                    </Button>
 
-                <Button onClick={() => {
-                    setSchedule(true)
-                    openTestTypeModal()
-                }}>
-                    Schedule Test 
-                </Button>
+                    <Button onClick={() => {
+                        setSchedule(true)
+                        openTestTypeModal()
+                    }}>
+                        Schedule Test 
+                    </Button>
+                </div>
             </div>
+
+            
+            <TableContainer id='schedule-table-container' component={Paper}>
+                <Table 
+                    sx={{ minWidth: 650, tableLayout: 'fixed' }} 
+                    aria-label="simple table" 
+                    id="test-schedule-table" 
+                >
+
+                {scheduleTable ?
+                    <>
+                        <TableHead>
+                            <TableRow>
+                                {/* replace with variables in future */}
+                                <TableCell className='schedule-table-header'>
+                                    Test
+                                </TableCell>
+
+                                <TableCell className='schedule-table-header'>
+                                    List
+                                </TableCell>
+
+                                <TableCell 
+                                    className='schedule-table-header' 
+                                >
+                                    Date
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {scheduleTable.map((row, index) => (
+                                <TableRow
+                                    key={index}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row" >
+                                        {row.testType}
+                                    </TableCell>
+                                    
+                                    <TableCell 
+                                        sx={{ paddingRight: "0px !important" }}
+                                    >
+                                        {row.collection}
+                                    </TableCell>   
+
+                                    <TableCell  
+                                        sx={{ paddingRight: "0px !important" }}
+                                    >
+                                        {row.date}
+                                    </TableCell> 
+                    
+                                </TableRow>
+                            ))}
+                        </TableBody> 
+                    </> :
+
+                    <TableBody>
+                        <TableRow>
+                            <TableCell>
+                                Loading...
+                            </TableCell> 
+                        </TableRow>
+                    </TableBody>
+                }
+                    
+                </Table>
+            </TableContainer>
+            
         </>
     );
 }
@@ -454,9 +538,21 @@ function SelectTest() {
                             }}
                             
                             //  Onclick "Confirm"
-                            onAccept={(e) => {
-                                scheduleTest(e.format("YYYY/MM/DD"),location.state.testType, selectedList);
-                                close();
+                            onAccept={async (e) => {
+                                try {
+                                    const success = await scheduleTest(
+                                        e.format("YYYY/MM/DD"),
+                                        location.state.testType,
+                                        selectedList
+                                    );
+                                
+                                    if (success) {
+                                        close(); // Only close modal if scheduling succeeded
+                                    }
+                                } catch (error) {
+                                    console.error("Failed to schedule test:", error);
+                                    alert("Something went wrong. Please try again.");
+                                }
                             }}
                         />
                     </LocalizationProvider>          
