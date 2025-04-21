@@ -3,9 +3,17 @@ html, body, #root, .App {
   overflow: hidden;
 }
 
-#schedule-table-header {
+#test-schedule-table {
+  width: 100%;
+}
+
+.schedule-table-header {
   /* make the column spacing better */
   width: 33.33%;
+}
+
+.schedule-table-rows:hover {
+  background-color: #D3D3D3;
 }
 
 #table-position {

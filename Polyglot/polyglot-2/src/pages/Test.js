@@ -38,6 +38,8 @@ import useTest from '../hooks/useTest';
 export function TestIndex() {
     const { user } = useAuth();
 
+    const navigate = useNavigate();
+
     const { getTestSchedule } = useScheduleTest(user);
 
     const [TestTypeModal, setTestTypeModal] = useState(false);
@@ -45,6 +47,8 @@ export function TestIndex() {
     const [scheduleTable, setScheduleTable] = useState(false);
 
     const [beginTestModal, setBeginTestModal] = useState(false);
+
+    const [testDetails, setTestDetails] = useState({});
 
     // decide whether the user will schedule a test or not.
     const [schedule, setSchedule] = useState(false);
@@ -74,7 +78,12 @@ export function TestIndex() {
 
 
     const beginTest = () => {
-        
+        navigate(`/test/${testDetails.collection}`, {
+            state: {
+              testType: testDetails.testType,
+              listName: testDetails.collection
+            },
+        });
     }
 
     const style = {
@@ -102,8 +111,10 @@ export function TestIndex() {
                         Would you like to start this test?
                     </Typography>
 
-                    <Button> Yes </Button>
-                    <Button> No </Button>
+                    <Button onClick={() => beginTest()}> Yes </Button>
+                    <Button onClick={() => {closeBeginTestModal()}}> 
+                        No 
+                    </Button>
                 </Box>
             </Modal>
 
@@ -169,7 +180,11 @@ export function TestIndex() {
                                 <TableRow
                                     key={index}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    
+                                    className='schedule-table-rows'
+                                    onDoubleClick={() => {
+                                        setTestDetails(row);
+                                        setBeginTestModal(true)
+                                    }}
                                 >
                                     <TableCell component="th" scope="row" >
                                         {row.testType}
@@ -434,7 +449,7 @@ export function TestLearner() {
                         <h1> Score: {score} / {vocabulary.length} </h1>
 
                         {/* only show if they've made any mistake */}
-                        {mistakes.length > 1 &&
+                        {mistakes.length >= 1 &&
                             <DisplayMistakes />
                         }
                         
