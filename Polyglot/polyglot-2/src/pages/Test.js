@@ -42,7 +42,9 @@ export function TestIndex() {
 
     const [TestTypeModal, setTestTypeModal] = useState(false);
 
-    const [scheduleTable, setScheduleTable] = useState();
+    const [scheduleTable, setScheduleTable] = useState(false);
+
+    const [beginTestModal, setBeginTestModal] = useState(false);
 
     // decide whether the user will schedule a test or not.
     const [schedule, setSchedule] = useState(false);
@@ -53,6 +55,10 @@ export function TestIndex() {
 
     const closeTestTypemodal = () => {
         setTestTypeModal(false);
+    }
+
+    const closeBeginTestModal = () => {
+        setBeginTestModal(false);
     }
 
     useEffect(() => {
@@ -67,8 +73,40 @@ export function TestIndex() {
     },[getTestSchedule]);
 
 
+    const beginTest = () => {
+        
+    }
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+      };
+
     return (
         <>
+            <Modal
+                open={beginTestModal}
+                onClose={closeBeginTestModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Would you like to start this test?
+                    </Typography>
+
+                    <Button> Yes </Button>
+                    <Button> No </Button>
+                </Box>
+            </Modal>
+
             <div>
                 <h1>Test</h1>
 
@@ -131,6 +169,7 @@ export function TestIndex() {
                                 <TableRow
                                     key={index}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    
                                 >
                                     <TableCell component="th" scope="row" >
                                         {row.testType}
