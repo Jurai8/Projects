@@ -81,7 +81,8 @@ export function TestIndex() {
         navigate(`/test/${testDetails.collection}`, {
             state: {
               testType: testDetails.testType,
-              listName: testDetails.collection
+              listName: testDetails.collection,
+              testId: testDetails.id
             },
         });
     }
@@ -239,6 +240,8 @@ export function TestLearner() {
     const { isCorrect, count, score, randomize, reset, mistakes, updatedTotalTests,
     } = useTest(state.listName);
 
+    const { unScheduleTest } = useScheduleTest(user);
+
     // current word to be displayed
     const [word, setWord] = useState('');
 
@@ -297,7 +300,13 @@ export function TestLearner() {
         if (vocabulary.length > 0 && count === vocabulary.length) {
 
             setBegin(false);
-        
+
+            // if the user scheduled a test
+            if (state.testId) {
+                // unschedule the test
+                unScheduleTest(state.testId);
+            }
+            
             // update number of tests user has done
             // if the user got a perfect score
             if (mistakes.length === 0) {
@@ -310,7 +319,7 @@ export function TestLearner() {
             
         }
 
-    }, [count,vocabulary, updatedTotalTests, mistakes])
+    }, [count,vocabulary, updatedTotalTests, mistakes, unScheduleTest, state.testId])
 
 
     // use to begin/restart a test
@@ -496,8 +505,6 @@ function SelectTest() {
     const [scheduleModal, setScheduleModal] = useState(false);
 
     const [selectedList, setSelectedList] = useState("");
-
-
 
 
     const open = () => setScheduleModal(true);

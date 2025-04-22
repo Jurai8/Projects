@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback} from 'react';
+import { useState, useCallback} from 'react';
 import { useAuth } from './useAuth';
-import { addDoc, collection, doc, getDoc, getDocFromServer, getDocs, Timestamp, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { firestore } from '../firebase';
 
 
@@ -184,7 +184,8 @@ export function useScheduleTest(user) {
                 testSchedule.push({
                     collection: doc.data().collection,
                     testType: doc.data().testType,
-                    date: doc.data().date
+                    date: doc.data().date,
+                    id: doc.id
                 })
             });
 
@@ -195,9 +196,20 @@ export function useScheduleTest(user) {
         }
     }, [user]);
 
+
+    const unScheduleTest = useCallback(async (docId) => {
+        try {
+            await deleteDoc(doc(firestore, "Users", user.uid, "Test_Schedule", docId));
+        } catch (error) {
+            throw new Error("could not deschedule test", error);  
+        }
+        
+    }, [user])
+
     return {
         scheduleTest,
         getTestSchedule,
+        unScheduleTest,
     }
     // if the test due on the current date/time, email the user
     // if I can't email the user. save an alert in the app
