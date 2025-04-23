@@ -2,6 +2,7 @@ import { useAuth } from "../hooks/useAuth";
 import { firestore } from "../firebase";
 import { collection, doc, getDoc} from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
+import { UseGetUserData } from "../hooks/useUserData";
 
 export default function Profile () {
 
@@ -21,37 +22,41 @@ export default function Profile () {
     const [username, setUsername] = useState("");
 
 
-    // TODO: Put everything in one function ?
+    const { getTotalVocab } = UseGetUserData(user);
 
-    const ProfileData = useCallback(async () => {
+
+    const ProfileData = useCallback(async (user) => {
 
         setUsername(user.displayName);
 
-        // Reference the user (doc)
-        const userDocRef = doc(firestore, "Users", user.uid);
+        try {
+            // Reference the user (doc)
+            const userDocRef = doc(firestore, "Users", user.uid);
 
-        const docSnap = await getDoc(userDocRef);
+            const docSnap = await getDoc(userDocRef);
 
-        // if the user (doc) exists
-        if (docSnap.exists()) {
-            // get the total number of words they have currently saved
-            setWords(docSnap.data().Total_Words);
-            setLists(docSnap.data().VocabLists);
-            setTests(docSnap.data().Tests);
-            setPerfects(docSnap.data().Perfects);
+            // if the user (doc) exists
+            if (docSnap.exists()) {
+                // get the total number of words they have currently saved
+                setWords(docSnap.data().Total_Words);
+                setLists(docSnap.data().VocabLists);
+                setTests(docSnap.data().Tests);
+                setPerfects(docSnap.data().Perfects);
 
-        } else {
-            // Throw an Error?
-            console.log("No such document!");
-        }
+            } else {
+                // Throw an Error?
+                console.log("No such document!");
+            }
+        } catch (error) {
+            console.error("error fetching profile data", error);
+        } 
 
-
-    }, [user])
+    }, [])
 
 
 
     useEffect(() => {
-        ProfileData();
+        ProfileData(user);
     }, [user, ProfileData])
     
 

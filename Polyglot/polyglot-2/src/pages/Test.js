@@ -606,9 +606,11 @@ function SelectTest() {
                                         location.state.testType,
                                         selectedList
                                     );
-                                
+
+                                    // Only close modal if scheduling succeeded
                                     if (success) {
-                                        close(); // Only close modal if scheduling succeeded
+                                        close();
+                                        navigate("/test", { replace: true });
                                     }
                                 } catch (error) {
                                     console.error("Failed to schedule test:", error);

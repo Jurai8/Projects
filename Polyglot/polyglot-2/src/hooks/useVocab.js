@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from "react"
 import { firestore } from "../firebase";
-import { collection, doc, updateDoc, getDocs, query, where, deleteDoc, getDoc } from "firebase/firestore"; 
+import { 
+    collection, doc, updateDoc, getDocs, query, where, deleteDoc, getDoc, addDoc, 
+} from "firebase/firestore"; 
 
 
 // TODO: useContext. the functions will be used in multiple places
@@ -154,8 +156,7 @@ export default function useFetchVocab(user) {
         return vocab;
     }, [user])
 
-
-
+    
 
     // make sure to return the functions or states themselves
     return {getVocab, getInfo, error}
@@ -175,6 +176,97 @@ export function useSetVocab(user) {
         }
 
     }, [user])
+
+
+    const addWord = async (vocabList, wordPair) => {
+        const userId = this.user.uid;
+        const listname = vocabList;
+
+        // check if it's a noun. regardless, return the word
+        const trans = this.input.classifyWord(wordPair.translation);
+        const native = wordPair.native
+
+        if (typeof trans !== "string" || typeof native !== "string") {
+            throw new Error("function addWord: Not a string");
+        }
+
+        const query1 = query(
+            collection(firestore, "Users", userId, listname),
+            where("word", "==", native)
+        );
+
+
+        const query2 = query(
+            collection(firestore, "Users", userId, listname),
+            where("translation", "==", trans)
+        );
+
+        
+        try {
+            // check if word/translation already exists in collection
+            const nativeSnapshot = await getDocs(query1);
+            const translationSnapshot = await getDocs(query2);
+            
+            // if the source word already exists
+            if (!nativeSnapshot.empty) {
+                alert("This word already exists within this collection");
+                // throw an error
+                throw new Error("This word already exists within this collection"); 
+            }
+            // if the translation already exists
+            if (!translationSnapshot.empty) {
+                alert("This translation already exists within this collection");
+                // throw an error
+                throw new Error("This translation already exists within this collection"); 
+            }
+
+            // add word / update vocab list
+            const vocabListRef = collection(firestore, "Users", userId, listname)
+            
+            await addDoc(vocabListRef, {
+                word: native,
+                translation: trans,
+                definition: "none",
+                POS: "none"
+            }).catch((error) => {
+                console.error('Error caught while adding document:', error);
+                throw new Error("Error adding word to subcollection"); 
+            });
+
+            // path to listname within "All_Vocab_lists"
+            const docRef = doc(firestore, "Users", userId, "All_Vocab_Lists", listname);
+
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data().Words || "0");
+
+                // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
+                // treat it as a number if it isn't already
+                const currTotalWords = docSnap.data().Words ? Number(docSnap.data().Words) : 0;
+
+                const newTotalWords = currTotalWords + 1;
+                
+                await updateDoc(docRef, {
+                    Words: newTotalWords
+                }).catch((error) => {
+                    throw new Error(error); 
+                });
+            } else {
+            // docSnap.data() will be undefined in this case
+            console.error("couldn't find collection");
+            alert("couldn't find collection");
+            }
+
+            return true;
+        } catch (error) {
+            console.error("issue with user input", error);
+            throw new Error("issue with user input");   
+        }        
+    }
+
+
+
 
     //? Can i combine these instead of repeating the code?
     // Edit existing vocab
