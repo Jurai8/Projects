@@ -68,6 +68,7 @@ export default function VocabLists() {
       <div>
         <h1>Your vocab lists</h1>
 
+        {/* if state is true it means the user is coming from test */}
         {
           state ? 
           <>
