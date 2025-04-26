@@ -1,7 +1,7 @@
-import { firestore } from "firebase/firestore";
+import { firestore } from "../firebase";
 import { getDoc,query, collection } from "firebase/firestore";
 
-export default function UseGetUserData(user) {
+export default function useGetUserData(user) {
 
     const getTotalVocab = () => {
         // get all the collections

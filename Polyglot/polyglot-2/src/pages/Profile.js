@@ -2,7 +2,7 @@ import { useAuth } from "../hooks/useAuth";
 import { firestore } from "../firebase";
 import { collection, doc, getDoc} from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
-import { UseGetUserData } from "../hooks/useUserData";
+import  useGetUserData  from "../hooks/useUserData";
 
 export default function Profile () {
 
@@ -21,8 +21,8 @@ export default function Profile () {
 
     const [username, setUsername] = useState("");
 
-
-    const { getTotalVocab } = UseGetUserData(user);
+     
+    const { getTotalVocab } = useGetUserData(user);
 
 
     const ProfileData = useCallback(async (user) => {

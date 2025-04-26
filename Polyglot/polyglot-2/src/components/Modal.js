@@ -100,7 +100,7 @@ export function NewCollection({ toggleNewCollectionModal }) {
     )
 }
 export default function AddWord ({ closeModal, eventHandler, updateVocab, newWord}) {
-
+    
     return (
         <div className='overlay'>
             <Box 

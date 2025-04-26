@@ -236,22 +236,34 @@ export function useSetVocab(user) {
             // path to listname within "All_Vocab_lists"
             const docRef = doc(firestore, "Users", userId, "All_Vocab_Lists", listname);
 
-            const docSnap = await getDoc(docRef);
+            // get the user doc to update total_words
+            const userDocRef = doc(firestore, "User", user.uid);
 
-            if (docSnap.exists()) {
+            const docSnap = await getDoc(docRef);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (docSnap.exists() && userDocSnap().exists) {
                 console.log("Document data:", docSnap.data().Words || "0");
 
                 // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
                 // treat it as a number if it isn't already
-                const currTotalWords = docSnap.data().Words ? Number(docSnap.data().Words) : 0;
+                const currTotalCollWords = docSnap.data().Words ? Number(docSnap.data().Words) : 0;
 
-                const newTotalWords = currTotalWords + 1;
-                
+                const currTotalWords = userDocSnap.data().Total_Words ? Number(userDocSnap.data().Total_Words) : 0;
+
+                // update total words for the collection
                 await updateDoc(docRef, {
-                    Words: newTotalWords
+                    Words: currTotalCollWords + 1
                 }).catch((error) => {
                     throw new Error(error); 
                 });
+
+                // update total words for the profile
+                await updateDoc(userDocSnap, {
+                    Total_Words: currTotalWords + 1
+                }).catch((error) => {
+                    throw new Error(error);
+                })
             } else {
             // docSnap.data() will be undefined in this case
             console.error("couldn't find collection");
@@ -498,7 +510,9 @@ export function useSetVocab(user) {
             }
         }
 
-        return { editSource, editTrans, editDefinition, editPOS, editExample }
+        return { 
+            editSource, editTrans, editDefinition, editPOS, editExample, addWord 
+        }
     }
 
 

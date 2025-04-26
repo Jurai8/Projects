@@ -9,6 +9,7 @@ import React, { useState, useEffect, useMemo} from 'react';
 import AddWord, { EditWord } from '../components/Modal';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useSetVocab } from '../hooks/useVocab';
 
 /* // TODO: 
     if user has no vocab list
@@ -28,6 +29,7 @@ import { useAuth } from '../hooks/useAuth';
 export default function Heft () {
     const { list } = useParams();
     const { user } = useAuth();
+    const { addWord } = useSetVocab(user);
     const [learner, setLearner] = useState(null);
     const checkInput = new InputCheck()
 
@@ -192,7 +194,13 @@ export default function Heft () {
             }
             // name of vocab list + the new word
             console.log("Heft, Currlist: " + typeof currList)
-            await vocabulary.addWord(currList, input);
+
+            if (addWord) {
+                console.log("addword exists");
+            } else if (!addWord) {
+                console.log("addWord does not exist")
+            }
+            await addWord(currList, input);
 
             console.log("Word has been added to list");
 
