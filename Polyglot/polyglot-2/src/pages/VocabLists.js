@@ -9,145 +9,102 @@
     
 import { Button } from "@mui/material";
 import { NewCollection } from "../components/Modal";
+import { useNavigate } from "react-router-dom";
+import Paper from '@mui/material/Paper';
 import { ShowVocabLists } from "../components/Table";
 import { Vocab } from "../functions/vocab";
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth";
 import { useLocation } from "react-router-dom";
+import useFetchVocab from "../hooks/useVocab";
 
 
 export default function VocabLists() {
   const { user } = useAuth();
-  const { state } = useLocation();
+  const navigate = useNavigate();
+
+  const { getVocabLists } = useFetchVocab(user);
 
   const [rows, setRows] = useState([]);
+
   const [newVocabCollection, setNewVocabCollection] = useState(false);
   const toggleNewCollectionModal = (bool) => setNewVocabCollection(bool);
 
-  // correct method for cleanup?
+
   useEffect(() => {
-    let isMounted = true; 
+    const getlists = async () => {
+      try {
+        const lists = await getVocabLists();
 
-    const lists = async () => {
-      if (!isMounted) return;
+        setRows(lists);
 
-      if (user) {
-        const vocab = new Vocab(user);
-
-        try {
-          const vocabLists = await vocab.getAllVocabLists();
-
-          if (isMounted) {
-            console.log(vocabLists.length);
-            setRows(vocabLists);
-          }
-        } catch (error) {
-          if (isMounted) {
-            console.error("Could not get vocab lists", error);
-          }
-        }
-
-      } else {
-        if (isMounted) {
-          console.log("Vocablists: user not signed in");
-          alert("Vocablists: user not signed in");
-        }
+      } catch (error) {
+        console.error(error)
       }
     }
-    lists();
 
-    // Cleanup listener on component unmount
-    return () => {
-      isMounted = false;
-    }
-  },[user])
+    getlists();
+
+  }, [getVocabLists])
 
   // decide which version to render depending on whether the user is coming from test or not
   return (
     <>
       <div>
         <h1>Your vocab lists</h1>
+          
+        <Button variant="contained" onClick={() => 
+        toggleNewCollectionModal(true)
+        }>          
+          New Collection 
+        </Button>
 
-        {/* if state is true it means the user is coming from test */}
-        {
-          state ? 
-          <>
-            <h2> Select a list </h2>
-            <ShowVocabLists rows={rows} state={state} />
-          </>
-          :
-          <>
-            <Button variant="contained" onClick={() => 
-            toggleNewCollectionModal(true)
-            }>          
-              New Collection 
-            </Button>
+        <Button variant="contained">          
+          Schedule Test
+        </Button>
 
-            <Button variant="contained">          
-              Schedule Test
-            </Button>
-
-            {newVocabCollection && 
-              <NewCollection 
-                toggleNewCollectionModal={toggleNewCollectionModal}
-              />
-            }
-
-            <ShowVocabLists rows={rows} />
-          </>
+        {newVocabCollection && 
+          <NewCollection 
+            toggleNewCollectionModal={toggleNewCollectionModal}
+          />
         }
 
-        
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>List Name </TableCell>
+                <TableCell align="right">Words&nbsp;</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow
+                  key={row.listName}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  onDoubleClick={() => {
+                    navigate(`/vocablists/${row.listName}`, { state: {
+                      listName: row.listName
+                    }});
+                  }}
+                >
+                  <TableCell component="th" scope="row">
+                    {row.listName}
+                  </TableCell>
+                  <TableCell align="right">{row.vocabCount}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     </>  
   );
 }
 
-/*
- const [learner, setLearner] = useState(null);
-
-    const getUser = () => {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                setLearner(user); // Set the learner when the user is authenticated
-            } else {
-                console.log("User is signed out");
-                alert("not signed in yet");
-            }
-        });
-    }
-
-    useEffect(() => {
-        getUser();
-    }, []);
-
-  const vocab = useMemo(() => {
-
-    if (learner) {
-      console.log("hello")
-      return new Vocab(learner);
-    } else {
-      alert("not signed in");
-    }
-  }, [learner])
-
-useEffect(() => {
-  console.log(vocab || "null");
-  const getLists = async () => {
-    if (vocab) {
-      try {
-        const vocabLists = await vocab.getAllVocabLists();
-  
-        console.log(vocabLists.length);
-        setRows(vocabLists);
-      } catch (error) {
-        console.error("could not get vocablists", error);
-      }
-    }
-  }
-
-  getLists();
-  
-}, [vocab])
-
-*/

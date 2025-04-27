@@ -376,6 +376,10 @@ export function LogIn({ setError, setMessage, setStatus }) {
 // Display a modal which contains data pertaining to a specific word
 export function WordInfoModal({ displayInfo, wordInfo }) {
 
+    //! replace display info with "close"
+    //! split wordInfo into "open" and "word"
+    //! instead of pathname use state
+
     // TODO: make sure the user can't edit unless they click "edit"
         // manipulate the css?
         

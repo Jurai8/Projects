@@ -152,14 +152,40 @@ export default function useFetchVocab(user) {
                 break;
         }
         
+        
         // how to return a randomized order of the array ?
         return vocab;
+    }, [user])
+
+
+    const getVocabLists = useCallback(async () => {
+
+        const vocabLists = []
+
+        try {
+            // path to subcollection
+            const querySnapshot = await getDocs(collection(
+                firestore, "Users", user.uid, "All_Vocab_Lists"
+            ));
+
+            querySnapshot.forEach((doc) => {
+                // add each vocablist into an array
+                vocabLists.push({
+                    listName: doc.id,
+                    vocabCount: doc.data().Words
+                });        
+            });
+
+            return vocabLists;
+        } catch (error) {
+            console.error("Could not get names of vocab lists", error);
+        }
     }, [user])
 
     
 
     // make sure to return the functions or states themselves
-    return {getVocab, getInfo, error}
+    return {getVocab, getVocabLists, getInfo, error}
 }
 
 // TODO: useContext. the functions will be used in multiple places
