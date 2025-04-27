@@ -56,18 +56,17 @@ export default function VocabLists() {
   // decide which version to render depending on whether the user is coming from test or not
   return (
     <>
-      <div>
-        <h1>Your vocab lists</h1>
-          
-        <Button variant="contained" onClick={() => 
-        toggleNewCollectionModal(true)
-        }>          
-          New Collection 
-        </Button>
+      <h1>Your vocab lists</h1>
+      <div className='table-position'>
+        <div className="button-container">
 
-        <Button variant="contained">          
-          Schedule Test
-        </Button>
+          <Button variant="contained" onClick={() => 
+          toggleNewCollectionModal(true)
+          }>          
+            New Collection 
+          </Button>
+        </div>  
+        
 
         {newVocabCollection && 
           <NewCollection 
@@ -75,18 +74,19 @@ export default function VocabLists() {
           />
         }
 
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableContainer className="table-container" component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table" className="template-table">
             <TableHead>
               <TableRow>
                 <TableCell>List Name </TableCell>
-                <TableCell align="right">Words&nbsp;</TableCell>
+                <TableCell align="right" colSpan={2}>Words&nbsp;</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((row) => (
                 <TableRow
                   key={row.listName}
+                  className='template-table-row'
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                   onDoubleClick={() => {
                     navigate(`/vocablists/${row.listName}`, { state: {

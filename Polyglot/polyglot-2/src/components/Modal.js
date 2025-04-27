@@ -139,60 +139,6 @@ export default function AddWord ({ closeModal, eventHandler, updateVocab, newWor
     )
 }
 
-// TODO: remove
-export function EditWord({closeModal, eventHandler, newWord, closeUpdateWord, editVocab}) {
-
-    return (
-        <div className='overlay'>
-            <Box 
-                id='edit-word-modal'
-                className='my-modal'
-                component="form"
-                sx={{
-                    '& > :not(style)': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
-                >
-                 
-                 { newWord.wordType === 'both' ? 
-
-                    // When user wants to update both words
-                    <div>
-                        <MenuListComposition closeUpdateWord={closeUpdateWord}
-                        newWord={newWord}/>
-                        <TextField 
-                            id="editNative" label="English" name="any-word" variant="outlined" onChange={eventHandler} 
-                        /> 
-                        <TextField 
-                            id="editTrans" label="German" name="any-word" variant="outlined" 
-                            onChange={eventHandler}
-                        />
-                    </div>: 
-
-                    // when user wants to update one word
-                    <div>  
-                        <MenuListComposition closeUpdateWord={closeUpdateWord}
-                        newWord={newWord}/>
-                        <TextField 
-                            id="any-word" label={newWord.wordType} name="any-word" variant="outlined" 
-                            onChange={eventHandler}
-                        />
-                    </div>
-                 }
-    
-                <div id='confirm-word'>
-                    <Button variant="contained" onClick={() => {
-                        editVocab();
-                        closeModal(2);
-                    }}>
-                        Confirm
-                    </Button>
-                </div>
-            </Box>
-        </div>
-    )
-}
 
 //* Popover code 
 // * ask user if they want to delete the word or not. call delete word from heft
@@ -374,7 +320,7 @@ export function LogIn({ setError, setMessage, setStatus }) {
 
 
 // Display a modal which contains data pertaining to a specific word
-export function WordInfoModal({ displayInfo, wordInfo }) {
+export function WordInfoModal({ close, open, word }) {
 
     //! replace display info with "close"
     //! split wordInfo into "open" and "word"
@@ -433,7 +379,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         // if there are no changes
         if (!trackChanges || trackChanges.length === 0) {
             // close the modal
-            displayInfo(false)
+            close()
         }
     }
 
@@ -569,34 +515,34 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
 
     // regulate when getInfo should be called
-    useEffect(() => {
-
-        //TODO store wordInfo in a state variable? 
-        if (!wordInfo || wordInfo === false) return;
+    useEffect(() => { 
 
         const callGetInfo = async () => {
             
-            console.log("hi: ", wordInfo);
+            console.log("hi: ", word);
             // if the modal should open, call getInfo
-            if (wordInfo.show === true) {
-
-                console.log("wordInfo:", wordInfo);
+            if (open && word) {
+                console.log("wordInfo:", word);
                 // vocabRef.current should have the values: POS, translation, word and definition
 
                 console.log("retrieving info on word");
-            
-                const vocabInfo = await getInfo(listName, wordInfo.word);
-                
-                setWordData(vocabInfo);
-                // save a copy of the original state, as wordData will be updated
-                setCopyWordData(vocabInfo);
+
+                try {
+                    const vocabInfo = await getInfo(listName, word);
+
+                    setWordData(vocabInfo);
+                    // save a copy of the original state, as wordData will be updated
+                    setCopyWordData(vocabInfo);
+                } catch (error) {
+                  console.error("could not get vocab data", error)  
+                }     
             }
 
         }
 
         callGetInfo();
         
-    }, [wordInfo, listName, getInfo ])
+    }, [word, open, listName, getInfo ])
 
 
             
@@ -623,9 +569,9 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         <div className='word-info-modal' aria-hidden="false" aria-modal="true">
 
             <Modal
-                open={wordInfo.show}
+                open={open}
                 // TODO: check if user has made any edits
-                onClose={() => displayInfo(false)}
+                onClose={() => close()}
                 /* open  & close modal */ 
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -801,7 +747,7 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                             </> 
                         ):(
                             <>
-                                <Button onClick={() => {displayInfo(false)}}>
+                                <Button onClick={() => {close()}}>
                                     close
                                 </Button>
 
