@@ -44,6 +44,8 @@ export default function Heft () {
     const { user } = useAuth();
 
     const { getVocab } = useFetchVocab(user);
+    
+    const { addWord } = useSetVocab(user)
 
     // this contains the name of the list
     const { state } = useLocation();
@@ -90,7 +92,7 @@ export default function Heft () {
     return (
         <>
             {/* Add Word modal*/}
-            <AddWordModal open={addWordModal} close={closeAddWord} />
+            <AddWordModal open={addWordModal} close={closeAddWord} addWord={addWord} listName={listName}/>
 
             {/* modal displaying word info */}
             <WordInfoModal 
@@ -191,11 +193,13 @@ const style = {
     p: 4,
 };
 
-function AddWordModal({ open, close }) {
+function AddWordModal({ open, close, addWord, listName }) {
 
-    const handleInputChange = () => {
+    const [source, setSource] = useState("");
+    // translation
+    const [trans, setTrans] = useState("");
 
-    }
+    
 
     return (
         <Modal
@@ -209,13 +213,21 @@ function AddWordModal({ open, close }) {
                     New Word
                 </Typography>
                 <TextField 
-                    id="outlined-basic-english" label="Source" name="source" variant="outlined" onChange={handleInputChange} 
+                    id="outlined-basic-english" label="Source" name="source" variant="outlined" onChange={(e) =>  
+                        setSource(e.target.value)
+                    } 
                 /> 
 
                 <TextField 
                     id="outlined-basic-german" label="Translation" name="translation" variant="outlined" 
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                        setTrans(e.target.value);
+                    }}
                 />
+
+                <Button onClick={() => {addWord(listName, source, trans)}}>
+                    Confirm
+                </Button>
             </Box>
         </Modal>
     )

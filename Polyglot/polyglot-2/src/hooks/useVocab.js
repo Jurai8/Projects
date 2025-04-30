@@ -204,26 +204,27 @@ export function useSetVocab(user) {
     }, [user])
 
 
-    const addWord = async (vocabList, wordPair) => {
-        const userId = this.user.uid;
+    const addWord = async (vocabList, word, translation) => {
+
         const listname = vocabList;
 
-        // check if it's a noun. regardless, return the word
-        const trans = this.input.classifyWord(wordPair.translation);
-        const native = wordPair.native
+        const trans = translation;
+        const source = word;
 
-        if (typeof trans !== "string" || typeof native !== "string") {
+        console.log(user.uid);
+
+        if (typeof trans !== "string" || typeof source !== "string") {
             throw new Error("function addWord: Not a string");
         }
 
+        // query for the words to see if they already exist
         const query1 = query(
-            collection(firestore, "Users", userId, listname),
-            where("word", "==", native)
+            collection(firestore, "Users", user.uid, listname),
+            where("word", "==", source)
         );
 
-
         const query2 = query(
-            collection(firestore, "Users", userId, listname),
+            collection(firestore, "Users", user.uid, listname),
             where("translation", "==", trans)
         );
 
@@ -246,29 +247,28 @@ export function useSetVocab(user) {
                 throw new Error("This translation already exists within this collection"); 
             }
 
-            // add word / update vocab list
-            const vocabListRef = collection(firestore, "Users", userId, listname)
+            // if all goes well, add word / update vocab list
+            const vocabListRef = collection(firestore, "Users", user.uid, listname)
             
             await addDoc(vocabListRef, {
-                word: native,
+                word: source,
                 translation: trans,
                 definition: "none",
                 POS: "none"
-            }).catch((error) => {
-                console.error('Error caught while adding document:', error);
-                throw new Error("Error adding word to subcollection"); 
-            });
+            })
 
             // path to listname within "All_Vocab_lists"
-            const docRef = doc(firestore, "Users", userId, "All_Vocab_Lists", listname);
+            const docRef = doc(firestore, "Users", user.uid, "All_Vocab_Lists", listname);
 
-            // get the user doc to update total_words
-            const userDocRef = doc(firestore, "User", user.uid);
+
+            // get the user doc to update total_words (for the account)
+            const userDocRef = doc(firestore, "Users", user.uid);
 
             const docSnap = await getDoc(docRef);
+
             const userDocSnap = await getDoc(userDocRef);
 
-            if (docSnap.exists() && userDocSnap().exists) {
+            if (docSnap.exists() ||  userDocSnap.exists()) {
                 console.log("Document data:", docSnap.data().Words || "0");
 
                 // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
@@ -280,25 +280,24 @@ export function useSetVocab(user) {
                 // update total words for the collection
                 await updateDoc(docRef, {
                     Words: currTotalCollWords + 1
-                }).catch((error) => {
-                    throw new Error(error); 
                 });
 
-                // update total words for the profile
-                await updateDoc(userDocSnap, {
+                // update total words for the user profile
+                await updateDoc(userDocRef, {
                     Total_Words: currTotalWords + 1
-                }).catch((error) => {
-                    throw new Error(error);
-                })
+                });
+
+                console.log("successfully updated word count")
             } else {
-            // docSnap.data() will be undefined in this case
-            console.error("couldn't find collection");
-            alert("couldn't find collection");
+                // docSnap.data() will be undefined in this case
+                console.error("couldn't find collection");
+                alert("couldn't find collection");
             }
 
-            return true;
+            alert("Word has been added");
+
         } catch (error) {
-            console.error("issue with user input", error);
+            console.error("Could not add word", error);
             throw new Error("issue with user input");   
         }        
     }
@@ -537,7 +536,7 @@ export function useSetVocab(user) {
         }
 
         return { 
-            editSource, editTrans, editDefinition, editPOS, editExample, addWord 
+            editSource, editTrans, editDefinition, editPOS, editExample, 
         }
     }
 
@@ -651,5 +650,5 @@ export function useSetVocab(user) {
         }
     }
 
-    return {editVocab, deleteVocab, reload, error};
+    return {addWord, editVocab, deleteVocab, reload, error};
 }

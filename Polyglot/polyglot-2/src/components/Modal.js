@@ -99,45 +99,7 @@ export function NewCollection({ toggleNewCollectionModal }) {
         </div>
     )
 }
-export default function AddWord ({ closeModal, eventHandler, updateVocab, newWord}) {
-    
-    return (
-        <div className='overlay'>
-            <Box 
-                id='new-word-modal'
-                className='my-modal'
-                component="form"
-                sx={{
-                    '& > :not(style)': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
-            >
 
-                <div>
-                    <TextField 
-                        id="outlined-basic-english" label="English" name="native" variant="outlined" onChange={eventHandler} 
-                    /> 
-                    <TextField 
-                        id="outlined-basic-german" label="German" name="translation" variant="outlined" 
-                        onChange={eventHandler}
-                    />
-                </div>
-    
-                <div id='confirm-word'>
-                    <Button variant="contained" onClick={async () => {
-                        // updateRows and db
-                        await updateVocab();
-                        // if it works it works ig
-                        closeModal(1);
-                    }}>
-                        Confirm
-                    </Button>
-                </div>
-            </Box>
-        </div>
-    )
-}
 
 
 //* Popover code 
