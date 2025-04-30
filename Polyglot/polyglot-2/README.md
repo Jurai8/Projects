@@ -17,11 +17,11 @@ The vocabulary will be stored in collections.
 The leaner will not only be able to store the vocabulary, but also test themselves, by means of vocab tests.
 Another method that will help them learn their vocabulary, is by using it. This is where the writing section comes in, but before we get to that we need to go over the grammar section
 
-## Grammr
+## For the future:
 
-## Writing
+### Grammar
+A section where the user can do grammar exercises for their chosen language
 
+### Writing 
+In this section the user can combine everything that they've learned, buy writing a short story or a short essay. They will then get evaluated based on syntax and grammer and also the length of the essay. 
 
-## ideas
-
-create a dictionary of sorts. each word will have the option to have a meaning associated with it, not just a translation.
