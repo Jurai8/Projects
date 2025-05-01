@@ -310,6 +310,7 @@ export function useSetVocab(user) {
     // Edit existing vocab
     const editVocab = (listName, prevWord, newWord) => {
         // the paramater should have the prev and new versions
+        
 
         const uid = user.uid;
 
@@ -405,6 +406,7 @@ export function useSetVocab(user) {
         }
 
         const editDefinition = async () => {
+
             const newDef = newWord.definition;
             const oldDef = prevWord.definition;
 

@@ -354,19 +354,19 @@ export function WordInfoModal({ close, open, word }) {
             placeholder: ""
         })
         setIsEditing(false);
+
+        // close modal
+        close();
     }
 
     // the user wants to save their changes
     const saveChanges = async () => {
-
 
         // TODO: If trackchanges is empty 
         if (!trackChanges || trackChanges.length === 0) {
             setIsEditing(false);
             return;
         }
-       
-
 
         const { 
             editSource, editTrans, editDefinition, editPOS, editExample
@@ -391,7 +391,6 @@ export function WordInfoModal({ close, open, word }) {
                     console.log("updated translation successfully",);
                     break;
                         
-    
                 case "definition":
                     await editDefinition();
                     console.log("updated definition successfully");
@@ -420,6 +419,9 @@ export function WordInfoModal({ close, open, word }) {
 
         // after the changes have been saved reset isEditing
         setIsEditing(false);
+
+        // close modal
+        close();
     }
 
     // Dynamically update wordInfo per field
@@ -684,7 +686,7 @@ export function WordInfoModal({ close, open, word }) {
 
                     <div sx={{ display: 'flex'}}>
 
-                        {isEditing  ? (
+                        {isEditing ? (
                             <>
                                 {/* if the user made changes and they click done, they are saving those changes. the modal should close too or the page should refresh*/}
                                 <Button onClick={() => {saveChanges()}}>
@@ -870,7 +872,7 @@ function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
             <Button onClick={() => {
                 // TODO: ensure that both modals close
                 close();
-                revertChanges()
+                revertChanges();
             }}>
                 Yes
             </Button>
