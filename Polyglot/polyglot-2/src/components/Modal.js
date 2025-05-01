@@ -686,12 +686,10 @@ export function WordInfoModal({ close, open, word }) {
 
                         {isEditing  ? (
                             <>
-                                {/* //TODO: first check if any changes have been made when executing the function */}
-                                <Button onClick={() => {unsavedEdits(trackChanges)}}>
+                                {/* if the user made changes and they click done, they are saving those changes. the modal should close too or the page should refresh*/}
+                                <Button onClick={() => {saveChanges()}}>
                                     Done
                                 </Button>
-
-                                {/* // TODO: add functionality to delete word*/}
                                 
                             </> 
                         ):(
@@ -794,7 +792,7 @@ export function WordInfoModalChild({open, close, edits, setUserInput }) {
 
 //* Popover code 
 // * ask user if they want to delete the word or not. call delete word from heft
-function DeleteWordModal({deleteVocab, open, close, listName, vocab}) {
+function DeleteWordModal({ deleteVocab, open, close, listName, vocab }) {
     const style = {
         position: 'absolute',
         top: '50%',
@@ -807,7 +805,8 @@ function DeleteWordModal({deleteVocab, open, close, listName, vocab}) {
         pt: 2,
         px: 4,
         pb: 3,
-      };
+    };
+
       return (
         <Modal
             open={open}
@@ -858,11 +857,11 @@ function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
 
     return (
         <Modal
-        open={open}
-        onClose={() => {close()}}
-        aria-labelledby="child-modal-title"
-        aria-describedby="child-modal-description"
-    >
+            open={open}
+            onClose={() => {close()}}
+            aria-labelledby="child-modal-title"
+            aria-describedby="child-modal-description"
+        >
         <Box sx={{ ...style, width: 200, }}>
             <div id='c-modal-title-container'>
                 <p> Close without saving changes? </p>
