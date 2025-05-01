@@ -1,15 +1,11 @@
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
 
-import '../App.css';
-import { DeleteWord, NewCollection, WordInfoModal } from '../components/Modal';
-import { Vocab } from '../functions/vocab';
-import { InputCheck } from '../functions/input';
-import Sidebar from '../components/Sidebar';
-import VocabBook from '../components/Table'
-import React, { useState, useEffect, useMemo} from 'react';
-import AddWord from '../components/Modal';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { WordInfoModal } from '../components/Modal';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import useFetchVocab, { useSetVocab } from '../hooks/useVocab';
 
@@ -44,7 +40,7 @@ export default function Heft () {
     const { user } = useAuth();
 
     const { getVocab } = useFetchVocab(user);
-    
+
     const { addWord } = useSetVocab(user)
 
     // this contains the name of the list
@@ -60,8 +56,6 @@ export default function Heft () {
     const [addWordModal, setAddWordModal] = useState(false);
 
     const closeAddWord = () => setAddWordModal(false);
-
-    const openAddWord = () => setAddWordModal(true);
 
     // control the wordInfo modal and pass the word whose data will be shown
     const [wordInfoModal, setWordInfoModal] = useState(false);
@@ -209,6 +203,13 @@ function AddWordModal({ open, close, addWord, listName }) {
             aria-describedby="modal-modal-description"
         >
             <Box sx={style}>
+                <div className='close-icon-container'>
+                    <IconButton onClick={() => close()}>
+                        <CloseIcon />
+                    </IconButton>
+                </div>
+
+
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                     New Word
                 </Typography>
@@ -225,7 +226,14 @@ function AddWordModal({ open, close, addWord, listName }) {
                     }}
                 />
 
-                <Button onClick={() => {addWord(listName, source, trans)}}>
+                <Button onClick={async () => {
+                    try {
+                        await addWord(listName, source, trans);
+                        window.location.reload();
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }}>
                     Confirm
                 </Button>
             </Box>

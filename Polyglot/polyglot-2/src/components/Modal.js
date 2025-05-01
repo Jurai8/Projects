@@ -1,21 +1,20 @@
 import '../App.css';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 import { Vocab } from '../functions/vocab';
 import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import MenuListComposition from './Menu';
-import { useEffect, useRef, useState, useReducer } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Divider } from '@mui/material';
+import TextField from '@mui/material/TextField';
 import EditIcon from '@mui/icons-material/Edit';
 import useFetchVocab from '../hooks/useVocab';
 import { useSetVocab } from '../hooks/useVocab';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-
 
 // pass user if possible
 export function NewCollection({ toggleNewCollectionModal }) {
@@ -101,47 +100,6 @@ export function NewCollection({ toggleNewCollectionModal }) {
 }
 
 
-
-//* Popover code 
-// * ask user if they want to delete the word or not. call delete word from heft
-export function DeleteWord({closeDeleteVocab, deleteVocab, open}) {
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        pt: 2,
-        px: 4,
-        pb: 3,
-      };
-      return (
-        <Modal
-            open={open}
-            onClose={closeDeleteVocab}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            >
-            <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-                Delete this word?
-            </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                If you delete this word you won't be able to get it back
-            </Typography>
-            <Button onClick={() => {
-                closeDeleteVocab()
-                deleteVocab()
-            }}>
-                Confirm
-            </Button>
-            </Box>
-        </Modal>
-      )
-}
 
 export function Register ({ setError, setMessage}) {
     const emailRef = useRef(null);
@@ -312,6 +270,8 @@ export function WordInfoModal({ close, open, word }) {
 
     const [childModal, setChildModal] = useState(false);
 
+    const [deleteWordModal, setDeleteWordModal] = useState();
+
     // open modal asking user to save changes
     const [isSaveChangesModal, setisSaveChangesModal] = useState(false);
 
@@ -329,6 +289,18 @@ export function WordInfoModal({ close, open, word }) {
     // set to true when the user begins making changes
     const [isEditing, setIsEditing] = useState(false);
 
+    const closeDeleteWordModal = () => {
+        setDeleteWordModal(false);
+    }
+
+    const closeModal = (unsavedEdits) => {
+
+        if (unsavedEdits) {
+            setIsEditing(false);
+            close()
+        }
+    }
+
     // TODO: replace with trackchanges? track if any changes have been made
     const unsavedEdits = (trackchanges) => {
         // if there are changes which haven't been saved
@@ -341,6 +313,7 @@ export function WordInfoModal({ close, open, word }) {
         // if there are no changes
         if (!trackChanges || trackChanges.length === 0) {
             // close the modal
+            setIsEditing(false);
             close()
         }
     }
@@ -533,7 +506,10 @@ export function WordInfoModal({ close, open, word }) {
             <Modal
                 open={open}
                 // TODO: check if user has made any edits
-                onClose={() => close()}
+                onClose={() => {
+                    setIsEditing(false);
+                    close();
+                }}
                 /* open  & close modal */ 
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -541,12 +517,19 @@ export function WordInfoModal({ close, open, word }) {
 
             <Box sx={style}>
 
+                <div className='close-icon-container'>
+                    <IconButton onClick={() => {
+                        close()}}>
+                        <CloseIcon />
+                    </IconButton>
+                </div>
+
                 {/* display something if error is true */ }
                 {/* //TODO: include "x" at the top left corner for user to exit modal. track whether any changes have been made */}
                 {wordData ? 
                 <>
 
-                    <h2> Info </h2>
+                    <h2 id='wordInfo-title'> Info </h2>
 
                     <div id='word-label-container'>
                         <div id='word-label-left'>
@@ -684,7 +667,13 @@ export function WordInfoModal({ close, open, word }) {
                         close={closeChildModal} 
                         edits={edits} 
                         setUserInput={setUserInput}
-                        />
+                    />
+
+                    <DeleteWordModal 
+                        open={deleteWordModal} close={closeDeleteWordModal} 
+                        listName={listName} vocab={copyWordData} 
+                        deleteVocab={deleteVocab}
+                    />
 
                     <SaveChangesModal 
                         open={isSaveChangesModal}
@@ -703,18 +692,17 @@ export function WordInfoModal({ close, open, word }) {
                                 </Button>
 
                                 {/* // TODO: add functionality to delete word*/}
-                                <Button onClick={() => {deleteVocab(listName, copyWordData)}}>
-                                    Delete
-                                </Button>
+                                
                             </> 
                         ):(
                             <>
-                                <Button onClick={() => {close()}}>
-                                    close
-                                </Button>
 
                                 <Button onClick={() => setIsEditing(true)}>
-                                    edit
+                                    Edit
+                                </Button>
+
+                                <Button onClick={() => setDeleteWordModal(true)}>
+                                    Delete
                                 </Button>
                             </>
 
@@ -804,6 +792,51 @@ export function WordInfoModalChild({open, close, edits, setUserInput }) {
   );
 }
 
+//* Popover code 
+// * ask user if they want to delete the word or not. call delete word from heft
+function DeleteWordModal({deleteVocab, open, close, listName, vocab}) {
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        pt: 2,
+        px: 4,
+        pb: 3,
+      };
+      return (
+        <Modal
+            open={open}
+            onClose={close}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+                Delete this word?
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                If you delete this word you will have to add it again later
+            </Typography>
+            <Button onClick={async () => {
+                try {
+                    await deleteVocab(listName, vocab);
+                    window.location.reload();
+                } catch (error) {
+                    console.error(error);
+                }
+            }}>
+                Confirm
+            </Button>
+            </Box>
+        </Modal>
+      )
+}
+
 function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
 
     const style = {
@@ -850,6 +883,7 @@ function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
             }}>
                 Save changes
             </Button>
+
         </Box>
     </Modal>
 

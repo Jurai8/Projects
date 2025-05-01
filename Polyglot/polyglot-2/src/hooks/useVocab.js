@@ -254,6 +254,7 @@ export function useSetVocab(user) {
                 word: source,
                 translation: trans,
                 definition: "none",
+                example: "none",
                 POS: "none"
             })
 
@@ -561,8 +562,8 @@ export function useSetVocab(user) {
 
             // query db to find doc that contains word AND translation
             const q = query(collection(firestore, "Users", uid, vocabList),
-            where("word", "==", native), 
-            where("translation", "==", trans)
+                where("word", "==", native), 
+                where("translation", "==", trans)
             );
 
             const querySnapshot = await getDocs(q);
@@ -635,6 +636,8 @@ export function useSetVocab(user) {
                             throw new Error(error);
                         }
                     }
+
+                    alert("Successfully deleted word");
 
                 } else {
                     console.error("Vocabulary list document does not exist");
