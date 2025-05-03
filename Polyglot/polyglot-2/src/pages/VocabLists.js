@@ -6,35 +6,41 @@
 
     // future: while in heft.js, they should be able to choose specific words they want to be tested on (on a specific date)
     
-    
-import { Button } from "@mui/material";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
 import { NewCollection } from "../components/Modal";
 import { useNavigate } from "react-router-dom";
+import { IconButton } from '@mui/material';
+import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
-import { ShowVocabLists } from "../components/Table";
-import { Vocab } from "../functions/vocab";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { useState, useEffect } from "react"
 import { useAuth } from "../hooks/useAuth";
-import { useLocation } from "react-router-dom";
-import useFetchVocab from "../hooks/useVocab";
+import useFetchVocab, { useSetVocab } from "../hooks/useVocab";
 
 
 export default function VocabLists() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // this will be used to create a new collection. Firebase will do it automatically
+  const { newCollection } = useSetVocab(user);
+
   const { getVocabLists } = useFetchVocab(user);
 
   const [rows, setRows] = useState([]);
 
-  const [newVocabCollection, setNewVocabCollection] = useState(false);
-  const toggleNewCollectionModal = (bool) => setNewVocabCollection(bool);
+  const [newCollectionModal, setNewCollectionModal] = useState(false);
+
+  const closeNewCollectionModal = () => setNewCollectionModal(false);
 
 
   useEffect(() => {
@@ -61,24 +67,20 @@ export default function VocabLists() {
         <div className="button-container">
 
           <Button variant="contained" onClick={() => 
-          toggleNewCollectionModal(true)
+            setNewCollectionModal(true)
           }>          
             New Collection 
           </Button>
         </div>  
         
 
-        {newVocabCollection && 
-          <NewCollection 
-            toggleNewCollectionModal={toggleNewCollectionModal}
-          />
-        }
+        <NewCollectionModal  open={newCollectionModal} close={closeNewCollectionModal} createCollection={newCollection}/>
 
         <TableContainer className="table-container" component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table" className="template-table">
             <TableHead>
               <TableRow>
-                <TableCell>List Name </TableCell>
+                <TableCell> List Name </TableCell>
                 <TableCell align="right" colSpan={2}>Words&nbsp;</TableCell>
               </TableRow>
             </TableHead>
@@ -108,3 +110,94 @@ export default function VocabLists() {
   );
 }
 
+function NewCollectionModal({open, close, createCollection }) {
+
+  const navigate = useNavigate();
+
+  const [collection, setCollection] = useState("");
+
+  const [source, setSource] = useState("");
+
+  const [translation, setTranslation] = useState("");
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    pt: 2,
+    px: 4,
+    pb: 3,
+  };
+
+  // TODO: fix the appearance of the modal
+  return (
+
+    <Modal
+      open={open}
+      onClose={close}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <div className='close-icon-container'>
+          <IconButton onClick={() => close()}>
+              <CloseIcon />
+          </IconButton>
+        </div>
+
+
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+            New Collection
+        </Typography>
+
+        <div>
+          <TextField
+            id='vocab-collection-name'
+            placeholder="e.g Family"
+            name='collection'
+            label='collection-name'
+            variant='outlined'
+            onChange={(e) => setCollection(e.target.value)}
+          />
+
+          <TextField
+            id='native'
+            placeholder="e.g daughter"
+            name='native'
+            label="native"
+            variant="outlined"
+            onChange={(e) => setSource(e.target.value)}
+          />
+
+          <TextField
+            id='translation'
+            placeholder="e.g die Tocher"
+            label="translation"
+            variant="outlined"
+            onChange={(e) => setTranslation(e.target.value)}
+          />
+        </div>
+        
+        <Button onClick={async () => {
+          try {
+            await createCollection(collection, source, translation);
+
+            navigate(`/vocablists/${collection}`, { state: {
+              listName: collection
+            }});
+
+          } catch (error) {
+            console.error(error);
+          }
+        }}>
+            Confirm
+        </Button>
+      </Box>
+    </Modal>
+  )
+}

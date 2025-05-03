@@ -270,10 +270,10 @@ export function WordInfoModal({ close, open, word }) {
 
     const [childModal, setChildModal] = useState(false);
 
-    const [deleteWordModal, setDeleteWordModal] = useState();
+    const [deleteWordModal, setDeleteWordModal] = useState(false);
 
     // open modal asking user to save changes
-    const [isSaveChangesModal, setisSaveChangesModal] = useState(false);
+    const [isSaveChangesModal, setIsSaveChangesModal] = useState(false);
 
     // track which functions need to be called
     // contains the names of the fields that need to be updated
@@ -302,9 +302,10 @@ export function WordInfoModal({ close, open, word }) {
     }
 
     // TODO: replace with trackchanges? track if any changes have been made
-    const unsavedEdits = (trackchanges) => {
+    const unsavedEdits = () => {
+
         // if there are changes which haven't been saved
-        if (trackChanges) {
+        if (trackChanges.length > 0) {
             // display modal
             openSaveChangesModal();
             // set displayInfo(false);
@@ -314,7 +315,7 @@ export function WordInfoModal({ close, open, word }) {
         if (!trackChanges || trackChanges.length === 0) {
             // close the modal
             setIsEditing(false);
-            close()
+            close();
         }
     }
 
@@ -422,6 +423,10 @@ export function WordInfoModal({ close, open, word }) {
 
         // close modal
         close();
+
+        alert("changes have been saved");
+
+        window.location.reload();
     }
 
     // Dynamically update wordInfo per field
@@ -444,11 +449,12 @@ export function WordInfoModal({ close, open, word }) {
             }
             
         }
+
     }
 
     // open and close the save changes modal 
-    const openSaveChangesModal = () => setisSaveChangesModal(true);
-    const closeSaveChangesModal = () =>  setisSaveChangesModal(false);
+    const openSaveChangesModal = () => setIsSaveChangesModal(true);
+    const closeSaveChangesModal = () =>  setIsSaveChangesModal(false);
 
 
     // regulate when getInfo should be called
@@ -509,8 +515,8 @@ export function WordInfoModal({ close, open, word }) {
                 open={open}
                 // TODO: check if user has made any edits
                 onClose={() => {
-                    setIsEditing(false);
-                    close();
+                    // before closing check if the user has made any unsaved changes
+                    unsavedEdits();
                 }}
                 /* open  & close modal */ 
                 aria-labelledby="modal-modal-title"
@@ -521,7 +527,8 @@ export function WordInfoModal({ close, open, word }) {
 
                 <div className='close-icon-container'>
                     <IconButton onClick={() => {
-                        close()}}>
+                        unsavedEdits();
+                    }}>
                         <CloseIcon />
                     </IconButton>
                 </div>
@@ -758,7 +765,7 @@ export function WordInfoModalChild({open, close, edits, setUserInput }) {
   return (
     <Modal
         open={open}
-        onClose={() => {close()}}
+        onClose={() => close()}
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
     >
@@ -795,6 +802,7 @@ export function WordInfoModalChild({open, close, edits, setUserInput }) {
 //* Popover code 
 // * ask user if they want to delete the word or not. call delete word from heft
 function DeleteWordModal({ deleteVocab, open, close, listName, vocab }) {
+
     const style = {
         position: 'absolute',
         top: '50%',
@@ -810,32 +818,32 @@ function DeleteWordModal({ deleteVocab, open, close, listName, vocab }) {
     };
 
       return (
-        <Modal
-            open={open}
-            onClose={close}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-        >
-            <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-                Delete this word?
-            </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                If you delete this word you will have to add it again later
-            </Typography>
-            <Button onClick={async () => {
-                try {
-                    await deleteVocab(listName, vocab);
-                    window.location.reload();
-                } catch (error) {
-                    console.error(error);
-                }
-            }}>
-                Confirm
-            </Button>
-            </Box>
-        </Modal>
-      )
+            <Modal
+                open={open}
+                onClose={close}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                    Delete this word?
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    If you delete this word you will have to add it again later
+                </Typography>
+                <Button onClick={async () => {
+                    try {
+                        await deleteVocab(listName, vocab);
+                        window.location.reload();
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }}>
+                    Confirm
+                </Button>
+                </Box>
+            </Modal>
+        )
 }
 
 function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
@@ -860,7 +868,7 @@ function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
     return (
         <Modal
             open={open}
-            onClose={() => {close()}}
+            onClose={() => close()}
             aria-labelledby="child-modal-title"
             aria-describedby="child-modal-description"
         >
@@ -880,7 +888,7 @@ function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
             <Button onClick={() => {
                 //TODO: close or refresh the previous modal
                 close();
-                saveChanges()
+                saveChanges();
             }}>
                 Save changes
             </Button>

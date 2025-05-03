@@ -204,14 +204,48 @@ export function useSetVocab(user) {
     }, [user])
 
 
-    const addWord = async (vocabList, word, translation) => {
+
+    const newCollection = async (collectionName, source, translation) => {
+        try {
+            await addWord(collectionName, source, translation);
+            
+            try {
+                const userRef = await getDoc(firestore, "Users", user.uid);
+
+                if (userRef.exists()) {
+                    // increase the number of collections
+                    const totalCollections = doc.data().VocabLists + 1;
+    
+                    // update in db
+                    try {
+                        await updateDoc(userRef, {
+                            VocabLists: totalCollections
+                        });
+                    } catch (error) {
+                        console.error(error);
+                    }
+    
+                    console.log("successfully updated total lists")
+                }
+
+            } catch (error) {
+                console.error(error);
+            }
+
+            console.log("created collection");
+
+        } catch (error) {
+            console.error("could not create collection", error);
+        }
+    }
+
+
+    const addWord = async(vocabList, word, translation) => {
 
         const listname = vocabList;
 
         const trans = translation;
         const source = word;
-
-        console.log(user.uid);
 
         if (typeof trans !== "string" || typeof source !== "string") {
             throw new Error("function addWord: Not a string");
@@ -249,7 +283,8 @@ export function useSetVocab(user) {
 
             // if all goes well, add word / update vocab list
             const vocabListRef = collection(firestore, "Users", user.uid, listname)
-            
+
+            // this will update or even create a new list
             await addDoc(vocabListRef, {
                 word: source,
                 translation: trans,
@@ -258,6 +293,7 @@ export function useSetVocab(user) {
                 POS: "none"
             })
 
+            //!! at this point a new list will not have been added to all_vocabLists
             // path to listname within "All_Vocab_lists"
             const docRef = doc(firestore, "Users", user.uid, "All_Vocab_Lists", listname);
 
@@ -270,7 +306,6 @@ export function useSetVocab(user) {
             const userDocSnap = await getDoc(userDocRef);
 
             if (docSnap.exists() ||  userDocSnap.exists()) {
-                console.log("Document data:", docSnap.data().Words || "0");
 
                 // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
                 // treat it as a number if it isn't already
@@ -279,11 +314,13 @@ export function useSetVocab(user) {
                 const currTotalWords = userDocSnap.data().Total_Words ? Number(userDocSnap.data().Total_Words) : 0;
 
                 // update total words for the collection
+                // TODO: replace with setDoc()
                 await updateDoc(docRef, {
                     Words: currTotalCollWords + 1
                 });
 
                 // update total words for the user profile
+                 // TODO: replace with setDoc()
                 await updateDoc(userDocRef, {
                     Total_Words: currTotalWords + 1
                 });
@@ -314,11 +351,14 @@ export function useSetVocab(user) {
 
         const uid = user.uid;
 
+        // used to find a word (document in the db) as their aren't and duplicates
+        const oldTrans = prevWord.translation;
+        const oldSource = prevWord.word
+
         //? can i combine the 4 edit functions into one ?
         const editSource = async () => {
             const newSource = newWord.word;
-            const oldSource = prevWord.word;
-
+            
             // get the doc that contains the word
             try {
                 const q = query(
@@ -363,12 +403,8 @@ export function useSetVocab(user) {
 
         const editTrans = async () => {
             const newTrans = newWord.translation;
-            const oldTrans = prevWord.translation;
 
             // get the doc that contains the word
-
-            console.log(listName, oldTrans);
-
             try {
                 const q = query(
                     collection(firestore, "Users", uid, listName),
@@ -407,17 +443,16 @@ export function useSetVocab(user) {
 
         const editDefinition = async () => {
 
+            // these are used to update the definition
             const newDef = newWord.definition;
-            const oldDef = prevWord.definition;
 
             // get the doc that contains the word
-
-            console.log(listName, "old:", oldDef, "new:", newDef);
 
             try {
                 const q = query(
                     collection(firestore, "Users", uid, listName),
-                    where("definition", "==", oldDef)
+                    where("word", "==", oldSource),
+                    where("translation", "==", oldTrans)
                 );
 
                 const nativeSnapshot = await getDocs(q);
@@ -425,7 +460,7 @@ export function useSetVocab(user) {
                 if (!nativeSnapshot.empty) { 
                     // get the doc(word) from the snapshpt
                     const firstDoc = nativeSnapshot.docs[0];
-                    // get the id of the doc (the word)
+                    // get the id of the doc 
                     const wordref = firstDoc.id; 
                 
                     // Reference the doc
@@ -437,7 +472,7 @@ export function useSetVocab(user) {
                             definition: newDef
                         })
                     } catch (error) {
-                        setError(true);
+                        setError(true); //  not used right now
                         console.error("Function editDefinition: could not update definition", error)
                     }
                     
@@ -452,14 +487,14 @@ export function useSetVocab(user) {
 
         const editPOS = async () => {
             const newPOS = newWord.POS;
-            const oldPOS = prevWord.POS;
 
             // get the doc that contains the word
 
             try {
                 const q = query(
                     collection(firestore, "Users", uid, listName),
-                    where("POS", "==", oldPOS)
+                    where("word", "==", oldSource),
+                    where("translation", "==", oldTrans)
                 );
 
                 const nativeSnapshot = await getDocs(q);
@@ -496,14 +531,14 @@ export function useSetVocab(user) {
 
         const editExample = async () => {
             const newEx = newWord.example;
-            const oldEx = prevWord.example;
 
             // get the doc that contains the word
 
             try {
                 const q = query(
                     collection(firestore, "Users", uid, listName),
-                    where("example", "==", oldEx)
+                    where("word", "==", oldSource),
+                    where("translation", "==", oldTrans)
                 );
 
                 const nativeSnapshot = await getDocs(q);
@@ -655,5 +690,5 @@ export function useSetVocab(user) {
         }
     }
 
-    return {addWord, editVocab, deleteVocab, reload, error};
+    return {addWord, editVocab, deleteVocab, reload, error, newCollection};
 }
