@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from "react"
 import { firestore } from "../firebase";
 import { 
-    collection, doc, updateDoc, getDocs, query, where, deleteDoc, getDoc, addDoc, 
+    collection, doc, updateDoc, getDocs, query, where, deleteDoc, getDoc, addDoc,
+    setDoc, 
 } from "firebase/firestore"; 
 
 
@@ -210,11 +211,13 @@ export function useSetVocab(user) {
             await addWord(collectionName, source, translation);
             
             try {
-                const userRef = await getDoc(firestore, "Users", user.uid);
 
-                if (userRef.exists()) {
+                const userRef = doc(firestore, "Users", user.uid)
+                const userSnapshot = await getDoc(userRef);
+
+                if (userSnapshot.exists()) {
                     // increase the number of collections
-                    const totalCollections = doc.data().VocabLists + 1;
+                    const totalCollections = (userSnapshot.data().VocabLists ?? 0) + 1;
     
                     // update in db
                     try {
@@ -296,48 +299,77 @@ export function useSetVocab(user) {
             //!! at this point a new list will not have been added to all_vocabLists
             // path to listname within "All_Vocab_lists"
             const docRef = doc(firestore, "Users", user.uid, "All_Vocab_Lists", listname);
-
-
             // get the user doc to update total_words (for the account)
-            const userDocRef = doc(firestore, "Users", user.uid);
-
+            
             const docSnap = await getDoc(docRef);
 
+            const userDocRef = doc(firestore, "Users", user.uid);
             const userDocSnap = await getDoc(userDocRef);
 
-            if (docSnap.exists() ||  userDocSnap.exists()) {
 
-                // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
-                // treat it as a number if it isn't already
-                const currTotalCollWords = docSnap.data().Words ? Number(docSnap.data().Words) : 0;
 
-                const currTotalWords = userDocSnap.data().Total_Words ? Number(userDocSnap.data().Total_Words) : 0;
+            if (docSnap.exists() && userDocSnap.exists()) {
+                
 
-                // update total words for the collection
-                // TODO: replace with setDoc()
-                await updateDoc(docRef, {
-                    Words: currTotalCollWords + 1
-                });
+                const currTotalWords = Number(
+                    userDocSnap.data().Total_Words ?? 0
+                ) + 1
 
-                // update total words for the user profile
-                 // TODO: replace with setDoc()
-                await updateDoc(userDocRef, {
-                    Total_Words: currTotalWords + 1
-                });
+                const  currTotalCollWords = Number(
+                    docSnap.data().Words ?? 0
+                ) + 1
+                
 
-                console.log("successfully updated word count")
+                try {
+                    await updateDoc(docRef, {
+                        Words: currTotalCollWords
+                    });
+
+                    await updateDoc(userDocRef, {
+                        Total_Words: currTotalWords
+                    });
+
+                } catch (error) {
+                    console.error(error);
+                }
+                
             } else {
-                // docSnap.data() will be undefined in this case
-                console.error("couldn't find collection");
-                alert("couldn't find collection");
-            }
+                
+                if (userDocSnap.exists()) {
 
-            alert("Word has been added");
+                    const currTotalWords = Number(
+                        userDocSnap.data().Total_Words ?? 0
+                    ) + 1;
+
+                    try {
+                        await setDoc(docRef, {
+                            Words: 1
+                        });
+
+                        await updateDoc(userDocRef, {
+                            Total_Words: currTotalWords
+                        });
+
+                    } catch (error) {
+                        console.error(error); 
+                    }
+
+                } else {
+                    console.error("user does not exist");
+                    return false
+                }
+                
+            }
+    
 
         } catch (error) {
             console.error("Could not add word", error);
             throw new Error("issue with user input");   
         }        
+    }
+
+    const deleteCollection = (listName) => {
+        
     }
 
 
