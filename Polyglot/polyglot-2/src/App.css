@@ -75,7 +75,14 @@ html, body, #root, .App {
   }
 }
 
-#more-icon {
+#more-icon-heft {
+  padding: 0%;
+  margin: 0%;
+  width: 0%;
+  max-width: 0%;
+}
+
+#more-icon-vocab-list {
   padding: 0%;
   margin: 0%;
   width: 0%;

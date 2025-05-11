@@ -2,8 +2,10 @@ import { useEffect, useState, useCallback } from "react"
 import { firestore } from "../firebase";
 import { 
     collection, doc, updateDoc, getDocs, query, where, deleteDoc, getDoc, addDoc,
-    setDoc, 
+    setDoc,
+    getCountFromServer, 
 } from "firebase/firestore"; 
+import VocabLists from "../pages/VocabLists";
 
 
 // TODO: useContext. the functions will be used in multiple places
@@ -242,6 +244,59 @@ export function useSetVocab(user) {
         }
     }
 
+    const deletecollection = async (collectionName) => {
+
+        const collectionPath = `Users/${user.uid}/${collectionName}`;
+
+        // reference collection to get it's size
+        const collectionRef = collection(firestore, "Users", user.uid, collectionName);
+
+        const collSnapshot = await getCountFromServer(collectionRef);
+
+        const response = await fetch('/deleteCollection', {
+            method: 'POST',
+            headers: {
+                'Content-Type': "application/json"
+            },
+            
+            body: JSON.stringify({
+                collectionPath: collectionPath,
+                batchSize: collSnapshot.data().count,
+            })
+        });
+
+        if (!response.ok) {
+            console.error("Failed to delete collection");
+
+        } else {
+
+            // remove the collection record from "All_Vocab_Lists"
+            const collRef = doc(firestore, "Users", user.uid, "All_Vocab_Lists", collectionName);
+
+            const collSnapshot = await getDoc(collRef);
+
+            // reference the user to decrease number of collections they own
+            const userRef = doc(firestore, "Users", user.uid);
+
+            const userSnapshot = await getDoc(userRef);
+
+            if (userSnapshot.exists() && collSnapshot.exists()) {
+                try {
+                    await deleteDoc(collRef);
+
+                    await updateDoc(userRef, {
+                        VocabLists: userSnapshot.data().VocabLists - 1,
+                    })
+                } catch (error) {
+                    console.error(error);
+                }
+            } 
+
+            console.log("Collection deleted successfully");
+        }
+
+    };
+
 
     const addWord = async(vocabList, word, translation) => {
 
@@ -367,13 +422,6 @@ export function useSetVocab(user) {
             throw new Error("issue with user input");   
         }        
     }
-
-    const deleteCollection = (listName) => {
-        
-    }
-
-
-
 
     //? Can i combine these instead of repeating the code?
     // Edit existing vocab
@@ -722,5 +770,8 @@ export function useSetVocab(user) {
         }
     }
 
-    return {addWord, editVocab, deleteVocab, reload, error, newCollection};
+    return {
+        addWord, editVocab, deleteVocab, reload, error, newCollection,
+        deletecollection
+    };
 }

@@ -9,10 +9,12 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
-import { NewCollection } from "../components/Modal";
 import { useNavigate } from "react-router-dom";
 import { IconButton } from '@mui/material';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Modal from '@mui/material/Modal';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -32,7 +34,7 @@ export default function VocabLists() {
   const navigate = useNavigate();
 
   // this will be used to create a new collection. Firebase will do it automatically
-  const { newCollection } = useSetVocab(user);
+  const { newCollection, deletecollection } = useSetVocab(user);
 
   const { getVocabLists } = useFetchVocab(user);
 
@@ -42,6 +44,11 @@ export default function VocabLists() {
 
   const closeNewCollectionModal = () => setNewCollectionModal(false);
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const closeMenu = () => {
+    setAnchorEl(null);
+  }
 
   useEffect(() => {
     const getlists = async () => {
@@ -100,6 +107,18 @@ export default function VocabLists() {
                     {row.listName}
                   </TableCell>
                   <TableCell align="right">{row.vocabCount}</TableCell>
+
+                  <PositionedMenu anchorEl={anchorEl} handleClose={closeMenu}
+                    deleteColletion={deletecollection} collection={row.listName}
+                  />
+
+                  <TableCell align="right" id='more-icon-vocab-list'>
+                      <IconButton onClick={(event) => {
+                        setAnchorEl(event.currentTarget);
+                      }}>
+                          <MoreVertIcon />
+                      </IconButton>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -110,7 +129,7 @@ export default function VocabLists() {
   );
 }
 
-function NewCollectionModal({open, close, createCollection }) {
+function NewCollectionModal({ open, close, createCollection }) {
 
   const navigate = useNavigate();
 
@@ -200,4 +219,47 @@ function NewCollectionModal({open, close, createCollection }) {
       </Box>
     </Modal>
   )
+}
+
+
+function PositionedMenu({ anchorEl, handleClose, deleteCollection, collection }) {
+  const open = Boolean(anchorEl);
+
+  const deleteColl = async () => {
+    handleClose();
+
+    console.log(typeof deleteCollection);
+    
+    try {
+      await deleteCollection(collection);
+
+      alert("Collection has been deleted");
+
+      window.location.reload();
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
+    <Menu
+      id="demo-positioned-menu"
+      aria-labelledby="demo-positioned-button"
+      anchorEl={anchorEl}
+      open={open}
+      onClose={handleClose}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'left',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'left',
+      }}
+    >
+      <MenuItem onClick={async () => deleteColl()}>Delete</MenuItem>
+    </Menu>
+    
+  );
 }

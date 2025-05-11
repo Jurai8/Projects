@@ -147,7 +147,7 @@ export default function Heft () {
         
         
                                         {/* change the sizing of the margin/padding etc */}
-                                        <TableCell align="right" id='more-icon' >
+                                        <TableCell align="right" id='more-icon-heft' >
                                             {/* display info */}
                                             <IconButton onClick={() =>
                                                 openWordInfo(row)
@@ -213,6 +213,7 @@ function AddWordModal({ open, close, addWord, listName }) {
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                     New Word
                 </Typography>
+                                                  
                 <TextField 
                     id="outlined-basic-english" label="Source" name="source" variant="outlined" onChange={(e) =>  
                         setSource(e.target.value)
