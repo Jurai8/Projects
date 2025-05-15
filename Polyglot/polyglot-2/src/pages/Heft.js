@@ -1,15 +1,27 @@
-import { Button,  } from '@mui/material';
-import '../App.css';
-import { DeleteWord, NewCollection, WordInfoModal } from '../components/Modal';
-import { Vocab } from '../functions/vocab';
-import { InputCheck } from '../functions/input';
-import Sidebar from '../components/Sidebar';
-import VocabBook from '../components/Table'
-import React, { useState, useEffect, useMemo} from 'react';
-import AddWord, { EditWord } from '../components/Modal';
-import { useParams } from 'react-router-dom';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
+
+import { WordInfoModal } from '../components/Modal';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { useSetVocab } from '../hooks/useVocab';
+import useFetchVocab, { useSetVocab } from '../hooks/useVocab';
+
+import { IconButton } from '@mui/material';
+import Modal from '@mui/material/Modal';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+
 
 /* // TODO: 
     if user has no vocab list
@@ -19,438 +31,213 @@ import { useSetVocab } from '../hooks/useVocab';
         add vocab list name to "All_Vocab_List" collection
 */
 
-// ! this page will only display the vocab with in a heft
-// ! to get to this page user needs to go to Vocablists.js, click on the list to view, then it will direct them here
-// ! while in heft allow the user to switch between collections
+//? define the modals outside of heft
 
-// ! check which functions need to be moved
 
 
 export default function Heft () {
-    const { list } = useParams();
+
     const { user } = useAuth();
-    const { addWord } = useSetVocab(user);
-    const [learner, setLearner] = useState(null);
-    const checkInput = new InputCheck()
 
-    useEffect(() => {
-        const getUser = () => {
-            if (user) {
-                setLearner(user); // Set the learner when the user is authenticated
-            } else {
-                console.log("User is signed out");
-                alert("Heft: user not signed in")
-            }
-        }
+    const { getVocab } = useFetchVocab(user);
 
-        getUser();
-    }, [user]);
+    const { addWord } = useSetVocab(user)
 
-    const vocabulary = useMemo(() => {
-        if (learner) {
-            return new Vocab(learner); // Create a new Vocab object when learner is available
-          } else {
-            console.log("User not authenticated, function: Sidebar");
-            return null;
-          }
-    }, [learner])
-          
+    // this contains the name of the list
+    const { state } = useLocation();
 
-    // ! move to vocablist.js
-    const [newVocabCollection, setNewVocabCollection] = useState(false);
-    // ! move to vocablist.js
-    const toggleNewCollectionModal = (bool) => {
-        setNewVocabCollection(bool);
-    }
+    const navigate = useNavigate();
 
-    // state for sidebar
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-    const toggleSidebar = (newOpen) => () => {
-        setIsSidebarOpen(newOpen);
-    };
-    
-    // Updating input to add it into vocabBook
-    const [input, setInput] = useState({
-        native: '',
-        translation: ''
-    });
-
-    // input newWord
-    const newNative = (e) => {
-        setInput(prevInput => ({
-            ...prevInput,
-            native: e.target.value
-        }));
-    };
-
-    const newTranslation = (e) => {
-        setInput(prevInput => ({
-            ...prevInput,
-            translation: e.target.value
-        }));
-    };
-
-    const [newWord, setNewWord] = useState({
-        wordType: "which word", 
-        native: "", 
-        translation: "", 
-        case: 0, 
-    })
-
-    const [originalWord, setOriginalWord] = useState({
-        native: "", 
-        translation: ""
-    });
-
-    const getOriginalWord = (wordpair) => {
-        setOriginalWord({
-            native: wordpair.native,
-            translation: wordpair.translation
-        })
-    }
-
-    // manage state of which vocab book to show
-    // pass vocab to vocabBook
+    // vocab in the vocab table
     const [vocab, setVocab] = useState([]);
 
-    // name of vocablist that is being accessed by user
-    const [currList, setCurrList] = useState("");
+    const [listName, setListName] = useState();
 
-    // get vocabulary to pass to vocab 
+    const [addWordModal, setAddWordModal] = useState(false);
+
+    const closeAddWord = () => setAddWordModal(false);
+
+    // control the wordInfo modal and pass the word whose data will be shown
+    const [wordInfoModal, setWordInfoModal] = useState(false);
+    const [wordInfo, setWordInfo] = useState({});
+
+    const openWordInfo = (word) => {
+        setWordInfo(word);
+        setWordInfoModal(true);
+    }
+
+    const closeWordInfo = () => setWordInfoModal(false);
+
     useEffect(() => {
-        if (list && vocabulary) {
-            const getListName = async () => {
-                try {
-                    const vocabList = await vocabulary.getVocabulary(list);
+        setListName(state.listName)
 
-                    console.log("vocabList: ", vocabList);
-                    // set all the vocab within the specific list
-                    setVocab(vocabList);
-                    // set name of current vocab list
-                    setCurrList(list);
-                } catch (error) {
-                    console.error("unable to display vocab list", error);
-                }
-            }
+        const getVocabulary = async () => {
+            const words = await getVocab(state.listName);
 
-            getListName();
-        }
-    },[list,vocabulary])
+            console.log(words);
 
-    // control both edit/add word modals 
-    const [isModalOpen, setIsModalOpen] = useState({
-        addWord: false, editWord: false
-    });
-
-    const openModal = (number) => {
-        if (number !== 2 && number !== 1) {
-            alert("Error");
-            return;
-        }
-        
-        if (number === 2) {
-            setIsModalOpen({addWord: false, editWord: true});
+            setVocab(words);
         }
 
-        if (number === 1) {
-            setIsModalOpen({addWord: true, editWord: false});
-        }
-        // clear current input
-        setInput('');
-    };
+        getVocabulary();
 
-    const closeModal = (number) => {
-        if (number !== 2 && number !== 1) {
-            alert("Error");
-            return;
-        }
+    },[getVocab, state.listName])
 
-        if (number === 2) {
-            setIsModalOpen({addWord: false, editWord: false});
-        }
-
-        if (number === 1) {
-            setIsModalOpen({addWord: false, editWord: false});
-        }
-    };
-    
-    const [deleteVocabModal, setDeleteVocabModal] = useState(false);
-
-    const openDeleteVocab = () => setDeleteVocabModal(true);
-        
-    const closeDeleteVocab = () => setDeleteVocabModal(false);
-
-    // pass this to confirm button
-    const updateVocab = async () => {
-        // if the input is not a string
-
-        try {
-            try {
-                checkInput.checkVocabInput(input)
-            } catch (error) {
-                alert(error);
-                throw new Error("error with inputs: " + error);
-            }
-            // name of vocab list + the new word
-            console.log("Heft, Currlist: " + typeof currList)
-
-            if (addWord) {
-                console.log("addword exists");
-            } else if (!addWord) {
-                console.log("addWord does not exist")
-            }
-            await addWord(currList, input);
-
-            console.log("Word has been added to list");
-
-            window.location.reload()
-            alert("Word has been added to list");
-
-        } catch (error) {
-            console.error("Error caught while adding word to vocablist", error);
-        }
-       
-    }
-
-    const editVocab = async () => {
-        // TODO: check input
-        try {
-            console.log("before calling editWord: ", newWord.native)
-            // name of vocab list + the new word
-            await vocabulary.editWord(currList, originalWord, newWord);
-
-            window.location.reload()
-            alert("Successfully edited word");
-
-        } catch (error) {
-            console.error("Error caught while editing word", error);
-        }
-    }
-
-    // * delete vocab 
-    const deleteVocab = async () => {
-        try {
-            // name of vocab list + og word
-            await vocabulary.deleteWord(currList, originalWord);
-
-            window.location.reload()
-            alert("Successfully deleted word");
-
-        } catch (error) {
-            console.error("Error caught while deleting word", error);
-        }
-    } 
-
-
-    const eventHandler = (e) => {
-
-        if (e.target.name === "any-word") {
-            // update existing word
-            switch(newWord.case) { 
-                // update native
-
-                // issue with collecting input
-                case 1:
-                    console.log("case 1");
-                    setNewWord(prevNewWord => ({ 
-                        ...prevNewWord,   
-                        native: e.target.value        
-                    }));
-                    
-                    break;
-                // update translation
-                case 2:
-                    setNewWord(prevNewWord => ({ 
-                        ...prevNewWord,   
-                        translation: e.target.value        
-                    }));
-                    break;
-                // update both
-                case 3:
-                    if (e.target.id === "editNative") {
-                        setNewWord(prevNewWord => ({ 
-                            ...prevNewWord,   
-                            native: e.target.value         
-                        }));
-                    } 
-                    if (e.target.id === "editTrans") {
-                        setNewWord(prevNewWord => ({ 
-                            ...prevNewWord,   
-                            translation: e.target.value         
-                        }));
-                    }
-                    break;
-                default:
-            } 
-            // make sure for case three, the following if statement for add word isn't executed (they use the same modal)
-            return;
-        }
-
-        // add new word
-        if (e.target.name === "native") {
-            newNative(e);
-            setNewWord({native: e})
-        } 
-        if (e.target.name === "translation") {
-            newTranslation(e);
-            setNewWord({translation: e})
-        }
-    }
-
-    // modal for update word
-    const closeUpdateWord = (event, value) => {
-    
-        setNewWord(() => {
-          if (value === null || value === undefined) {
-            return {
-                wordType: "which word"
-            };
-          }
-          
-          // if they click outside the menu
-          if (event.currentTarget.value === null || event.currentTarget.value === undefined) {
-            return {
-                wordType: "which word"
-            };
-          }
-
-          if (value === "both") {
-            return {
-                wordType: value,
-                case: 3
-            }
-          } else if (value === "translation") {
-            return {
-                wordType: value,
-                case: 2
-            }
-          } else if (value === "native") {
-            return {
-                wordType: value,
-                case: 1
-            }
-          }
-
-          // TODO: change
-          return "nothing worked";
-        });
-    };
-
-
-    // function to set state using vocab list name
-    // ? is this even being used ?
-    const getListName = async (ListName) => {
-        try {
-            // TODO: replace this with some method from learner.js
-            const vocabList = await vocabulary.getVocabulary(ListName);
-            // set all the vocab within the specific list
-            setVocab(vocabList);
-            // set name of current vocab list
-            setCurrList(ListName);
-        } catch (error) {
-            console.error("unable to display vocab list", error);
-        }
-    }
-
-    // control modal for viewing info of a word
-    //? can this control when both vocab book and the modal reload, to show the updated data ?
-    const [wordInfoModal, setWordInfoModal] = useState({show: null, word: null})
-
-    // word = the chosen word whose info will be displayed
-    // bool regulates whether the modal will open or no
-    const displayInfo = (bool, word) => {
-        if (bool === true) setWordInfoModal({
-            show: true,
-            word: word
-        })
-    
-        if (bool === false) setWordInfoModal({
-            show: false, 
-            word: null
-          });
-      }
-    
     return (
         <>
-        <h1>{currList}</h1>
-        <div id='table-position'>
-            <div className='button-container'>
-                {/* only display button when showing a list */}
-                {currList !== "" &&
-                 <Button variant="contained" onClick={() => {
-                    openModal(1);
-                }}>
-                    New Word
-                </Button>
-                }
-                <Button variant="contained" onClick={toggleSidebar(true)}>          
-                    Collections 
-                </Button>
-            </div>
-
-            {/* //TODO remove the sidebar? use the collections button to route baack to vocablists.js */}
-            {isSidebarOpen &&
-             <Sidebar toggleSidebar={toggleSidebar} 
-             isSidebarOpen={isSidebarOpen} getListName={getListName}
-             toggleNewCollectionModal={toggleNewCollectionModal}
-            />}
-
-            {/* // !move to vocablist.js*/}
-            {newVocabCollection && 
-                <NewCollection 
-                    toggleNewCollectionModal={toggleNewCollectionModal}
-                />
-            }
-
-            {isModalOpen.addWord &&
-                <AddWord 
-                    closeModal={closeModal} 
-                    eventHandler={eventHandler}
-                    updateVocab={updateVocab}
-                    newWord={newWord}
-                /> 
-            }
-
-            {isModalOpen.editWord &&
-                <EditWord 
-                    eventHandler={eventHandler}
-                    closeUpdateWord={closeUpdateWord}
-                    closeModal={closeModal}
-                    newWord={newWord}
-                    editVocab={editVocab}
-
-                />
-            }
-
-            {/*Modal for delete vocab */
-                deleteVocabModal && 
-                <DeleteWord 
-                    deleteVocab={deleteVocab} 
-                    closeDeleteVocab={closeDeleteVocab}
-                    open={deleteVocabModal}
-                />
-            }
+            {/* Add Word modal*/}
+            <AddWordModal open={addWordModal} close={closeAddWord} addWord={addWord} listName={listName}/>
 
             {/* modal displaying word info */}
-            {
-                wordInfoModal.show && 
-                <WordInfoModal 
-                    displayInfo={displayInfo} 
-                    wordInfo={wordInfoModal} 
-                />
-            }
+            <WordInfoModal 
+                close={closeWordInfo} open={wordInfoModal} 
+                word={wordInfo} 
+            />
 
-                <VocabBook 
-                    vocab={vocab} 
-                    getOriginalWord={getOriginalWord}
-                    // triggers EditWord
-                    openModal={openModal}
-                    openDeleteVocab={openDeleteVocab}
-                    displayInfo={displayInfo}
-                />
-        </div>
+            {/*Modal for delete vocab */}
+
+            <h1>{listName}</h1>
+            <div id='table-position'>
+                <div className='button-container' >
+                    {/* "New Word" button which opens addwordmodal*/}
+                    <Button onClick={() => setAddWordModal(true)}>
+                        New Word
+                    </Button>
+
+                    {/* Button to navigate back to collections view */}
+                    <Button onClick={() => navigate("/vocablists")}>
+                        Collections
+                    </Button>
+                </div>
+
+                {/* table displaying words from the collection */}
+                <TableContainer id='table-container' component={Paper}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table"
+                    className="template-table">
+                        <TableHead>
+                            <TableRow>
+                                {/* replace with variables in future */}
+                                <TableCell>English</TableCell>
+                                <TableCell align="right" colSpan={2}>German</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            { vocab ? (
+                                vocab.map((row) => (
+                                    <TableRow
+                                        key={row.word}
+                                        className='template-table-row'
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell 
+                                            component="th" 
+                                            id="vocab-source" 
+                                            scope="row" 
+                                        >
+                                            {row.word}
+                                        </TableCell>
+                                        
+                                        <TableCell 
+                                            align="right" 
+                                            id='vocab-translation' 
+                                            sx={{ paddingRight: "0px !important" }}
+                                        >
+                                            {row.translation}
+                                        </TableCell>    
+        
+        
+                                        {/* change the sizing of the margin/padding etc */}
+                                        <TableCell align="right" id='more-icon-heft' >
+                                            {/* display info */}
+                                            <IconButton onClick={() =>
+                                                openWordInfo(row)
+                                            }>
+                                                <MoreVertIcon />
+                                            </IconButton>
+                                        </TableCell>
+        
+                                    </TableRow>
+                                )) ):(
+
+                                <TableRow>
+                                    <TableCell>
+                                        Loading...
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                            
+                        </TableBody>
+                    </Table>
+                </TableContainer>   
+            </div>
         </>
        
     );
+}
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+
+function AddWordModal({ open, close, addWord, listName }) {
+
+    const [source, setSource] = useState("");
+    // translation
+    const [trans, setTrans] = useState("");
+
+    
+
+    return (
+        <Modal
+            open={open}
+            onClose={close}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={style}>
+                <div className='close-icon-container'>
+                    <IconButton onClick={() => close()}>
+                        <CloseIcon />
+                    </IconButton>
+                </div>
+
+
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                    New Word
+                </Typography>
+                                                  
+                <TextField 
+                    id="outlined-basic-english" label="Source" name="source" variant="outlined" onChange={(e) =>  
+                        setSource(e.target.value)
+                    } 
+                /> 
+
+                <TextField 
+                    id="outlined-basic-german" label="Translation" name="translation" variant="outlined" 
+                    onChange={(e) => {
+                        setTrans(e.target.value);
+                    }}
+                />
+
+                <Button onClick={async () => {
+                    try {
+                        await addWord(listName, source, trans);
+                        window.location.reload();
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }}>
+                    Confirm
+                </Button>
+            </Box>
+        </Modal>
+    )
 }

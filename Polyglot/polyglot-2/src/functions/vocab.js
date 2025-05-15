@@ -79,29 +79,7 @@ export class Vocab {
         }
     }
 
-    async getAllVocabLists() {
-        const uid = this.user.uid;
-
-        try {
-            // path to subcollection
-            const querySnapshot = await getDocs(collection(
-                firestore, "Users", uid, "All_Vocab_Lists"
-            ));
-
-            querySnapshot.forEach((doc) => {
-                // add each vocablist into an array
-                this.allVocabLists.push({
-                    listName: doc.id,
-                    vocabCount: doc.data().Words
-                });        
-            });
-
-            return this.allVocabLists;
-        } catch (error) {
-            console.error("Could not get names of vocab lists", error);
-        }
-    }
-
+    
     async getVocabulary(collectionName) {
         const uid = this.user.uid;
 

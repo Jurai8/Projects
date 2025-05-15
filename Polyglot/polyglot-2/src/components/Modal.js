@@ -1,21 +1,20 @@
 import '../App.css';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 import { Vocab } from '../functions/vocab';
 import { getAuth } from 'firebase/auth';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import MenuListComposition from './Menu';
-import { useEffect, useRef, useState, useReducer } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Divider } from '@mui/material';
+import TextField from '@mui/material/TextField';
 import EditIcon from '@mui/icons-material/Edit';
 import useFetchVocab from '../hooks/useVocab';
 import { useSetVocab } from '../hooks/useVocab';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-
 
 // pass user if possible
 export function NewCollection({ toggleNewCollectionModal }) {
@@ -99,141 +98,8 @@ export function NewCollection({ toggleNewCollectionModal }) {
         </div>
     )
 }
-export default function AddWord ({ closeModal, eventHandler, updateVocab, newWord}) {
-    
-    return (
-        <div className='overlay'>
-            <Box 
-                id='new-word-modal'
-                className='my-modal'
-                component="form"
-                sx={{
-                    '& > :not(style)': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
-            >
 
-                <div>
-                    <TextField 
-                        id="outlined-basic-english" label="English" name="native" variant="outlined" onChange={eventHandler} 
-                    /> 
-                    <TextField 
-                        id="outlined-basic-german" label="German" name="translation" variant="outlined" 
-                        onChange={eventHandler}
-                    />
-                </div>
-    
-                <div id='confirm-word'>
-                    <Button variant="contained" onClick={async () => {
-                        // updateRows and db
-                        await updateVocab();
-                        // if it works it works ig
-                        closeModal(1);
-                    }}>
-                        Confirm
-                    </Button>
-                </div>
-            </Box>
-        </div>
-    )
-}
 
-// TODO: remove
-export function EditWord({closeModal, eventHandler, newWord, closeUpdateWord, editVocab}) {
-
-    return (
-        <div className='overlay'>
-            <Box 
-                id='edit-word-modal'
-                className='my-modal'
-                component="form"
-                sx={{
-                    '& > :not(style)': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
-                >
-                 
-                 { newWord.wordType === 'both' ? 
-
-                    // When user wants to update both words
-                    <div>
-                        <MenuListComposition closeUpdateWord={closeUpdateWord}
-                        newWord={newWord}/>
-                        <TextField 
-                            id="editNative" label="English" name="any-word" variant="outlined" onChange={eventHandler} 
-                        /> 
-                        <TextField 
-                            id="editTrans" label="German" name="any-word" variant="outlined" 
-                            onChange={eventHandler}
-                        />
-                    </div>: 
-
-                    // when user wants to update one word
-                    <div>  
-                        <MenuListComposition closeUpdateWord={closeUpdateWord}
-                        newWord={newWord}/>
-                        <TextField 
-                            id="any-word" label={newWord.wordType} name="any-word" variant="outlined" 
-                            onChange={eventHandler}
-                        />
-                    </div>
-                 }
-    
-                <div id='confirm-word'>
-                    <Button variant="contained" onClick={() => {
-                        editVocab();
-                        closeModal(2);
-                    }}>
-                        Confirm
-                    </Button>
-                </div>
-            </Box>
-        </div>
-    )
-}
-
-//* Popover code 
-// * ask user if they want to delete the word or not. call delete word from heft
-export function DeleteWord({closeDeleteVocab, deleteVocab, open}) {
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        pt: 2,
-        px: 4,
-        pb: 3,
-      };
-      return (
-        <Modal
-            open={open}
-            onClose={closeDeleteVocab}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            >
-            <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-                Delete this word?
-            </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                If you delete this word you won't be able to get it back
-            </Typography>
-            <Button onClick={() => {
-                closeDeleteVocab()
-                deleteVocab()
-            }}>
-                Confirm
-            </Button>
-            </Box>
-        </Modal>
-      )
-}
 
 export function Register ({ setError, setMessage}) {
     const emailRef = useRef(null);
@@ -374,7 +240,11 @@ export function LogIn({ setError, setMessage, setStatus }) {
 
 
 // Display a modal which contains data pertaining to a specific word
-export function WordInfoModal({ displayInfo, wordInfo }) {
+export function WordInfoModal({ close, open, word }) {
+
+    //! replace display info with "close"
+    //! split wordInfo into "open" and "word"
+    //! instead of pathname use state
 
     // TODO: make sure the user can't edit unless they click "edit"
         // manipulate the css?
@@ -400,8 +270,10 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
     const [childModal, setChildModal] = useState(false);
 
+    const [deleteWordModal, setDeleteWordModal] = useState(false);
+
     // open modal asking user to save changes
-    const [isSaveChangesModal, setisSaveChangesModal] = useState(false);
+    const [isSaveChangesModal, setIsSaveChangesModal] = useState(false);
 
     // track which functions need to be called
     // contains the names of the fields that need to be updated
@@ -417,10 +289,23 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
     // set to true when the user begins making changes
     const [isEditing, setIsEditing] = useState(false);
 
+    const closeDeleteWordModal = () => {
+        setDeleteWordModal(false);
+    }
+
+    const closeModal = (unsavedEdits) => {
+
+        if (unsavedEdits) {
+            setIsEditing(false);
+            close()
+        }
+    }
+
     // TODO: replace with trackchanges? track if any changes have been made
-    const unsavedEdits = (trackchanges) => {
+    const unsavedEdits = () => {
+
         // if there are changes which haven't been saved
-        if (trackChanges) {
+        if (trackChanges.length > 0) {
             // display modal
             openSaveChangesModal();
             // set displayInfo(false);
@@ -429,7 +314,8 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         // if there are no changes
         if (!trackChanges || trackChanges.length === 0) {
             // close the modal
-            displayInfo(false)
+            setIsEditing(false);
+            close();
         }
     }
 
@@ -469,19 +355,19 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
             placeholder: ""
         })
         setIsEditing(false);
+
+        // close modal
+        close();
     }
 
     // the user wants to save their changes
     const saveChanges = async () => {
-
 
         // TODO: If trackchanges is empty 
         if (!trackChanges || trackChanges.length === 0) {
             setIsEditing(false);
             return;
         }
-       
-
 
         const { 
             editSource, editTrans, editDefinition, editPOS, editExample
@@ -506,7 +392,6 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                     console.log("updated translation successfully",);
                     break;
                         
-    
                 case "definition":
                     await editDefinition();
                     console.log("updated definition successfully");
@@ -535,6 +420,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
         // after the changes have been saved reset isEditing
         setIsEditing(false);
+
+        // close modal
+        close();
+
+        alert("changes have been saved");
+
+        window.location.reload();
     }
 
     // Dynamically update wordInfo per field
@@ -557,42 +449,43 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
             }
             
         }
+
     }
 
     // open and close the save changes modal 
-    const openSaveChangesModal = () => setisSaveChangesModal(true);
-    const closeSaveChangesModal = () =>  setisSaveChangesModal(false);
+    const openSaveChangesModal = () => setIsSaveChangesModal(true);
+    const closeSaveChangesModal = () =>  setIsSaveChangesModal(false);
 
 
     // regulate when getInfo should be called
-    useEffect(() => {
-
-        //TODO store wordInfo in a state variable? 
-        if (!wordInfo || wordInfo === false) return;
+    useEffect(() => { 
 
         const callGetInfo = async () => {
             
-            console.log("hi: ", wordInfo);
+            console.log("hi: ", word);
             // if the modal should open, call getInfo
-            if (wordInfo.show === true) {
-
-                console.log("wordInfo:", wordInfo);
+            if (open && word) {
+                console.log("wordInfo:", word);
                 // vocabRef.current should have the values: POS, translation, word and definition
 
                 console.log("retrieving info on word");
-            
-                const vocabInfo = await getInfo(listName, wordInfo.word);
-                
-                setWordData(vocabInfo);
-                // save a copy of the original state, as wordData will be updated
-                setCopyWordData(vocabInfo);
+
+                try {
+                    const vocabInfo = await getInfo(listName, word);
+
+                    setWordData(vocabInfo);
+                    // save a copy of the original state, as wordData will be updated
+                    setCopyWordData(vocabInfo);
+                } catch (error) {
+                  console.error("could not get vocab data", error)  
+                }     
             }
 
         }
 
         callGetInfo();
         
-    }, [wordInfo, listName, getInfo ])
+    }, [word, open, listName, getInfo ])
 
 
             
@@ -619,9 +512,12 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
         <div className='word-info-modal' aria-hidden="false" aria-modal="true">
 
             <Modal
-                open={wordInfo.show}
+                open={open}
                 // TODO: check if user has made any edits
-                onClose={() => displayInfo(false)}
+                onClose={() => {
+                    // before closing check if the user has made any unsaved changes
+                    unsavedEdits();
+                }}
                 /* open  & close modal */ 
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
@@ -629,12 +525,20 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
             <Box sx={style}>
 
+                <div className='close-icon-container'>
+                    <IconButton onClick={() => {
+                        unsavedEdits();
+                    }}>
+                        <CloseIcon />
+                    </IconButton>
+                </div>
+
                 {/* display something if error is true */ }
                 {/* //TODO: include "x" at the top left corner for user to exit modal. track whether any changes have been made */}
                 {wordData ? 
                 <>
 
-                    <h2> Info </h2>
+                    <h2 id='wordInfo-title'> Info </h2>
 
                     <div id='word-label-container'>
                         <div id='word-label-left'>
@@ -772,7 +676,13 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
                         close={closeChildModal} 
                         edits={edits} 
                         setUserInput={setUserInput}
-                        />
+                    />
+
+                    <DeleteWordModal 
+                        open={deleteWordModal} close={closeDeleteWordModal} 
+                        listName={listName} vocab={copyWordData} 
+                        deleteVocab={deleteVocab}
+                    />
 
                     <SaveChangesModal 
                         open={isSaveChangesModal}
@@ -783,26 +693,23 @@ export function WordInfoModal({ displayInfo, wordInfo }) {
 
                     <div sx={{ display: 'flex'}}>
 
-                        {isEditing  ? (
+                        {isEditing ? (
                             <>
-                                {/* //TODO: first check if any changes have been made when executing the function */}
-                                <Button onClick={() => {unsavedEdits(trackChanges)}}>
+                                {/* if the user made changes and they click done, they are saving those changes. the modal should close too or the page should refresh*/}
+                                <Button onClick={() => {saveChanges()}}>
                                     Done
                                 </Button>
-
-                                {/* // TODO: add functionality to delete word*/}
-                                <Button onClick={() => {deleteVocab(listName, copyWordData)}}>
-                                    Delete
-                                </Button>
+                                
                             </> 
                         ):(
                             <>
-                                <Button onClick={() => {displayInfo(false)}}>
-                                    close
-                                </Button>
 
                                 <Button onClick={() => setIsEditing(true)}>
-                                    edit
+                                    Edit
+                                </Button>
+
+                                <Button onClick={() => setDeleteWordModal(true)}>
+                                    Delete
                                 </Button>
                             </>
 
@@ -858,7 +765,7 @@ export function WordInfoModalChild({open, close, edits, setUserInput }) {
   return (
     <Modal
         open={open}
-        onClose={() => {close()}}
+        onClose={() => close()}
         aria-labelledby="child-modal-title"
         aria-describedby="child-modal-description"
     >
@@ -892,6 +799,53 @@ export function WordInfoModalChild({open, close, edits, setUserInput }) {
   );
 }
 
+//* Popover code 
+// * ask user if they want to delete the word or not. call delete word from heft
+function DeleteWordModal({ deleteVocab, open, close, listName, vocab }) {
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        pt: 2,
+        px: 4,
+        pb: 3,
+    };
+
+      return (
+            <Modal
+                open={open}
+                onClose={close}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                    Delete this word?
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    If you delete this word you will have to add it again later
+                </Typography>
+                <Button onClick={async () => {
+                    try {
+                        await deleteVocab(listName, vocab);
+                        window.location.reload();
+                    } catch (error) {
+                        console.error(error);
+                    }
+                }}>
+                    Confirm
+                </Button>
+                </Box>
+            </Modal>
+        )
+}
+
 function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
 
     const style = {
@@ -913,11 +867,11 @@ function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
 
     return (
         <Modal
-        open={open}
-        onClose={() => {close()}}
-        aria-labelledby="child-modal-title"
-        aria-describedby="child-modal-description"
-    >
+            open={open}
+            onClose={() => close()}
+            aria-labelledby="child-modal-title"
+            aria-describedby="child-modal-description"
+        >
         <Box sx={{ ...style, width: 200, }}>
             <div id='c-modal-title-container'>
                 <p> Close without saving changes? </p>
@@ -926,7 +880,7 @@ function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
             <Button onClick={() => {
                 // TODO: ensure that both modals close
                 close();
-                revertChanges()
+                revertChanges();
             }}>
                 Yes
             </Button>
@@ -934,10 +888,11 @@ function SaveChangesModal({ open, close, revertChanges, saveChanges }) {
             <Button onClick={() => {
                 //TODO: close or refresh the previous modal
                 close();
-                saveChanges()
+                saveChanges();
             }}>
                 Save changes
             </Button>
+
         </Box>
     </Modal>
 

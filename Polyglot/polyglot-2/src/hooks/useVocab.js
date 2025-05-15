@@ -1,8 +1,11 @@
 import { useEffect, useState, useCallback } from "react"
 import { firestore } from "../firebase";
 import { 
-    collection, doc, updateDoc, getDocs, query, where, deleteDoc, getDoc, addDoc, 
+    collection, doc, updateDoc, getDocs, query, where, deleteDoc, getDoc, addDoc,
+    setDoc,
+    getCountFromServer, 
 } from "firebase/firestore"; 
+import VocabLists from "../pages/VocabLists";
 
 
 // TODO: useContext. the functions will be used in multiple places
@@ -152,14 +155,40 @@ export default function useFetchVocab(user) {
                 break;
         }
         
+        
         // how to return a randomized order of the array ?
         return vocab;
+    }, [user])
+
+
+    const getVocabLists = useCallback(async () => {
+
+        const vocabLists = []
+
+        try {
+            // path to subcollection
+            const querySnapshot = await getDocs(collection(
+                firestore, "Users", user.uid, "All_Vocab_Lists"
+            ));
+
+            querySnapshot.forEach((doc) => {
+                // add each vocablist into an array
+                vocabLists.push({
+                    listName: doc.id,
+                    vocabCount: doc.data().Words
+                });        
+            });
+
+            return vocabLists;
+        } catch (error) {
+            console.error("Could not get names of vocab lists", error);
+        }
     }, [user])
 
     
 
     // make sure to return the functions or states themselves
-    return {getVocab, getInfo, error}
+    return {getVocab, getVocabLists, getInfo, error}
 }
 
 // TODO: useContext. the functions will be used in multiple places
@@ -178,26 +207,121 @@ export function useSetVocab(user) {
     }, [user])
 
 
-    const addWord = async (vocabList, wordPair) => {
-        const userId = this.user.uid;
+
+    const newCollection = async (collectionName, source, translation) => {
+        try {
+            await addWord(collectionName, source, translation);
+            
+            try {
+
+                const userRef = doc(firestore, "Users", user.uid)
+                const userSnapshot = await getDoc(userRef);
+
+                if (userSnapshot.exists()) {
+                    // increase the number of collections
+                    const totalCollections = (userSnapshot.data().VocabLists ?? 0) + 1;
+    
+                    // update in db
+                    try {
+                        await updateDoc(userRef, {
+                            VocabLists: totalCollections
+                        });
+                    } catch (error) {
+                        console.error(error);
+                    }
+    
+                    console.log("successfully updated total lists")
+                }
+
+            } catch (error) {
+                console.error(error);
+            }
+
+            console.log("created collection");
+
+        } catch (error) {
+            console.error("could not create collection", error);
+        }
+    }
+
+    const deletecollection = async (collectionName) => {
+
+        const collectionPath = `Users/${user.uid}/${collectionName}`;
+
+        // reference collection to get it's size
+        const collectionRef = collection(firestore, "Users", user.uid, collectionName);
+
+        const collSnapshot = await getCountFromServer(collectionRef);
+
+        const response = await fetch('/deleteCollection', {
+            method: 'POST',
+            headers: {
+                'Content-Type': "application/json"
+            },
+            
+            body: JSON.stringify({
+                collectionPath: collectionPath,
+                batchSize: collSnapshot.data().count,
+            })
+        });
+
+        if (!response.ok) {
+            console.error("Failed to delete collection");
+
+        } else {
+
+            // remove the collection record from "All_Vocab_Lists"
+            const collRef = doc(firestore, "Users", user.uid, "All_Vocab_Lists", collectionName);
+
+            const collSnapshot = await getDoc(collRef);
+
+            // reference the user to decrease number of collections they own
+            const userRef = doc(firestore, "Users", user.uid);
+
+            const userSnapshot = await getDoc(userRef);
+
+            if (userSnapshot.exists() && collSnapshot.exists()) {
+
+                // get the number of words in the collection
+                const collWords = collSnapshot.data().Words;
+
+                try {
+                    await deleteDoc(collRef);
+
+                    await updateDoc(userRef, {
+                        VocabLists: userSnapshot.data().VocabLists - 1,
+                        Total_Words: userSnapshot.data().Total_Words - collWords
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
+            } 
+
+            console.log("Collection deleted successfully");
+        }
+
+    };
+
+
+    const addWord = async(vocabList, word, translation) => {
+
         const listname = vocabList;
 
-        // check if it's a noun. regardless, return the word
-        const trans = this.input.classifyWord(wordPair.translation);
-        const native = wordPair.native
+        const trans = translation;
+        const source = word;
 
-        if (typeof trans !== "string" || typeof native !== "string") {
+        if (typeof trans !== "string" || typeof source !== "string") {
             throw new Error("function addWord: Not a string");
         }
 
+        // query for the words to see if they already exist
         const query1 = query(
-            collection(firestore, "Users", userId, listname),
-            where("word", "==", native)
+            collection(firestore, "Users", user.uid, listname),
+            where("word", "==", source)
         );
 
-
         const query2 = query(
-            collection(firestore, "Users", userId, listname),
+            collection(firestore, "Users", user.uid, listname),
             where("translation", "==", trans)
         );
 
@@ -220,78 +344,106 @@ export function useSetVocab(user) {
                 throw new Error("This translation already exists within this collection"); 
             }
 
-            // add word / update vocab list
-            const vocabListRef = collection(firestore, "Users", userId, listname)
-            
+            // if all goes well, add word / update vocab list
+            const vocabListRef = collection(firestore, "Users", user.uid, listname)
+
+            // this will update or even create a new list
             await addDoc(vocabListRef, {
-                word: native,
+                word: source,
                 translation: trans,
                 definition: "none",
+                example: "none",
                 POS: "none"
-            }).catch((error) => {
-                console.error('Error caught while adding document:', error);
-                throw new Error("Error adding word to subcollection"); 
-            });
+            })
 
+            //!! at this point a new list will not have been added to all_vocabLists
             // path to listname within "All_Vocab_lists"
-            const docRef = doc(firestore, "Users", userId, "All_Vocab_Lists", listname);
-
-            // get the user doc to update total_words
-            const userDocRef = doc(firestore, "User", user.uid);
-
+            const docRef = doc(firestore, "Users", user.uid, "All_Vocab_Lists", listname);
+            // get the user doc to update total_words (for the account)
+            
             const docSnap = await getDoc(docRef);
+
+            const userDocRef = doc(firestore, "Users", user.uid);
             const userDocSnap = await getDoc(userDocRef);
 
-            if (docSnap.exists() && userDocSnap().exists) {
-                console.log("Document data:", docSnap.data().Words || "0");
 
-                // update "Words" field in ALL_Vocab_Lists (corresponding to vocab list)
-                // treat it as a number if it isn't already
-                const currTotalCollWords = docSnap.data().Words ? Number(docSnap.data().Words) : 0;
 
-                const currTotalWords = userDocSnap.data().Total_Words ? Number(userDocSnap.data().Total_Words) : 0;
+            if (docSnap.exists() && userDocSnap.exists()) {
+                
 
-                // update total words for the collection
-                await updateDoc(docRef, {
-                    Words: currTotalCollWords + 1
-                }).catch((error) => {
-                    throw new Error(error); 
-                });
+                const currTotalWords = Number(
+                    userDocSnap.data().Total_Words ?? 0
+                ) + 1
 
-                // update total words for the profile
-                await updateDoc(userDocSnap, {
-                    Total_Words: currTotalWords + 1
-                }).catch((error) => {
-                    throw new Error(error);
-                })
+                const  currTotalCollWords = Number(
+                    docSnap.data().Words ?? 0
+                ) + 1
+                
+
+                try {
+                    await updateDoc(docRef, {
+                        Words: currTotalCollWords
+                    });
+
+                    await updateDoc(userDocRef, {
+                        Total_Words: currTotalWords
+                    });
+
+                } catch (error) {
+                    console.error(error);
+                }
+                
             } else {
-            // docSnap.data() will be undefined in this case
-            console.error("couldn't find collection");
-            alert("couldn't find collection");
-            }
+                
+                if (userDocSnap.exists()) {
 
-            return true;
+                    const currTotalWords = Number(
+                        userDocSnap.data().Total_Words ?? 0
+                    ) + 1;
+
+                    try {
+                        await setDoc(docRef, {
+                            Words: 1
+                        });
+
+                        await updateDoc(userDocRef, {
+                            Total_Words: currTotalWords
+                        });
+
+                    } catch (error) {
+                        console.error(error); 
+                    }
+
+                } else {
+                    console.error("user does not exist");
+                    return false
+                }
+                
+            }
+    
+
         } catch (error) {
-            console.error("issue with user input", error);
+            console.error("Could not add word", error);
             throw new Error("issue with user input");   
         }        
     }
-
-
-
 
     //? Can i combine these instead of repeating the code?
     // Edit existing vocab
     const editVocab = (listName, prevWord, newWord) => {
         // the paramater should have the prev and new versions
+        
 
         const uid = user.uid;
+
+        // used to find a word (document in the db) as their aren't and duplicates
+        const oldTrans = prevWord.translation;
+        const oldSource = prevWord.word
 
         //? can i combine the 4 edit functions into one ?
         const editSource = async () => {
             const newSource = newWord.word;
-            const oldSource = prevWord.word;
-
+            
             // get the doc that contains the word
             try {
                 const q = query(
@@ -336,12 +488,8 @@ export function useSetVocab(user) {
 
         const editTrans = async () => {
             const newTrans = newWord.translation;
-            const oldTrans = prevWord.translation;
 
             // get the doc that contains the word
-
-            console.log(listName, oldTrans);
-
             try {
                 const q = query(
                     collection(firestore, "Users", uid, listName),
@@ -379,17 +527,17 @@ export function useSetVocab(user) {
         }
 
         const editDefinition = async () => {
+
+            // these are used to update the definition
             const newDef = newWord.definition;
-            const oldDef = prevWord.definition;
 
             // get the doc that contains the word
-
-            console.log(listName, "old:", oldDef, "new:", newDef);
 
             try {
                 const q = query(
                     collection(firestore, "Users", uid, listName),
-                    where("definition", "==", oldDef)
+                    where("word", "==", oldSource),
+                    where("translation", "==", oldTrans)
                 );
 
                 const nativeSnapshot = await getDocs(q);
@@ -397,7 +545,7 @@ export function useSetVocab(user) {
                 if (!nativeSnapshot.empty) { 
                     // get the doc(word) from the snapshpt
                     const firstDoc = nativeSnapshot.docs[0];
-                    // get the id of the doc (the word)
+                    // get the id of the doc 
                     const wordref = firstDoc.id; 
                 
                     // Reference the doc
@@ -409,7 +557,7 @@ export function useSetVocab(user) {
                             definition: newDef
                         })
                     } catch (error) {
-                        setError(true);
+                        setError(true); //  not used right now
                         console.error("Function editDefinition: could not update definition", error)
                     }
                     
@@ -424,14 +572,14 @@ export function useSetVocab(user) {
 
         const editPOS = async () => {
             const newPOS = newWord.POS;
-            const oldPOS = prevWord.POS;
 
             // get the doc that contains the word
 
             try {
                 const q = query(
                     collection(firestore, "Users", uid, listName),
-                    where("POS", "==", oldPOS)
+                    where("word", "==", oldSource),
+                    where("translation", "==", oldTrans)
                 );
 
                 const nativeSnapshot = await getDocs(q);
@@ -468,14 +616,14 @@ export function useSetVocab(user) {
 
         const editExample = async () => {
             const newEx = newWord.example;
-            const oldEx = prevWord.example;
 
             // get the doc that contains the word
 
             try {
                 const q = query(
                     collection(firestore, "Users", uid, listName),
-                    where("example", "==", oldEx)
+                    where("word", "==", oldSource),
+                    where("translation", "==", oldTrans)
                 );
 
                 const nativeSnapshot = await getDocs(q);
@@ -511,7 +659,7 @@ export function useSetVocab(user) {
         }
 
         return { 
-            editSource, editTrans, editDefinition, editPOS, editExample, addWord 
+            editSource, editTrans, editDefinition, editPOS, editExample, 
         }
     }
 
@@ -536,8 +684,8 @@ export function useSetVocab(user) {
 
             // query db to find doc that contains word AND translation
             const q = query(collection(firestore, "Users", uid, vocabList),
-            where("word", "==", native), 
-            where("translation", "==", trans)
+                where("word", "==", native), 
+                where("translation", "==", trans)
             );
 
             const querySnapshot = await getDocs(q);
@@ -611,6 +759,8 @@ export function useSetVocab(user) {
                         }
                     }
 
+                    alert("Successfully deleted word");
+
                 } else {
                     console.error("Vocabulary list document does not exist");
                     throw new Error("Vocabulary list document does not exist");
@@ -625,5 +775,8 @@ export function useSetVocab(user) {
         }
     }
 
-    return {editVocab, deleteVocab, reload, error};
+    return {
+        addWord, editVocab, deleteVocab, reload, error, newCollection,
+        deletecollection
+    };
 }

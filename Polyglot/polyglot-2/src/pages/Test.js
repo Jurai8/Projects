@@ -495,11 +495,15 @@ export function TestLearner() {
 //This is where the user will choose which test to write.
 function SelectTest() {
     const { user } = useAuth();
+
+    const { getVocabLists } = useFetchVocab(user);
+
     const navigate = useNavigate();
     const location = useLocation();
 
     const [options, setOptions] = useState([]);
 
+    // this will be used to generate rows depening on whether the user is scheduling or not
     const [pathname, setPathname] = useState(null);
 
     const [scheduleModal, setScheduleModal] = useState(false);
@@ -524,31 +528,19 @@ function SelectTest() {
 
     useEffect(() => {
         setPathname(location.pathname);
-
-        if (location.pathname === "/test/schedule-test/select-list") {
-            console.log("scheduling...")
-        } else {
-            console.log("not scheduling...Pathname:", location.pathname )
-        }
         
-        const getLists = async () => {
-            if (user) {
-                const vocab = new Vocab(user);
-
-                try {
-                    const vocabLists = await vocab.getAllVocabLists();
-                    setOptions(vocabLists);
-                } catch (error) {
-                    console.error("Error fetching vocab lists:", error);
-                }
-            } else {
-                console.log("User is signed out");
-                alert("Test: not signed in yet");
+        const getlists = async () => {
+            try {
+                const lists = await getVocabLists();
+                setOptions(lists);
+            } catch (error) {
+                console.error(error)
             }
-        };
+        }
+      
+        getlists();
 
-        getLists(); 
-    }, [user, location]);
+    }, [getVocabLists, location]);
 
     const style = {
         position: 'absolute',
