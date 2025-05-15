@@ -281,12 +281,17 @@ export function useSetVocab(user) {
             const userSnapshot = await getDoc(userRef);
 
             if (userSnapshot.exists() && collSnapshot.exists()) {
+
+                // get the number of words in the collection
+                const collWords = collSnapshot.data().Words;
+
                 try {
                     await deleteDoc(collRef);
 
                     await updateDoc(userRef, {
                         VocabLists: userSnapshot.data().VocabLists - 1,
-                    })
+                        Total_Words: userSnapshot.data().Total_Words - collWords
+                    });
                 } catch (error) {
                     console.error(error);
                 }

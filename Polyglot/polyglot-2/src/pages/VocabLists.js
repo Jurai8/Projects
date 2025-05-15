@@ -108,8 +108,8 @@ export default function VocabLists() {
                   </TableCell>
                   <TableCell align="right">{row.vocabCount}</TableCell>
 
-                  <PositionedMenu anchorEl={anchorEl} handleClose={closeMenu}
-                    deleteColletion={deletecollection} collection={row.listName}
+                  <DeleteMenu anchorEl={anchorEl} handleClose={closeMenu}
+                    deleteCollection={deletecollection} collection={row.listName}
                   />
 
                   <TableCell align="right" id='more-icon-vocab-list'>
@@ -222,7 +222,7 @@ function NewCollectionModal({ open, close, createCollection }) {
 }
 
 
-function PositionedMenu({ anchorEl, handleClose, deleteCollection, collection }) {
+function DeleteMenu({ anchorEl, handleClose, deleteCollection, collection }) {
   const open = Boolean(anchorEl);
 
   const deleteColl = async () => {
@@ -235,7 +235,7 @@ function PositionedMenu({ anchorEl, handleClose, deleteCollection, collection })
 
       alert("Collection has been deleted");
 
-      window.location.reload();
+     // window.location.reload();
 
     } catch (error) {
       console.error(error);
