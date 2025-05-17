@@ -778,5 +778,5 @@ export function useSetVocab(user) {
     return {
         addWord, editVocab, deleteVocab, reload, error, newCollection,
         deletecollection
-    };
+    }
 }

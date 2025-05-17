@@ -1,8 +1,8 @@
 import { createContext, useContext, useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Learner } from "../functions/Learner";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { setDoc, updateDoc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
+import { firestore } from "../firebase";
 
 const AuthContext = createContext();
 
@@ -10,22 +10,64 @@ export const AuthProvider = ({ children }) => {
 
   const auth = getAuth();
 
+  const [error, setError] = useState({
+    status: false,
+    message: ""
+  })
   const [user, setUser] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // const sign up
   const register = ({ email, password, username}) => {
-    try {
-      signUp(auth, email, password, username);
 
-       navigate("/vocablists");
-    } catch (error) {
-      alert("could not create account")
-      throw new Error("useAuth: register error");
-    }
-   
-  }
+    setLoading(true);
+
+    // get the date
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+    const year = today.getFullYear();
+
+    // the date that the user joined
+    const joined = `${day}/${month}/${year}`;
+
+
+    signUp(auth, email, password, username)
+    .then(async (user) => {
+      // ✅ Return and wait for updateProfile to finish
+      return updateProfile(user, {
+        displayName: username,
+      }).then(() => {
+        // ✅ Now set the doc with correct displayName
+        return setDoc(doc(firestore, "Users", user.uid), {
+          Email: user.email,
+          Username: username,
+          Joined: joined,
+          Perfects: 0,
+          Tests: 0,
+          Total_Words: 0,
+          VocabLists: 0,
+        });
+      });
+    })
+    .then(() => {
+      // ✅ All done, now navigate
+      setLoading(false);
+
+      navigate("/vocablists");
+    })
+    .catch((error) => {
+      console.error("Sign-up error:", error);
+
+      setLoading(false);
+
+      setError({
+        status: true,
+        message: "password must be stronger"
+      })
+    });
+  };
 
   // call this function when you want to authenticate the user
   const login = ({ email, password }) => {
@@ -82,6 +124,7 @@ export const AuthProvider = ({ children }) => {
       login,
       logout,
       loading,
+      error
     }),
     [user]
   );
@@ -95,32 +138,17 @@ export const useAuth = () => {
 // password requires: caps, lowercase, special char, numbers
 
 function signUp(auth, email, password, username) {
+  return createUserWithEmailAndPassword(auth, email, password)
+  .then(async (userCredential) => {
 
-  console.log(email, password, username);
+    // Signed up
 
-  createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    // Signed up 
-    const user = userCredential.user;
-
-    // update username
-    updateProfile(user, {
-      displayName: username
-    })
-
+    return userCredential.user;;
 
   })
   .catch((error) => {
     console.error(error);
   });
-
-  // TODO updated db with user credentials
-  const upadteDb = async (user) => {
-    await setDoc(user.uid, {
-      Email: user.email,
-      Username: user.displayName
-    })
-  }
 
 }
 

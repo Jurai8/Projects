@@ -1,6 +1,8 @@
 import CssBaseline from '@mui/material/CssBaseline';
-import { Register, LogIn } from '../components/Modal';
+import { LogIn } from '../components/Modal';
 import React, { useRef, useState} from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { Box, TextField, Button, Link} from '@mui/material';
 
 
 
@@ -10,26 +12,27 @@ import React, { useRef, useState} from 'react';
 // TODO: implement sign in with google
 
 export default function SignUp() {
-  // use one state handler. set true/false
-  const [error, setError] = useState(null);
-  // message depends on error or success
-  const [message, setMessage] = useState(null);
+  
+  const { register, loading, error } = useAuth();
 
   return (
-      <div>
-          <CssBaseline />
-          {/* conditional rendering for register and sign in */}
-            <Register 
-              setError={setError}
-              setMessage={setMessage}
-            />
-          {error ?
-          // if there is an error
-          <p style={{ color: 'red' }}>{message}</p> 
-          // else success
-          : <p style={{ color: 'green' }}>{message}</p>
-          }
-      </div>
+    <div>
+        <CssBaseline />
+        {/* conditional rendering for register and sign in */}
+        {loading ? 
+          <h2> loading...</h2> :
+
+          <RegisterModal register={register} />
+          
+        }
+          
+        {error ?
+        // if there is an error
+        <p style={{ color: 'red' }}>{error.message}</p> 
+        // else success
+        : <p style={{ color: 'green' }}>{error.message}</p>
+        }
+    </div>
   )
 }
 
@@ -62,27 +65,64 @@ export function SignIn() {
   
 }
 
-/* 
-* // ! can't do this yet. Need an authorized domain
-* vist "https://developers.google.com/identity/gsi/web/guides/display-button#html", when ready
+function RegisterModal({ register }) {
 
-export function SignIn() {
-  // TODO: check Prerequisites
-  <>
-  <script src="https://accounts.google.com/gsi/client" async></script>
-    <div id="g_id_onload"
-        data-client_id="YOUR_GOOGLE_CLIENT_ID"
-        data-login_uri="https://your.domain/your_login_endpoint"
-        data-auto_prompt="false"> 
-    </div>
-    <div class="g_id_signin"
-        data-type="standard"
-        data-size="large"
-        data-theme="outline"
-        data-text="sign_in_with"
-        data-shape="rectangular"
-        data-logo_alignment="left">
-    </div>
-  </>
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const usernameRef = useRef(null);
+
+  const handleSubmit = async () => {
+    await register(emailRef, passwordRef, usernameRef);
+  }
+
+  return (
+    <Box
+        component="form"
+        method='post'
+        action='/checkUser'
+        sx={{
+            '& > :not(style)': { m: 1, width: '25ch' },
+        }}
+        noValidate
+        autoComplete="off"
+        onSubmit={handleSubmit}
+    >
+        <h1>Sign Up</h1>
+        <div >
+            <TextField
+            id='outlined-basic-email'
+            placeholder="carlos@gmail.com"
+            label="Email"
+            variant="outlined"
+            inputRef={emailRef}
+            />
+        </div>
+        <div >
+            <TextField
+            id='outlined-basic-username'
+            label="Username"
+            variant="outlined"
+            inputRef={usernameRef}
+            />
+        </div>
+        <div>
+            <TextField
+            id='outlined-basic-password'
+            label="Password"
+            variant="outlined"
+            type='password'
+            inputRef={passwordRef}
+            />
+        </div>
+        <Button id="Confirm-word" variant="contained" type='submit'>
+            Sign up
+        </Button>
+        <section>
+            <p>Already have an account?</p> 
+            <Link to="/signin">
+                sign in
+            </Link>
+        </section>
+    </Box>
+  )
 }
-*/

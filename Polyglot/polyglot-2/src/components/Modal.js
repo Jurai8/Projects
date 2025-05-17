@@ -101,12 +101,12 @@ export function NewCollection({ toggleNewCollectionModal }) {
 
 
 
-export function Register ({ setError, setMessage}) {
+export function Register ({ setError, setMessage }) {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const usernameRef = useRef(null);
 
-    const { register } = useAuth();
+    const { register, loading, error } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
