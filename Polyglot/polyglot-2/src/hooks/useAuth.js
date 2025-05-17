@@ -1,48 +1,56 @@
 import { createContext, useContext, useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Learner } from "../functions/Learner";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { setDoc, updateDoc } from "firebase/firestore";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const learner = new Learner();
+
+  const auth = getAuth();
 
   const [user, setUser] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // const sign up
-  const register = async ({ email, password, username}) => {
+  const register = ({ email, password, username}) => {
     try {
-      await learner.SignUp(email, password, username)
+      signUp(auth, email, password, username);
+
+       navigate("/vocablists");
     } catch (error) {
       alert("could not create account")
       throw new Error("useAuth: register error");
     }
-    navigate("/vocablists");
+   
   }
 
   // call this function when you want to authenticate the user
-  const login = async ({ email, password }) => {
+  const login = ({ email, password }) => {
     try {
         console.log("signing in user");
-        await learner.LogIn(email, password);
+        signIn(auth, email, password);
+
+        navigate("/vocablists");
     } catch (error) {
         throw new Error("useAuth: login error");
     }
-    navigate("/vocablists");
+    
   };
 
   // call this function to sign out logged in user
   const logout = () => {
-    try {
-      learner.SignOut();
-  } catch (error) {
-    throw new Error("useAuth: sign out error");
-
-  }
+   signOut(auth).then(() => {
+    // Sign-out successful.
     navigate("/", { replace: true });
+
+    }).catch((error) => {
+      // An error happened.
+      console.error(error)
+    });
+    
   };
 
   // moniter authentication state
@@ -83,4 +91,47 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   return useContext(AuthContext);
 };
+
+// password requires: caps, lowercase, special char, numbers
+
+function signUp(auth, email, password, username) {
+
+  console.log(email, password, username);
+
+  createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed up 
+    const user = userCredential.user;
+
+    // update username
+    updateProfile(user, {
+      displayName: username
+    })
+
+
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+  // TODO updated db with user credentials
+  const upadteDb = async (user) => {
+    await setDoc(user.uid, {
+      Email: user.email,
+      Username: user.displayName
+    })
+  }
+
+}
+
+
+function signIn(auth, email, password) {
+  signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    alert("Welcome");
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+}
 

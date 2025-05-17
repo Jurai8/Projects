@@ -109,7 +109,7 @@ export class Learner {
         } else {
             console.warn('credentials are undefined or null');
             alert("Fill in all the boxes");
-          }
+        }
     }
 
     // handle login
