@@ -42,6 +42,13 @@ export default function VocabLists() {
 
   const [newCollectionModal, setNewCollectionModal] = useState(false);
 
+  // used to check if the user has any lists
+  const [hasVocab, setHasVocab] = useState(false);
+
+  const closeHasVocab = () => {
+    setHasVocab(false);
+  }
+
   const closeNewCollectionModal = () => setNewCollectionModal(false);
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -55,7 +62,16 @@ export default function VocabLists() {
       try {
         const lists = await getVocabLists();
 
-        setRows(lists);
+        console.log(lists);
+
+        if (lists.length < 1) {
+          setHasVocab(true);
+        } else {
+          setHasVocab(false)
+          setRows(lists);
+        }
+
+        
 
       } catch (error) {
         console.error(error)
@@ -69,67 +85,76 @@ export default function VocabLists() {
   // decide which version to render depending on whether the user is coming from test or not
   return (
     <>
-      <h1>Your vocab lists</h1>
-      <div className='table-position'>
-        <div className="button-container">
+      { hasVocab ? (
+        <NewCollectionModal  open={hasVocab} close={closeNewCollectionModal} createCollection={newCollection} hasVocab={hasVocab} closeHasVocab={closeHasVocab}/>
+        ) : (
+          <>
+            <h1>Your vocab lists</h1>
+            <div className='table-position'>
+              <div className="button-container">
+                <Button variant="contained" onClick={() => 
+                  setNewCollectionModal(true)
+                }>          
+                  New Collection 
+                </Button>
+              </div>  
 
-          <Button variant="contained" onClick={() => 
-            setNewCollectionModal(true)
-          }>          
-            New Collection 
-          </Button>
-        </div>  
+              <NewCollectionModal  open={newCollectionModal} close={closeNewCollectionModal} createCollection={newCollection} hasVocab={hasVocab} />
+
+              <TableContainer className="table-container" component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table" className="template-table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell> List Name </TableCell>
+                      <TableCell align="right" colSpan={2}>Words&nbsp;</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows.map((row) => (
+                      <TableRow
+                        key={row.listName}
+                        className='template-table-row'
+                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                        onDoubleClick={() => {
+                          navigate(`/vocablists/${row.listName}`, { state: {
+                            listName: row.listName
+                          }});
+                        }}
+                      >
+                        <TableCell component="th" scope="row">
+                          {row.listName}
+                        </TableCell>
+                        <TableCell align="right">{row.vocabCount}</TableCell>
+
+                        <DeleteMenu anchorEl={anchorEl} handleClose={closeMenu}
+                          deleteCollection={deletecollection} collection={row.listName}
+                        />
+
+                        <TableCell align="right" id='more-icon-vocab-list'>
+                            <IconButton onClick={(event) => {
+                              setAnchorEl(event.currentTarget);
+                            }}>
+                                <MoreVertIcon />
+                            </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
+          </>
+
+        )
+      }
         
-
-        <NewCollectionModal  open={newCollectionModal} close={closeNewCollectionModal} createCollection={newCollection}/>
-
-        <TableContainer className="table-container" component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table" className="template-table">
-            <TableHead>
-              <TableRow>
-                <TableCell> List Name </TableCell>
-                <TableCell align="right" colSpan={2}>Words&nbsp;</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.listName}
-                  className='template-table-row'
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  onDoubleClick={() => {
-                    navigate(`/vocablists/${row.listName}`, { state: {
-                      listName: row.listName
-                    }});
-                  }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.listName}
-                  </TableCell>
-                  <TableCell align="right">{row.vocabCount}</TableCell>
-
-                  <DeleteMenu anchorEl={anchorEl} handleClose={closeMenu}
-                    deleteCollection={deletecollection} collection={row.listName}
-                  />
-
-                  <TableCell align="right" id='more-icon-vocab-list'>
-                      <IconButton onClick={(event) => {
-                        setAnchorEl(event.currentTarget);
-                      }}>
-                          <MoreVertIcon />
-                      </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
     </>  
   );
 }
 
-function NewCollectionModal({ open, close, createCollection }) {
+
+
+function NewCollectionModal({ open, close, createCollection, hasVocab, closeHasVocab }) {
 
   const navigate = useNavigate();
 
@@ -169,10 +194,18 @@ function NewCollectionModal({ open, close, createCollection }) {
           </IconButton>
         </div>
 
+        { hasVocab ? (
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Create a vocab list
+            </Typography>
+          ) : (
 
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-            New Collection
-        </Typography>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              New Collection
+            </Typography>
+          )
+        }
+        
 
         <div>
           <TextField
@@ -206,6 +239,9 @@ function NewCollectionModal({ open, close, createCollection }) {
           try {
             await createCollection(collection, source, translation);
 
+            // there's probably a better way to do this
+            closeHasVocab();
+
             navigate(`/vocablists/${collection}`, { state: {
               listName: collection
             }});
@@ -235,7 +271,7 @@ function DeleteMenu({ anchorEl, handleClose, deleteCollection, collection }) {
 
       alert("Collection has been deleted");
 
-     // window.location.reload();
+      window.location.reload();
 
     } catch (error) {
       console.error(error);

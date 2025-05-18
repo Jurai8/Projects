@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useEffect, useState } from "react";
+import { createContext, useContext, useMemo, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
@@ -8,8 +8,6 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
 
-  const auth = getAuth();
-
   const [error, setError] = useState({
     status: false,
     message: ""
@@ -18,8 +16,10 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const auth = getAuth();
+
   // const sign up
-  const register = ({ email, password, username}) => {
+  const register = useCallback(async (email, password, username)  => {
 
     setLoading(true);
 
@@ -32,32 +32,32 @@ export const AuthProvider = ({ children }) => {
     // the date that the user joined
     const joined = `${day}/${month}/${year}`;
 
+    try {
 
-    signUp(auth, email, password, username)
-    .then(async (user) => {
-      // ✅ Return and wait for updateProfile to finish
-      return updateProfile(user, {
+      const user = await signUp(auth, email, password, username)
+
+      // Wait for profile update
+      await updateProfile(user, {
         displayName: username,
-      }).then(() => {
-        // ✅ Now set the doc with correct displayName
-        return setDoc(doc(firestore, "Users", user.uid), {
-          Email: user.email,
-          Username: username,
-          Joined: joined,
-          Perfects: 0,
-          Tests: 0,
-          Total_Words: 0,
-          VocabLists: 0,
-        });
       });
-    })
-    .then(() => {
-      // ✅ All done, now navigate
-      setLoading(false);
 
+      // Set user document in Firestore
+      await setDoc(doc(firestore, "Users", user.uid), {
+        Email: user.email,
+        Username: username,
+        Joined: joined,
+        Perfects: 0,
+        Tests: 0,
+        Total_Words: 0,
+        VocabLists: 0,
+      });
+
+      //  All done, now navigate
       navigate("/vocablists");
-    })
-    .catch((error) => {
+
+      setError(false);
+
+    } catch (error) {
       console.error("Sign-up error:", error);
 
       setLoading(false);
@@ -66,24 +66,46 @@ export const AuthProvider = ({ children }) => {
         status: true,
         message: "password must be stronger"
       })
-    });
-  };
+    } finally {
+      setLoading(false);
+    }
+
+  }, [auth, navigate])
+
+  
 
   // call this function when you want to authenticate the user
-  const login = ({ email, password }) => {
-    try {
-        console.log("signing in user");
-        signIn(auth, email, password);
+  const login = useCallback( async ( email, password ) => {
+    setLoading(true);
 
-        navigate("/vocablists");
+    try {
+      console.log("signing in user:", email, password);
+
+      await signIn(auth, email, password);
+      
+      navigate("/vocablists");
+
+      setLoading(false);
+      setError(false);
+
     } catch (error) {
-        throw new Error("useAuth: login error");
+
+      console.log("helloo")
+
+      setError({
+        status: true,
+        message: error.message
+      });
+      
+      console.error(error);
+    } finally {
+      setLoading(false)
     }
     
-  };
+  },[auth, navigate]);
 
   // call this function to sign out logged in user
-  const logout = () => {
+  const logout = useCallback(() => {
    signOut(auth).then(() => {
     // Sign-out successful.
     navigate("/", { replace: true });
@@ -93,7 +115,7 @@ export const AuthProvider = ({ children }) => {
       console.error(error)
     });
     
-  };
+  }, [auth, navigate]);
 
   // moniter authentication state
   useEffect(() => {
@@ -126,7 +148,11 @@ export const AuthProvider = ({ children }) => {
       loading,
       error
     }),
-    [user]
+    [user, register,
+      login,
+      logout,
+      loading,
+      error]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
@@ -137,29 +163,23 @@ export const useAuth = () => {
 
 // password requires: caps, lowercase, special char, numbers
 
-function signUp(auth, email, password, username) {
+async function signUp(auth, email, password, username) {
+
   return createUserWithEmailAndPassword(auth, email, password)
-  .then(async (userCredential) => {
+  .then((userCredential) => {
 
     // Signed up
 
     return userCredential.user;;
 
   })
-  .catch((error) => {
-    console.error(error);
-  });
-
 }
 
 
-function signIn(auth, email, password) {
-  signInWithEmailAndPassword(auth, email, password)
+async function signIn(auth, email, password) {  
+  return signInWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {
-    alert("Welcome");
+    return userCredential.user;
   })
-  .catch((error) => {
-    console.error(error);
-  });
 }
 

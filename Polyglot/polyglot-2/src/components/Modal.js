@@ -110,6 +110,7 @@ export function Register ({ setError, setMessage }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
         try {
             await register({
                 email: emailRef.current.value, 
@@ -127,7 +128,6 @@ export function Register ({ setError, setMessage }) {
         <Box
             component="form"
             method='post'
-            action='/checkUser'
             sx={{
                 '& > :not(style)': { m: 1, width: '25ch' },
             }}
