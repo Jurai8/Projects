@@ -13,7 +13,8 @@ export const AuthProvider = ({ children }) => {
     message: ""
   })
   const [user, setUser] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   const auth = getAuth();
@@ -127,7 +128,7 @@ export const AuthProvider = ({ children }) => {
         console.log("User signed in:");
         setUser(user);
       } else {
-        setUser(null);
+        setUser(false);
       }
 
       setLoading(false)

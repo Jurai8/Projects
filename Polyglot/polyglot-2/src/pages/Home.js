@@ -50,12 +50,19 @@ export default function Home() {
 
     )
 
-    function DisplayPage({user, loading}) {
-      if (loading) return <div>Loading...</div>;
+    function DisplayPage({ user, loading }) {
 
-      if (user) return SignedInPage
+      if (loading || user === null) {
+        return <div>Loading...</div>
 
-      if (!user) return  SignedOutPage
+      } else {
+        if (user) {
+          return SignedInPage 
+        } else {
+          return  SignedOutPage
+        }
+      }
+
     }
 
   
