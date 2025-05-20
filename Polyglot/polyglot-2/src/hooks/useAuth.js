@@ -22,7 +22,11 @@ export const AuthProvider = ({ children }) => {
   // const sign up
   const register = useCallback(async (email, password, username)  => {
 
+    console.log("loading: ", loading);
+
     setLoading(true);
+
+    console.log("loading: ", loading);
 
     // get the date
     const today = new Date();
@@ -61,14 +65,14 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Sign-up error:", error);
 
-      setLoading(false);
-
       setError({
         status: true,
         message: "password must be stronger"
       })
     } finally {
+      console.log("0 loading: ", loading);
       setLoading(false);
+      console.log("0 loading: ", loading);
     }
 
   }, [auth, navigate])

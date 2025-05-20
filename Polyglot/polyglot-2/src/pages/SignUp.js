@@ -2,6 +2,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import React, { useEffect, useRef, useState} from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Box, TextField, Button, Link} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -79,6 +80,8 @@ function RegisterModal({ register }) {
     await register(emailRef.current.value, passwordRef.current.value, usernameRef.current.value);
   }
 
+  const navigate = useNavigate();
+
   return (
     <Box
         component="form"
@@ -120,10 +123,10 @@ function RegisterModal({ register }) {
             Sign up
         </Button>
         <section>
-            <p>Already have an account?</p> 
-            <Link to="/signin">
-                sign in
-            </Link>
+            <p>Already have an account?</p>
+
+            <p onClick={() => navigate("/signin")}> sign in </p> 
+            
         </section>
     </Box>
   )
@@ -132,21 +135,23 @@ function RegisterModal({ register }) {
 
 function SignInModal ({ login }) {
 
-    const emailRef = useRef(null);
-    const passwordRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      try {
-          await login(
-            emailRef.current.value, 
-            passwordRef.current.value 
-          )        
-      } catch (error) {
-          console.error(error);
-      }
+    try {
+        await login(
+          emailRef.current.value, 
+          passwordRef.current.value 
+        )        
+    } catch (error) {
+        console.error(error);
     }
+  }
+
+  const navigate = useNavigate();
 
 
   return (
@@ -183,9 +188,8 @@ function SignInModal ({ login }) {
       </Button>
       <section>
           <p>Don't have an account ?</p> 
-          <Link to="/signup">
-              sign up
-          </Link>
+
+          <p onClick={() => navigate("/signup")}> sign up </p> 
       </section>
     </Box>
   )
