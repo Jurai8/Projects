@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     message: ""
   })
   const [user, setUser] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -21,12 +22,7 @@ export const AuthProvider = ({ children }) => {
 
   // const sign up
   const register = useCallback(async (email, password, username)  => {
-
-    console.log("loading: ", loading);
-
     setLoading(true);
-
-    console.log("loading: ", loading);
 
     // get the date
     const today = new Date();
@@ -58,9 +54,9 @@ export const AuthProvider = ({ children }) => {
       });
 
       //  All done, now navigate
-      navigate("/vocablists");
 
       setError(false);
+      navigate("/vocablists");
 
     } catch (error) {
       console.error("Sign-up error:", error);
@@ -68,13 +64,10 @@ export const AuthProvider = ({ children }) => {
       setError({
         status: true,
         message: "password must be stronger"
-      })
+      });
     } finally {
-      console.log("0 loading: ", loading);
       setLoading(false);
-      console.log("0 loading: ", loading);
     }
-
   }, [auth, navigate])
 
   
@@ -90,7 +83,6 @@ export const AuthProvider = ({ children }) => {
       
       navigate("/vocablists");
 
-      setLoading(false);
       setError(false);
 
     } catch (error) {
@@ -131,17 +123,17 @@ export const AuthProvider = ({ children }) => {
         // User is signed in
         console.log("User signed in:");
         setUser(user);
+        setLoading(false)
       } else {
         setUser(false);
       }
-
-      setLoading(false)
+      
     });
 
 
     // Cleanup the listener when the component unmounts
     return () => unsubscribe();
-  }, [user]); //? i added user as a dependancy but haven't checked if it affected anything
+  }, []); //? i added user as a dependancy but haven't checked if it affected anything
 
   // create object of values, which only update based on "user"
   const value = useMemo(

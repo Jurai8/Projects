@@ -12,16 +12,18 @@ import { useNavigate } from 'react-router-dom';
 // TODO: implement sign in with google
 
 export default function SignUp() {
-  
-  const { register, loading, error } = useAuth();
+
+  const { register, loading, error, user } = useAuth();
+
+  if (user) return <h2> loading...</h2>;
 
   return (
     <div>
       <CssBaseline />
       {/* conditional rendering for register and sign in */}
-      {loading ? 
-        <h2> loading...</h2> :
-
+      {(loading || user) ? (
+        <h2> loading...</h2> 
+      ) : (
         <>
           <RegisterModal register={register} />
         
@@ -30,8 +32,7 @@ export default function SignUp() {
             <p style={{ color: 'red' }}>{error.message}</p> 
           }
         </>
-        
-      }
+      )}
           
     </div>
   )
