@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, deleteDoc } from "firebase/firestore";
 import { firestore } from "../firebase";
 
 const AuthContext = createContext();
@@ -102,17 +102,44 @@ export const AuthProvider = ({ children }) => {
   },[auth, navigate]);
 
   // call this function to sign out logged in user
-  const logout = useCallback(() => {
-   signOut(auth).then(() => {
-    // Sign-out successful.
-    navigate("/", { replace: true });
+  const logout = useCallback(async () => {
 
-    }).catch((error) => {
-      // An error happened.
-      console.error(error)
-    });
+   await signOut(auth)
+
+   navigate("/", { replace: true });
+
     
   }, [auth, navigate]);
+
+  const deleteAccount = useCallback(async () => {
+
+    const response = await fetch('/deleteAccount', {
+      method: 'POST',
+      headers: {
+        'Content-Type': "application/json"
+      },
+      
+      body: JSON.stringify({
+        uid: user.uid,
+      })
+    });  
+
+    try {
+      const data = await response.json();
+
+      await deleteDoc(doc(firestore, "Users", user.uid));
+
+      await logout();
+      // TODO delete the subcollections
+
+      console.log(data);
+      navigate("/")
+
+    } catch (error) {
+      console.error(error);
+    }
+    
+  }, [user, navigate, logout])
 
   // moniter authentication state
   useEffect(() => {
@@ -130,6 +157,7 @@ export const AuthProvider = ({ children }) => {
       
     });
 
+    setLoading(false); 
 
     // Cleanup the listener when the component unmounts
     return () => unsubscribe();
@@ -143,13 +171,16 @@ export const AuthProvider = ({ children }) => {
       login,
       logout,
       loading,
-      error
+      error,
+      deleteAccount
     }),
     [user, register,
       login,
       logout,
       loading,
-      error]
+      error,
+      deleteAccount
+    ]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
@@ -157,6 +188,8 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   return useContext(AuthContext);
 };
+
+
 
 // password requires: caps, lowercase, special char, numbers
 

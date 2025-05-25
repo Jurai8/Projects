@@ -53,6 +53,8 @@ export default function Home() {
     function DisplayPage({ user, loading }) {
 
       if (loading || user === null) {
+        console.log(user);
+        
         return <div>Loading...</div>
 
       } else {

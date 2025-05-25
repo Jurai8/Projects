@@ -8,6 +8,7 @@ import { AuthProvider } from '../hooks/useAuth.js';
 import { ProtectedRoute } from '../components/ProtectedRoute.js';
 import Layout from '../components/Layout.js';
 import Profile from './Profile.js';
+import Account from './Account.js';
 
 
 // TODO make sure the data (/state?) persists after refresh
@@ -37,6 +38,13 @@ function App() {
                 <SignIn />
               }
             /> 
+
+            <Route path="/account" element={
+                <ProtectedRoute>
+                  <Account />
+                </ProtectedRoute>
+              }
+            />
 
             {/* vocablist */}
             <Route path="/vocablists" element={
