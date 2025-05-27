@@ -1,9 +1,18 @@
+
+/* home page */
+.home-page {
+  text-align: center;
+  height: 75%;
+}
+
+
+
 .close-icon-container {
  text-align: right;
 }
 
 
-html, body, #root, .App {
+html, body, #root {
   height: 100%;
   overflow: hidden;
 }

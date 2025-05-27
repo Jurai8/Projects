@@ -22,7 +22,6 @@ export default function Home() {
     
     const SignedOutPage = (
       <>
-        <h1>Polyglot</h1>
         <h2>Hello There</h2>
         
         <Link to="/signin">
@@ -70,8 +69,10 @@ export default function Home() {
   
   
     return (
-      <div className="App">
-        <DisplayPage user={user} loading={loading} />
+      <div className="home-page">
+        <div>
+          <DisplayPage user={user} loading={loading} />
+        </div>
       </div>
     );
   }
