@@ -6,7 +6,7 @@ import VocabLists from "./VocabLists.js";
 import {TestLearner, SelectTest, TestIndex} from "./Test.js"
 import { AuthProvider } from '../hooks/useAuth.js';
 import { ProtectedRoute } from '../components/ProtectedRoute.js';
-import Layout from '../components/Layout.js';
+import Layout from '../components/layout.js';
 import Profile from './Profile.js';
 import Account from './Account.js';
 

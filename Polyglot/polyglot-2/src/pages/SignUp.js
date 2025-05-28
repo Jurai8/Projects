@@ -49,7 +49,7 @@ export function SignIn() {
   }, [error])
 
   return (
-    <>
+    <div className='auth-modal-container'>
       <CssBaseline />
       {loading ? 
         <h2> loading...</h2> :
@@ -64,7 +64,7 @@ export function SignIn() {
         </>
         
       }
-    </>
+    </div>
   )
   
 }
@@ -159,39 +159,54 @@ function SignInModal ({ login }) {
     <Box
       component="form"
       sx={{
-          '& > :not(style)': { m: 1, width: '25ch' },
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',       // center horizontally
+        justifyContent: 'center',   // center vertically (when height is set)
+        height: '100vh',   // full viewport height for vertical centering
       }}
       noValidate
       autoComplete="off"
       onSubmit={handleSubmit}
     >
-      <h1>Log In</h1>
-      <div >
-          <TextField
+      <Box 
+        id='signIn'
+        sx={{ 
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',       
+          justifyContent: 'center',
+          '& > :not(style)':  {m: 1, width: '25ch' } 
+        }}
+      >
+        <h1 style={{ textAlign: 'center', width: '100%' }}>Log In</h1>
+
+        <TextField
           id='outlined-basic-email'
           placeholder="carlos@gmail.com"
           label="Email"
           variant="outlined"
           inputRef={emailRef}
-          />
-      </div>
-      <div>
-          <TextField
+        />
+      
+        <TextField
           id='outlined-basic-password'
           label="Password"
           variant="outlined"
           type='password'
           inputRef={passwordRef}
-          />
-      </div>
-      <Button variant="contained" type='submit'>
-          Log in
-      </Button>
-      <section>
-          <p>Don't have an account ?</p> 
+        />
+    
+        <Button variant="contained" type='submit'>
+            Log in
+        </Button>
+        <section>
+            <p>Don't have an account ?</p> 
 
-          <p onClick={() => navigate("/signup")}> sign up </p> 
-      </section>
+            <p onClick={() => navigate("/signup")}> sign up </p> 
+        </section>
+      </Box>
+      
     </Box>
   )
 }
