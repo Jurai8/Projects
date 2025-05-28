@@ -6,10 +6,12 @@ export default function Layout({ children }) {
     return (
         <>
             <Navigation />
-            <main>
+            <main id='main-container'>
                 <Outlet />
             </main>
-            <Footer />
+            
         </>
     )
+
+    // <Footer />
 }

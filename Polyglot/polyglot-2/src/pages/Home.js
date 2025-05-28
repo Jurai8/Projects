@@ -69,8 +69,8 @@ export default function Home() {
   
   
     return (
-      <div className="home-page">
-        <div>
+      <div id="home-page-container">
+        <div id="home-page">
           <DisplayPage user={user} loading={loading} />
         </div>
       </div>
