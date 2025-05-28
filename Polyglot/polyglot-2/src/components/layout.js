@@ -10,8 +10,8 @@ export default function Layout({ children }) {
                 <Outlet />
             </main>
             
+            <Footer />
+            
         </>
     )
-
-    // <Footer />
 }

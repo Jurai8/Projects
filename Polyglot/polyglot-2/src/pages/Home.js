@@ -22,7 +22,7 @@ export default function Home() {
     
     const SignedOutPage = (
       <>
-        <h2>Hello There</h2>
+        <h2>Welcome to Polyglot</h2>
         
         <Link to="/signin">
           <Button>sign in</Button>
@@ -49,6 +49,7 @@ export default function Home() {
 
     )
 
+    
     function DisplayPage({ user, loading }) {
 
       if (loading || user === null) {
@@ -77,12 +78,3 @@ export default function Home() {
     );
   }
   
-  /* 
-  loading &&  <div>Loading...</div>
-
-        {user ? (
-          SignedOutPage
-        ) : (
-          SignedInPage
-        )}
-          */
