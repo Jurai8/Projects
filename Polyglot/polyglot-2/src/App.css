@@ -1,23 +1,25 @@
-/* testing random stuff*/
-
-#signIn {
-  border: 0.5px solid black;
-  border-radius: 10px;
+/** 0.  */ 
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
-
-
-
-/* ------- */
-
-
 
 /* this affects the main content of everypage */
 #main-container {
-  height: 100%;
+  flex: 1; /* This is KEY: grow to fill remaining space between Navbar and Footer */
+  display: flex;
+  flex-direction: column;
+  overflow: auto; /* Allow scrolling ONLY if content overflows */
 }
 
 
-/* home page */
+
+/*? next */
+
+
+/** 1. home page */
 #home-page-container {
   height: 100%;
   display: flex;
@@ -29,12 +31,23 @@
   text-align: center;
 }
 
-/* sign up/in page */
+
+/** 2.  sign up/in page */
 .auth-modal-container {
-  height: 100%;
+  flex: 1;
   display: flex;
-  justify-content: center;   /* center horizontally */
-  align-items: center;
+  flex-direction: column;
+}
+
+.auth-modal {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+  border: 0.5px solid black;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+#auth-modal-signUp {
+  padding: 20px;
 }
 
 
@@ -43,13 +56,6 @@
  text-align: right;
 }
 
-
-html, body, #root {
-  height: 100%;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
 
 #test-schedule-table {
   width: 100%;

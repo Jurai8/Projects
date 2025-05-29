@@ -18,7 +18,7 @@ export default function SignUp() {
   if (user) return <h2> loading...</h2>;
 
   return (
-    <div>
+    <div className='auth-modal-container'>
       <CssBaseline />
       {/* conditional rendering for register and sign in */}
       {(loading || user) ? (
@@ -85,50 +85,67 @@ function RegisterModal({ register }) {
 
   return (
     <Box
-        component="form"
-        sx={{
-            '& > :not(style)': { m: 1, width: '25ch' },
-        }}
-        noValidate
-        autoComplete="off"
-        onSubmit={handleSubmit}
+      component="form"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',       // center horizontally
+        justifyContent: 'center',   // center vertically (when height is set)
+        height: '100%'
+      }}
+      
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit}
     >
-        <h1>Sign Up</h1>
-        <div >
-            <TextField
+      <Box 
+        className='auth-modal'
+        id='auth-modal-signUp'
+        sx={{ 
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',       
+          justifyContent: 'center',
+          '& > :not(style)':  {m: 1, width: '25ch' } 
+        }}
+      >
+        <h1 style={{ textAlign: 'center', width: '100%' }}>Sign Up</h1>
+        
+          <TextField
             id='outlined-basic-email'
             placeholder="carlos@gmail.com"
             label="Email"
             variant="outlined"
             inputRef={emailRef}
-            />
-        </div>
-        <div >
-            <TextField
+          />
+      
+          <TextField
             id='outlined-basic-username'
             label="Username"
             variant="outlined"
             inputRef={usernameRef}
-            />
-        </div>
-        <div>
-            <TextField
+          />
+
+          <TextField
             id='outlined-basic-password'
             label="Password"
             variant="outlined"
             type='password'
             inputRef={passwordRef}
-            />
-        </div>
-        <Button variant="contained" type='submit'>
-            Sign up
-        </Button>
-        <section>
-            <p>Already have an account?</p>
+          />
 
-            <p onClick={() => navigate("/signin")}> sign in </p> 
-            
+        <Button variant="contained" type='submit'>
+          Sign up
+        </Button>
+      
+        <section>
+          <p>Already have an account?</p>
+
+          <p onClick={() => navigate("/signin")}> sign in </p> 
         </section>
+
+      </Box>
+        
     </Box>
   )
 }
@@ -163,14 +180,14 @@ function SignInModal ({ login }) {
         flexDirection: 'column',
         alignItems: 'center',       // center horizontally
         justifyContent: 'center',   // center vertically (when height is set)
-        height: '100vh',   // full viewport height for vertical centering
+        height: '100%'
       }}
       noValidate
       autoComplete="off"
       onSubmit={handleSubmit}
     >
       <Box 
-        id='signIn'
+        className='auth-modal'
         sx={{ 
           display: 'flex',
           flexDirection: 'column',
