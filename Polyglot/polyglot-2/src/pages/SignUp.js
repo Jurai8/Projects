@@ -1,4 +1,5 @@
 import CssBaseline from '@mui/material/CssBaseline';
+import CircularProgress from '@mui/material/CircularProgress';
 import React, { useEffect, useRef, useState} from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { Box, TextField, Button, Link} from '@mui/material';
@@ -22,16 +23,34 @@ export default function SignUp() {
       <CssBaseline />
       {/* conditional rendering for register and sign in */}
       {(loading || user) ? (
-        <h2> loading...</h2> 
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh', // or set a fixed height if not full screen
+          width: '100%',
+        }}>
+          <CircularProgress />
+        </div> 
       ) : (
-        <>
-          <RegisterModal register={register} />
+        // TODO: fix the spacing between the modal and error message
         
+        <div 
+          style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh', // or set a fixed height if not full screen
+          width: '100%',
+        }}>
+          <RegisterModal register={register} />
+
           {error.status === true &&
             // if there is an error
             <p style={{ color: 'red' }}>{error.message}</p> 
           }
-        </>
+        </div>
       )}
           
     </div>
@@ -52,16 +71,34 @@ export function SignIn() {
     <div className='auth-modal-container'>
       <CssBaseline />
       {loading ? 
-        <h2> loading...</h2> :
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh', // or set a fixed height if not full screen
+          width: '100%',
+        }}>
+          <CircularProgress />
+        </div> 
+      :
 
-        <>
+      // TODO: fix the spacing between the modal and error message
+        <div 
+          style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh', // or set a fixed height if not full screen
+          width: '100%',
+        }}>
           <SignInModal login={login} />
-        
+
           {error.status === true &&
             // if there is an error
             <p style={{ color: 'red' }}>{error.message}</p> 
           }
-        </>
+        </div>
         
       }
     </div>

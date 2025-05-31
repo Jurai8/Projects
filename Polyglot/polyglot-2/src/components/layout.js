@@ -13,8 +13,8 @@ export default function Layout({ children }) {
     //TODO: only display a link to the about us page when on the home page and the user hasn't signed in.
     return (
         <>
-            {!shouldHideLayout && <Navigation />}
-
+            <Navigation />
+            
             <main id='main-container'>
                 <Outlet />
             </main>

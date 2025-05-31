@@ -154,14 +154,14 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(false);
       }
-      
-    });
 
-    setLoading(false); 
+      setLoading(false); 
+
+    });
 
     // Cleanup the listener when the component unmounts
     return () => unsubscribe();
-  }, []); //? i added user as a dependancy but haven't checked if it affected anything
+  }, []); 
 
   // create object of values, which only update based on "user"
   const value = useMemo(
