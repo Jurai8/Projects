@@ -90,8 +90,17 @@ export default function VocabLists() {
         ) : (
           <>
             <h1>Your vocab lists</h1>
-            <div className='table-position'>
-              <div className="button-container">
+            <Box className='table-position'
+              sx={{ 
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',       
+                justifyContent: 'center',
+                '& > :not(style)':  {m: 1, width: '50%' } 
+              }}
+            >
+
+              <div id="coll-table-button-container">
                 <Button variant="contained" onClick={() => 
                   setNewCollectionModal(true)
                 }>          
@@ -101,7 +110,7 @@ export default function VocabLists() {
 
               <NewCollectionModal  open={newCollectionModal} close={closeNewCollectionModal} createCollection={newCollection} hasVocab={hasVocab} />
 
-              <TableContainer className="table-container" component={Paper}>
+              <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table" className="template-table">
                   <TableHead>
                     <TableRow>
@@ -142,9 +151,8 @@ export default function VocabLists() {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
+            </Box>
           </>
-
         )
       }
         

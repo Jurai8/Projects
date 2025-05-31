@@ -50,6 +50,57 @@ html, body, #root {
   padding: 20px;
 }
 
+/*? next */
+
+/* 3. Vocab lists table */
+#coll-table-button-container {
+  width: 50%;
+  text-align: right;
+  margin-bottom: 3px;
+}
+
+
+/* 4. vocab table */
+
+/* when there's a certain amount of words make the table scrollable*/
+#table-container {
+  width: 50%;
+  max-width: 100%;
+  overflow-x: auto; /* Enables horizontal scrolling if needed */
+  overflow-y: auto;
+  margin: auto;
+}
+
+#table-position {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+
+
+/* Style table cells */
+#vocab-source {
+  padding: 12px;
+  text-align: left;
+  word-wrap: break-word; /* Prevents text overflow */
+}
+
+#vocab-translation {
+  word-wrap: break-word;
+}
+
+/* Make table responsive */
+@media (max-width: 900px) {
+  #table-container {
+    width: 90%; /* Make the table wider on smaller screens */
+  }
+}
+
+
+/*? next */
+
 
 
 .close-icon-container {
@@ -70,21 +121,7 @@ html, body, #root {
   background-color: #D3D3D3;
 }
 
-#table-position {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  height: 100%;
-}
 
-/* when there's a certain amount of words make the table scrollable*/
-#table-container {
-  width: 50%;
-  max-width: 100%;
-  overflow-x: auto; /* Enables horizontal scrolling if needed */
-  overflow-y: auto;
-  margin: auto;
-}
 
 
 
@@ -104,25 +141,11 @@ html, body, #root {
   background-color: #f9f9f9;
 }
 
-/* Style table cells */
-#vocab-source {
-  padding: 12px;
-  text-align: left;
-  word-wrap: break-word; /* Prevents text overflow */
-}
 
-#vocab-translation {
-  word-wrap: break-word;
-}
 
 /* Align German words to the right */
 
-/* Make table responsive */
-@media (max-width: 900px) {
-  #table-container {
-    width: 90%; /* Make the table wider on smaller screens */
-  }
-}
+
 
 #more-icon-heft {
   padding: 0%;
