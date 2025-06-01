@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import { useAuth } from '../hooks/useAuth';
+import { Box } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 export default function Home() {
   const [username, setUsername] = useState(null);
@@ -54,7 +57,11 @@ export default function Home() {
     if (loading || user === null) {
       console.log(user);
       
-      return <div>Loading...</div>
+      return (
+        <Box className='loading-icon-position'>
+          <CircularProgress className='' />
+        </Box> 
+      );
 
     } else {
       if (user) {

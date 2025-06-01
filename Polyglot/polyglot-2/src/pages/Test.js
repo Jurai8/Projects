@@ -410,38 +410,38 @@ export function TestLearner() {
         return (
             <>
                 <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                    <TableRow>
-                        <TableCell align="left">Your answer</TableCell>
-                        <TableCell align="right">Correct answer</TableCell>
-                    </TableRow>
-                    </TableHead>
-                    <TableBody>
-                    {mistakes.map((row, index) => (
-                        <TableRow
-                        key={index}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                        <TableCell component="th" scope="row">
-                            {row.userAnswer}
-                        </TableCell>
-
-                        <TableCell align="right">
-                            {row.correctAnswer}
-                        </TableCell>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                        <TableRow>
+                            <TableCell align="left">Your answer</TableCell>
+                            <TableCell align="right">Correct answer</TableCell>
                         </TableRow>
-                    ))}
-                    </TableBody>
-                    
-                </Table>
+                        </TableHead>
+                        <TableBody>
+                        {mistakes.map((row, index) => (
+                            <TableRow
+                            key={index}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                            <TableCell component="th" scope="row">
+                                {row.userAnswer}
+                            </TableCell>
+
+                            <TableCell align="right">
+                                {row.correctAnswer}
+                            </TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                        
+                    </Table>
                 </TableContainer>
             </>
         )
     }
 
     return (
-        <div>
+        <Box id='test-view'>
             {/* should be variable */}
 
             {state && 
@@ -457,9 +457,25 @@ export function TestLearner() {
                 // if begin != null 
             ) : (
                 begin === true ? (
-                    <>
+                    
+                        
+                    <Box
+                        component="form"
+                        sx={{
+                            '& > :not(style)': { m: 1, width: '25ch' },
+                        }}
+                        noValidate
+                        autoComplete="off"
+                        onSubmit={handleFormSubmit}
+                    >
                         <h1> Word: {word} </h1>
-                    </>
+
+                        {begin &&
+                            <TextField id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}/> 
+                        }
+
+                    </Box>
+                
                 ): (
                     <>
                         <h1> Score: {score} / {vocabulary.length} </h1>
@@ -474,27 +490,10 @@ export function TestLearner() {
                 )
             )}
 
+            <DisplayButtons begin={begin}/>
+           
 
-            <Box
-                component="form"
-                sx={{
-                    '& > :not(style)': { m: 1, width: '25ch' },
-                }}
-                noValidate
-                autoComplete="off"
-                onSubmit={handleFormSubmit}
-                >
-
-                {begin &&
-                    <TextField id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}/> 
-                }
-                
-
-                <DisplayButtons begin={begin}/>
-
-            </Box>
-
-        </div>
+        </Box>
     )
 }
 
@@ -629,33 +628,41 @@ function SelectTest() {
             <ScheduleTestModal />
 
             <Typography variant='h5'> Select your vocab list</Typography>
-            {options.map((list,index)=>(
-                <List key={index}>
-                    {/*pass test type and listName to TestLearner */}
 
-                    {pathname === "/test/schedule-test/select-list" ?
-                        <ListItem disablePadding>
-                            <ListItemButton 
+            <Box className='table-position'>
+
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                            <TableCell><strong>List Name</strong></TableCell>
+                            </TableRow>
+                        </TableHead>
+
+                        <TableBody>
+                            {options.map((list, index) => (
+                            <TableRow
+                                key={index}
+                                hover
+                                sx={{ cursor: 'pointer' }}
                                 onClick={() => {
-                                    setSelectedList(list.listName);
-                                    open()
+                                    if (pathname === "/test/schedule-test/select-list") {
+                                        setSelectedList(list.listName);
+                                        open();
+                                    } else {
+                                        handleNavigation(list.listName);
+                                    }
                                 }}
                             >
-                                <ListItemText primary={list.listName}/>
-                            </ListItemButton>
-                        </ListItem> :
-
-                        <ListItem disablePadding>
-                            <ListItemButton 
-                                onClick={() => {handleNavigation(list.listName)}}
-                            >
-                                <ListItemText primary={list.listName}/>
-                            </ListItemButton>
-                        </ListItem>
-                    }
-                    
-                </List>
-            ))}
+                                <TableCell>{list.listName}</TableCell>
+                            </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                
+            </Box>
+            
         </div>
     )
 }
@@ -665,7 +672,7 @@ function SelectTest() {
 export {SelectTest}
 
 // after the user selects the test, they then select the list
-function TestType({ open, close, schedule}) {
+function TestType({ open, close, schedule }) {
     // modal
     // options:
         // Pos test

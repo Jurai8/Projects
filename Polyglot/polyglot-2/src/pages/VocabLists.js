@@ -209,7 +209,12 @@ function NewCollectionModal({ open, close, createCollection, hasVocab, closeHasV
         }
         
 
-        <div>
+        <Box 
+          display="flex"
+          flexDirection="column"
+          gap={2} // or spacing between fields (2 = 16px)
+          width="100%" 
+        >
           <TextField
             id='vocab-collection-name'
             placeholder="e.g Family"
@@ -235,7 +240,7 @@ function NewCollectionModal({ open, close, createCollection, hasVocab, closeHasV
             variant="outlined"
             onChange={(e) => setTranslation(e.target.value)}
           />
-        </div>
+        </Box>
         
         <Button onClick={async () => {
           try {

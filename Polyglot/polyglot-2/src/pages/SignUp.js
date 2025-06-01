@@ -23,15 +23,9 @@ export default function SignUp() {
       <CssBaseline />
       {/* conditional rendering for register and sign in */}
       {(loading || user) ? (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh', // or set a fixed height if not full screen
-          width: '100%',
-        }}>
-          <CircularProgress />
-        </div> 
+        <Box className='loading-icon-position'>
+          <CircularProgress className='' />
+        </Box> 
       ) : (
         // TODO: fix the spacing between the modal and error message
         
@@ -71,15 +65,9 @@ export function SignIn() {
     <div className='auth-modal-container'>
       <CssBaseline />
       {loading ? 
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh', // or set a fixed height if not full screen
-          width: '100%',
-        }}>
-          <CircularProgress />
-        </div> 
+        <Box className='loading-icon-position'>
+          <CircularProgress className='' />
+        </Box> 
       :
 
       // TODO: fix the spacing between the modal and error message

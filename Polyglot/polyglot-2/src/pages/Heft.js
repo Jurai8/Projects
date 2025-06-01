@@ -187,6 +187,7 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    pt: 2
 };
 
 function AddWordModal({ open, close, addWord, listName }) {
@@ -212,22 +213,34 @@ function AddWordModal({ open, close, addWord, listName }) {
                 </div>
 
 
-                <Typography id="modal-modal-title" variant="h6" component="h2">
+                <Typography 
+                    id="modal-modal-title" 
+                    variant="h6" 
+                    component="h2" 
+                    sx={{pb: 2}}
+                >
                     New Word
                 </Typography>
-                                                  
-                <TextField 
-                    id="outlined-basic-english" label="Source" name="source" variant="outlined" onChange={(e) =>  
-                        setSource(e.target.value)
-                    } 
-                /> 
 
-                <TextField 
-                    id="outlined-basic-german" label="Translation" name="translation" variant="outlined" 
-                    onChange={(e) => {
-                        setTrans(e.target.value);
-                    }}
-                />
+                <Box 
+                    display="flex"
+                    flexDirection="row"
+                    gap={2} 
+                >
+                    <TextField 
+                        id="outlined-basic-english" label="Source" name="source" variant="outlined" onChange={(e) =>  
+                            setSource(e.target.value)
+                        } 
+                    /> 
+
+                    <TextField 
+                        id="outlined-basic-german" label="Translation" name="translation" variant="outlined" 
+                        onChange={(e) => {
+                            setTrans(e.target.value);
+                        }}
+                    />
+                </Box>                          
+                
 
                 <Button onClick={async () => {
                     try {
