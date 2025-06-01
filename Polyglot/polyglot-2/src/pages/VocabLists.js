@@ -82,7 +82,7 @@ export default function VocabLists() {
 
   }, [getVocabLists])
 
-  // decide which version to render depending on whether the user is coming from test or not
+  
   return (
     <>
       { hasVocab ? (
@@ -90,14 +90,8 @@ export default function VocabLists() {
         ) : (
           <>
             <h1>Your vocab lists</h1>
-            <Box className='table-position'
-              sx={{ 
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',       
-                justifyContent: 'center',
-                '& > :not(style)':  {m: 1, width: '50%' } 
-              }}
+            <Box 
+              className='table-position'
             >
 
               <div id="coll-table-button-container">

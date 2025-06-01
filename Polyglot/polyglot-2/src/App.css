@@ -14,6 +14,14 @@ html, body, #root {
   overflow: auto; /* Allow scrolling ONLY if content overflows */
 }
 
+.loading-icon-position {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
 
 
 /*? next */
@@ -71,11 +79,16 @@ html, body, #root {
   margin: auto;
 }
 
-#table-position {
+.table-position {
   display: flex;
-  align-items: center;
   flex-direction: column;
-  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-position > :not(style) {
+  margin: 8px; /* 'm: 1' = theme.spacing(1) = usually 8px */
+  width: 50%;
 }
 
 
@@ -102,12 +115,7 @@ html, body, #root {
 /*? next */
 
 
-
-.close-icon-container {
- text-align: right;
-}
-
-
+/* 5. Test */
 #test-schedule-table {
   width: 100%;
 }
@@ -120,6 +128,15 @@ html, body, #root {
 .schedule-table-rows:hover {
   background-color: #D3D3D3;
 }
+
+
+
+.close-icon-container {
+ text-align: right;
+}
+
+
+
 
 
 

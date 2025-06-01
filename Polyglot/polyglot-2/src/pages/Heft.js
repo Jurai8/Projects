@@ -21,6 +21,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 /* // TODO: 
@@ -97,7 +98,9 @@ export default function Heft () {
             {/*Modal for delete vocab */}
 
             <h1>{listName}</h1>
-            <div id='table-position'>
+            <Box className='table-position'
+            
+            >
                 <div className='button-container' >
                     {/* "New Word" button which opens addwordmodal*/}
                     <Button onClick={() => setAddWordModal(true)}>
@@ -159,17 +162,16 @@ export default function Heft () {
                                     </TableRow>
                                 )) ):(
 
-                                <TableRow>
-                                    <TableCell>
-                                        Loading...
-                                    </TableCell>
-                                </TableRow>
+                                <Box className='loading-icon-position'>
+                                    <CircularProgress />
+                                </Box>
+
                             )}
                             
                         </TableBody>
                     </Table>
                 </TableContainer>   
-            </div>
+            </Box>
         </>
        
     );

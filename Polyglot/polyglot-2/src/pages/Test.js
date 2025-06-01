@@ -27,6 +27,8 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import { Typography } from '@mui/material';
 import useTest from '../hooks/useTest';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 
 //TODO: create a collection to store words that user wants to be tested on in the future. User should be able to select individual words to be tested on within a vocab collection (?) or they can get tested on the entire collection
@@ -145,14 +147,14 @@ export function TestIndex() {
                 </div>
             </div>
 
-            
-            <TableContainer id='schedule-table-container' component={Paper}>
+            <Box className="table-position">
+
+                <TableContainer id='schedule-table-container' component={Paper}>
                 <Table 
                     sx={{ minWidth: 650, tableLayout: 'fixed' }} 
                     aria-label="simple table" 
                     id="test-schedule-table" 
                 >
-
                 {scheduleTable ?
                     <>
                         <TableHead>
@@ -162,12 +164,15 @@ export function TestIndex() {
                                     Test
                                 </TableCell>
 
-                                <TableCell className='schedule-table-header'>
+                                <TableCell className='schedule-table-header'
+                                    align='center'
+                                >
                                     List
                                 </TableCell>
 
                                 <TableCell 
-                                    className='schedule-table-header' 
+                                    className='schedule-table-header'
+                                    align="right"
                                 >
                                     Date
                                 </TableCell>
@@ -190,12 +195,14 @@ export function TestIndex() {
                                     
                                     <TableCell 
                                         sx={{ paddingRight: "0px !important" }}
+                                        align='center'
                                     >
                                         {row.collection}
                                     </TableCell>   
 
                                     <TableCell  
-                                        sx={{ paddingRight: "0px !important" }}
+                                        sx={{ paddingRight: "10px !important" }}
+                                        align='right'
                                     >
                                         {row.date}
                                     </TableCell> 
@@ -214,8 +221,11 @@ export function TestIndex() {
                     </TableBody>
                 }
                     
-                </Table>
-            </TableContainer>
+                    </Table>
+                </TableContainer>
+            
+
+            </Box>
             
         </>
     );
