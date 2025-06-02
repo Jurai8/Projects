@@ -370,19 +370,7 @@ export function TestLearner() {
                         Begin
                     </Button>
                 ) : (
-                    begin === true ? (
-                        <Button 
-                            variant="contained" 
-                            onClick={() => {
-                                if (begin) {
-                                    handleConfirmClick()
-                                } else {
-                                    return null;
-                                }        
-                            }}>
-                            Confirm
-                        </Button>
-                    ) : (
+                    begin === false ? (
                         <>
                             <Button variant="contained" onClick={() => {
                                 setVocabulary(randomize(vocabulary));
@@ -400,6 +388,8 @@ export function TestLearner() {
                                 End
                             </Button>
                         </>
+                    ) : (
+                        null
                     )
                 )}
             </>
@@ -441,56 +431,84 @@ export function TestLearner() {
     }
 
     return (
-        <Box id='test-view'>
+        <Box id='test-page'>
             {/* should be variable */}
 
             {state && 
-                <>
+                <Box id='test-heading'>
                     <h1>Test: {state.testType}</h1>
                     <h1>List: {state.listName}</h1>
-                </>
+                </Box>
             }
 
             {/* display "word" upon entering the page */}
-            {begin === null ? (
-                <h1>Goodluck</h1>
-                // if begin != null 
-            ) : (
-                begin === true ? (
-                    
-                        
-                    <Box
-                        component="form"
-                        sx={{
-                            '& > :not(style)': { m: 1, width: '25ch' },
-                        }}
-                        noValidate
-                        autoComplete="off"
-                        onSubmit={handleFormSubmit}
-                    >
-                        <h1> Word: {word} </h1>
+            <Box id="test-center-content">
+                <Paper elevation={3} sx={{ minWidth: '50%', minHeight: '50%' }} >
+                    <Box id='test-screen'>
+                        {begin === null ? (
 
-                        {begin &&
-                            <TextField id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}/> 
-                        }
+                        <Typography variant='h4'>Goodluck</Typography>
+                    
+                        ) : (
+                            begin === true ? (
+                                
+                                    
+                                <Box
+                                    component="form"
+                                    sx={{
+                                        '& > :not(style)': { m: 1, width: '25ch' },
+                                    }}
+                                    noValidate
+                                    autoComplete="off"
+                                    onSubmit={handleFormSubmit}
+                                >
+                                    <Typography variant='h4'>
+                                        Word: {word} 
+                                    </Typography>
+
+                                    
+                                    <TextField 
+                                        id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}
+                                    /> 
+
+                                    <Button 
+                                        variant="contained" 
+                                        onClick={() => {
+                                            if (begin) {
+                                                handleConfirmClick()
+                                            } else {
+                                                return null;
+                                            }        
+                                        }}>
+                                        Confirm
+                                    </Button>
+                                    
+
+                                </Box>
+                            
+                            ) : (
+                                <Box>
+                                    <h1> Score: {score} / {vocabulary.length} </h1>
+
+                                    {/* only show if they've made any mistake */}
+                                    {mistakes.length >= 1 &&
+                                        <DisplayMistakes />
+                                    }
+                                    
+                                </Box>
+                            
+                            )
+                        )}
+
+                        <DisplayButtons begin={begin}/>
 
                     </Box>
-                
-                ): (
-                    <>
-                        <h1> Score: {score} / {vocabulary.length} </h1>
+                    
+                </Paper>
 
-                        {/* only show if they've made any mistake */}
-                        {mistakes.length >= 1 &&
-                            <DisplayMistakes />
-                        }
-                        
-                    </>
-                   
-                )
-            )}
-
-            <DisplayButtons begin={begin}/>
+            </Box>
+            
+            
            
 
         </Box>
