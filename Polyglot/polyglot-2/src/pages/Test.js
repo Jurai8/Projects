@@ -363,34 +363,12 @@ export function TestLearner() {
     function DisplayButtons({begin}) { 
         return (
             <>
-                {begin === null ? (
+                {begin === null && (
                     <Button variant="contained" onClick={() => {
                         beginTest()
                     }}>
                         Begin
                     </Button>
-                ) : (
-                    begin === false ? (
-                        <>
-                            <Button variant="contained" onClick={() => {
-                                setVocabulary(randomize(vocabulary));
-                                beginTest();
-                            }}>
-                                restart
-                            </Button>
-
-                            {/* rout user to indexTest */}
-                            <Button variant="contained" onClick={() => {
-                                // ? don't allow the user to go back ?
-                                navigate("/test")
-                            }}
-                            >
-                                End
-                            </Button>
-                        </>
-                    ) : (
-                        null
-                    )
                 )}
             </>
         )
@@ -443,8 +421,9 @@ export function TestLearner() {
 
             {/* display "word" upon entering the page */}
             <Box id="test-center-content">
-                <Paper elevation={3} sx={{ minWidth: '50%', minHeight: '50%' }} >
-                    <Box id='test-screen'>
+                <Paper id='test-screen' elevation={3} 
+                >
+                    <Box id='test-content-container'>
                         {begin === null ? (
 
                         <Typography variant='h4'>Goodluck</Typography>
@@ -454,6 +433,7 @@ export function TestLearner() {
                                 
                                     
                                 <Box
+                                    id='test-content'
                                     component="form"
                                     sx={{
                                         '& > :not(style)': { m: 1, width: '25ch' },
@@ -462,39 +442,83 @@ export function TestLearner() {
                                     autoComplete="off"
                                     onSubmit={handleFormSubmit}
                                 >
-                                    <Typography variant='h4'>
-                                        Word: {word} 
-                                    </Typography>
+                                    <Box id='test-word'>
+                                        <Typography variant='h4'>
+                                            Word: {word} 
+                                        </Typography>
+                                    </Box>
+                                    
 
                                     
                                     <TextField 
-                                        id="standard-basic" label="Standard" variant="standard" type='text' value={input} onChange={handleInputChange}
+                                        id="standard-basic" label="Answer" variant="standard" type='text' value={input} onChange={handleInputChange}
                                     /> 
 
-                                    <Button 
-                                        variant="contained" 
-                                        onClick={() => {
+                                    <Box id='test-confirm-button-container'>
+                                        <Button 
+                                            variant="contained" 
+                                            onClick={() => {
                                             if (begin) {
                                                 handleConfirmClick()
                                             } else {
                                                 return null;
                                             }        
                                         }}>
-                                        Confirm
-                                    </Button>
-                                    
+                                            Confirm
+                                        </Button>
+                                    </Box>
 
                                 </Box>
                             
                             ) : (
-                                <Box>
-                                    <h1> Score: {score} / {vocabulary.length} </h1>
+                                <Box 
+                                    display="flex" 
+                                    flexDirection="column" 
+                                    height="100%"
+                                >
+                                    {/* Top Half – Score */}
+                                    <Box id='test-result-top-half'>
 
-                                    {/* only show if they've made any mistake */}
-                                    {mistakes.length >= 1 &&
-                                        <DisplayMistakes />
-                                    }
-                                    
+                                        <Box id='score-container'>
+                                            <Typography variant='h4'> 
+                                                Score: {score} / {vocabulary.length} 
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+
+                                    {/* Bottom Half – Buttons & Mistakes */}
+                                    <Box id='test-result-bottom-half'>
+
+                                        <Box display="flex" gap={2}>
+                                            <Button 
+                                                variant="contained" 
+                                                onClick={() => {
+                                                setVocabulary(randomize(vocabulary));
+                                                beginTest();
+                                                }}
+                                            >
+                                                Restart
+                                            </Button>
+
+                                            <Button 
+                                                variant="contained" 
+                                                onClick={() => {
+                                                navigate("/test");
+                                                }}
+                                            >
+                                                End
+                                            </Button>
+                                        </Box>
+
+                                        
+                                    </Box>
+
+                                    {/* Optional mistakes list below buttons */}
+                                        {mistakes.length >= 1 && (
+                                        <Box id='mistakes-table' mt={3}>
+                                            <DisplayMistakes />
+                                        </Box>
+                                        )}
                                 </Box>
                             
                             )
