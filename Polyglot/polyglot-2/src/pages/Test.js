@@ -2,6 +2,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import de from 'date-fns/locale/de';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import { Backdrop } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import dayjs from 'dayjs';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -179,37 +180,46 @@ export function TestIndex() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {scheduleTable.map((row, index) => (
-                                <TableRow
-                                    key={index}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    className='schedule-table-rows'
-                                    onDoubleClick={() => {
-                                        setTestDetails(row);
-                                        setBeginTestModal(true)
-                                    }}
-                                >
-                                    <TableCell component="th" scope="row" >
-                                        {row.testType}
+                            {scheduleTable.length <= 0 ? (
+                                <TableRow>
+                                    <TableCell>
+                                        Schedule is Empty
                                     </TableCell>
-                                    
-                                    <TableCell 
-                                        sx={{ paddingRight: "0px !important" }}
-                                        align='center'
-                                    >
-                                        {row.collection}
-                                    </TableCell>   
-
-                                    <TableCell  
-                                        sx={{ paddingRight: "10px !important" }}
-                                        align='right'
-                                    >
-                                        {row.date}
-                                    </TableCell> 
-                    
                                 </TableRow>
-                            ))}
+                            ) : (
+                                scheduleTable.map((row, index) => (
+                                    <TableRow
+                                        key={index}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        className='schedule-table-rows'
+                                        onDoubleClick={() => {
+                                            setTestDetails(row);
+                                            setBeginTestModal(true)
+                                        }}
+                                    >
+                                        <TableCell component="th" scope="row" >
+                                            {row.testType}
+                                        </TableCell>
+                                        
+                                        <TableCell 
+                                            sx={{ paddingRight: "0px !important" }}
+                                            align='center'
+                                        >
+                                            {row.collection}
+                                        </TableCell>   
+
+                                        <TableCell  
+                                            sx={{ paddingRight: "10px !important" }}
+                                            align='right'
+                                        >
+                                            {row.date}
+                                        </TableCell> 
+                        
+                                    </TableRow>
+                                ))
+                            )}
                         </TableBody> 
+                        
                     </> :
 
                     <TableBody>
@@ -262,6 +272,12 @@ export function TestLearner() {
     const [vocabulary,setVocabulary] = useState([]);
 
     const [vocabType, setVocabType] = useState("")
+
+    // shows mistakes table
+    const [showMistakes, setShowMistakes] = useState(false);
+
+    const displayMistakes = () => setShowMistakes(true);
+    const closeMistakes = () => setShowMistakes(false)
 
     
     // get the vocab to be tested on
@@ -376,8 +392,12 @@ export function TestLearner() {
 
     function DisplayMistakes() {
         return (
-            <>
-                <TableContainer component={Paper}>
+            <Backdrop
+                sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+                open={showMistakes}
+                onClick={closeMistakes}
+            >
+                <TableContainer component={Paper} id='test-table-container'>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                         <TableRow>
@@ -404,7 +424,7 @@ export function TestLearner() {
                         
                     </Table>
                 </TableContainer>
-            </>
+            </Backdrop>
         )
     }
 
@@ -421,8 +441,8 @@ export function TestLearner() {
 
             {/* display "word" upon entering the page */}
             <Box id="test-center-content">
-                <Paper id='test-screen' elevation={3} 
-                >
+                <Paper id='test-screen' elevation={3}>
+
                     <Box id='test-content-container'>
                         {begin === null ? (
 
@@ -487,7 +507,9 @@ export function TestLearner() {
                                     </Box>
 
                                     {/* Bottom Half – Buttons & Mistakes */}
-                                    <Box id='test-result-bottom-half'>
+                                    <Box id='test-result-bottom-half'
+                                        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}
+                                    >
 
                                         <Box display="flex" gap={2}>
                                             <Button 
@@ -510,19 +532,29 @@ export function TestLearner() {
                                             </Button>
                                         </Box>
 
+                                        {mistakes.length >= 1 &&
+                                            <Box sx={{ paddingTop: "5px"}}
+                                            >
+                                                <Button variant='contained'
+                                                    onClick={() => 
+                                                        displayMistakes()
+                                                    }   
+                                                >
+                                                    Mistakes
+                                                </Button>
+                                            </Box>
+                                           
+                                        }
                                         
                                     </Box>
-
-                                    {/* Optional mistakes list below buttons */}
-                                        {mistakes.length >= 1 && (
-                                        <Box id='mistakes-table' mt={3}>
-                                            <DisplayMistakes />
-                                        </Box>
-                                        )}
                                 </Box>
                             
                             )
                         )}
+
+                      
+                        <DisplayMistakes />   
+                        
 
                         <DisplayButtons begin={begin}/>
 
@@ -530,10 +562,7 @@ export function TestLearner() {
                     
                 </Paper>
 
-            </Box>
-            
-            
-           
+            </Box>   
 
         </Box>
     )
@@ -626,7 +655,7 @@ function SelectTest() {
                         dateAdapter={AdapterDayjs} adapterLocale={de}
                     >
                         <StaticDatePicker 
-                            defaultValue={dayjs('2025/04/17')} 
+                            defaultValue={dayjs()} 
                             // customize what button shows in the actionbar
                             slotProps={{
                                 actionBar: {

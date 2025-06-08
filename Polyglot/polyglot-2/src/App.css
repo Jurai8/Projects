@@ -214,10 +214,20 @@ html, body, #root {
   text-align: center;
 }
 
-#mistakes-table {
-  width: 100%;
+#mistakes-table-backdrop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
+#test-table-container {
+  width: 50%;
+  max-width: 100%;
+  overflow-x: auto; /* Enables horizontal scrolling if needed */
+  overflow-y: auto;
+  margin: auto;
+}
 
 
 .close-icon-container {
