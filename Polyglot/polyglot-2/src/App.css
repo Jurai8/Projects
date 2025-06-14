@@ -229,13 +229,45 @@ html, body, #root {
   margin: auto;
 }
 
+/* 6. Profile page */
+
+#profile-content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7rem;
+}
+
+#profile-personal {
+  width: 95%;
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+#profile-collection {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#profile-stats{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 
 .close-icon-container {
  text-align: right;
 }
-
-
-
 
 
 

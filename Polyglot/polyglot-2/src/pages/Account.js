@@ -2,6 +2,7 @@ import { Button, Modal, Box, Typography } from "@mui/material";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 
+// TODO: add a sign out function. remove the signout button from the home page
 export default function Account() {
 
     const { deleteAccount } = useAuth();

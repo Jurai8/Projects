@@ -3,6 +3,7 @@ import { firestore } from "../firebase";
 import { collection, doc, getDoc} from "firebase/firestore";
 import { useCallback, useEffect, useState } from "react";
 import  useGetUserData  from "../hooks/useUserData";
+import { Box, Paper, Typography } from "@mui/material";
 
 export default function Profile () {
 
@@ -42,6 +43,7 @@ export default function Profile () {
                 setLists(docSnap.data().VocabLists);
                 setTests(docSnap.data().Tests);
                 setPerfects(docSnap.data().Perfects);
+                setJoined(docSnap.data().Joined)
 
             } else {
                 // Throw an Error?
@@ -61,15 +63,72 @@ export default function Profile () {
     
 
     return (
-        <div>
-            <h1>Username: {username} </h1>
+        <Box id='profile-content-container'>
+            <Box id='profile-personal'>
+                <Typography variant="h3"> {username} </Typography>
+                <Typography variant="h7"> Joined: {joined} </Typography>
+            </Box>
 
-            <h1>Lists: {lists} </h1>
-            <h1>Words saved: {words} </h1>
-            <h1>Tests done: {tests} </h1>
-            <h2>Perfects: {perfects} </h2>
-            <h1>Date Joined: </h1>
-        </div>
+            
+                <Paper id='profile-collection'>
+                    <Box 
+                        sx={{ width: '33.3%', display: 'flex', justifyContent: 'center',
+                    }}>
+
+                        <Box 
+                            sx={{ display: 'flex', justifyContent: 'center',alignItems: 'center', flexDirection: 'column'
+                        }}>
+                            <Typography variant="h4">Lists</Typography>
+                            <Typography variant="h4">{lists}</Typography>
+                        </Box>
+                        
+                    </Box>
+
+                    <Box sx={{ width: '33.3%' }} /> {/* Empty middle spacer */}
+
+                    <Box 
+                        sx={{ width: '33.3%', display: 'flex', justifyContent: 'center'
+                    }}>
+                        <Box 
+                            sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'
+                        }}>
+                            <Typography variant="h4">Words</Typography>
+                            <Typography variant="h4">{words}</Typography>
+                        </Box>
+                        
+                    </Box>
+                </Paper>
+                
+          
+
+            <Box id='profile-stats'>
+                <Box 
+                    sx={{ width: '33.3%', display: 'flex', justifyContent: 'center' 
+                }}>
+                    <Box 
+                        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'
+                    }}>
+                        <Typography variant="h4">Tests</Typography>
+                        <Typography variant="h4"> {tests}  </Typography>
+                    </Box>
+                    
+                </Box>
+
+                <Box sx={{ width: '33.3%' }} /> {/* Empty middle spacer */}
+
+                <Box 
+                    sx={{ width: '33.3%', display: 'flex', justifyContent: 'center' 
+                }}>
+                    <Box 
+                        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'
+                    }}>
+                        <Typography variant="h4">Perfects</Typography>
+                        <Typography variant="h4"> {perfects} </Typography>
+                    </Box>
+                </Box>
+            </Box>
+            
+        </Box>
        
     );
 }

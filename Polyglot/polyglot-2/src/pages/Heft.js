@@ -149,7 +149,9 @@ export default function Heft () {
                                         </TableCell>    
         
         
-                                        {/* change the sizing of the margin/padding etc */}
+                                        {
+                                        /* change the sizing of the margin/padding etc */
+                                        }
                                         <TableCell align="right" id='more-icon-heft' >
                                             {/* display info */}
                                             <IconButton onClick={() =>
