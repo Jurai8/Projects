@@ -36,3 +36,6 @@ A section where the user can do grammar exercises for their chosen language
 
 In this section the user can combine everything that they've learned, buy writing a short story or a short essay. They will then get evaluated based on syntax and grammer and also the length of the essay. 
 
+## Database
+
+Firebase is used for the db
