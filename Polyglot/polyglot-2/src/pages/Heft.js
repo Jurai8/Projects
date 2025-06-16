@@ -98,9 +98,7 @@ export default function Heft () {
             {/*Modal for delete vocab */}
 
             <h1>{listName}</h1>
-            <Box className='table-position'
-            
-            >
+            <Box className='table-position'>
                 <div className='button-container' >
                     {/* "New Word" button which opens addwordmodal*/}
                     <Button onClick={() => setAddWordModal(true)}>

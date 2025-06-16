@@ -35,11 +35,11 @@ const theme = createTheme({
 
 
 const pages = ['Home', 'VocabLists', 'Test',];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Account'];
 
 function Navigation() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -62,8 +62,6 @@ function Navigation() {
   const navigateTo = (page) => {
     if (page === "Home") {
       navigate("/")
-    } else if (page === "Logout") {
-      logout()
     } else {
       navigate(`/${page}`)
     }

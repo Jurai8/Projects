@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from "react";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useAuth } from '../hooks/useAuth';
 import { Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -41,10 +41,7 @@ export default function Home() {
       <section id="username">
         {username ? (
           <div style={{ display: 'flex' }}>
-            <h1>Welcome {username}</h1>
-            <Button onClick={() => logout()}>
-                Sign out
-            </Button>
+            <Typography variant='h4'>Welcome {username}</Typography>
           </div>
         ) : null}
       </section>

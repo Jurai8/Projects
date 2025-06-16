@@ -70,38 +70,38 @@ export default function Profile () {
             </Box>
 
             
-                <Paper id='profile-collection'>
-                    <Box 
-                        sx={{ width: '33.3%', display: 'flex', justifyContent: 'center',
-                    }}>
-
-                        <Box 
-                            sx={{ display: 'flex', justifyContent: 'center',alignItems: 'center', flexDirection: 'column'
-                        }}>
-                            <Typography variant="h4">Lists</Typography>
-                            <Typography variant="h4">{lists}</Typography>
-                        </Box>
-                        
-                    </Box>
-
-                    <Box sx={{ width: '33.3%' }} /> {/* Empty middle spacer */}
+            <Paper id='profile-collection'>
+                <Box 
+                    sx={{ width: '33.3%', display: 'flex', justifyContent: 'center',
+                }}>
 
                     <Box 
-                        sx={{ width: '33.3%', display: 'flex', justifyContent: 'center'
+                        sx={{ display: 'flex', justifyContent: 'center',alignItems: 'center', flexDirection: 'column'
                     }}>
-                        <Box 
-                            sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'
-                        }}>
-                            <Typography variant="h4">Words</Typography>
-                            <Typography variant="h4">{words}</Typography>
-                        </Box>
-                        
+                        <Typography variant="h4">Lists</Typography>
+                        <Typography variant="h4">{lists}</Typography>
                     </Box>
-                </Paper>
-                
-          
+                    
+                </Box>
 
-            <Box id='profile-stats'>
+                <Box sx={{ width: '33.3%' }} /> {/* Empty middle spacer */}
+
+                <Box 
+                    sx={{ width: '33.3%', display: 'flex', justifyContent: 'center'
+                }}>
+                    <Box 
+                        sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'
+                    }}>
+                        <Typography variant="h4">Words</Typography>
+                        <Typography variant="h4">{words}</Typography>
+                    </Box>
+                    
+                </Box>
+            </Paper>
+            
+        
+               
+            <Paper id='profile-stats'>
                 <Box 
                     sx={{ width: '33.3%', display: 'flex', justifyContent: 'center' 
                 }}>
@@ -126,9 +126,10 @@ export default function Profile () {
                         <Typography variant="h4"> {perfects} </Typography>
                     </Box>
                 </Box>
-            </Box>
+            </Paper>
             
         </Box>
+        
        
     );
 }

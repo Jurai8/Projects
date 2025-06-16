@@ -1,20 +1,45 @@
 import { Button, Modal, Box, Typography } from "@mui/material";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 
 // TODO: add a sign out function. remove the signout button from the home page
 export default function Account() {
 
-    const { deleteAccount } = useAuth();
+    const { deleteAccount, logout } = useAuth();
+
     const [modal, setModal] = useState(false);
 
     const openModal = () => setModal(true);
 
     const closeModal = () => setModal(false);
-    
+
+    const theme = createTheme({
+        palette: {
+            primary: {
+            main: '#FFFFFF',
+            },
+            secondary: {
+            main: '#FFFFFF',
+        
+        },
+    },
+});
     return (
-        <>
-            <Button onClick={() => openModal()}>Delete Account</Button>
+        <Box id='delete-account-button-container'>
+           
+            <Button 
+                sx={{ color: theme.palette.error.dark }}
+                onClick={() => openModal()
+            }>
+                Delete Account
+            </Button>
+
+            <Button onClick={() => logout()}>
+                Sign out
+            </Button>
+                
 
             {modal && (
                 <DeleteAccountModal 
@@ -23,7 +48,7 @@ export default function Account() {
                     deleteAccount={deleteAccount} 
                 /> 
             )}
-        </>
+        </Box>
 
     );
 }
