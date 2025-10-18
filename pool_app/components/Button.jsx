@@ -1,16 +1,31 @@
 import { StyleSheet, View, Pressable, Text } from 'react-native';
-import PropTypes from 'prop-types';
+import { useRouter } from 'expo-router';
 
 
+
+const authNavigate = (label, router) => {
+  if (label === "Sign in") {
+    router.navigate('auth/sign_in')
+  } else if (label === "Sign up") {
+    router.navigate('auth/sign_up')
+  }
+}
 export default function Button({ label }) {
+
+  const router = useRouter();
+
   return (
     <View style={styles.buttonContainer}>
-      <Pressable style={styles.button} onPress={() => alert('You pressed a button.')}>
+      <Pressable style={styles.button} 
+        onPress={() => authNavigate(label, router)}
+      >
         <Text style={styles.buttonLabel}>{label}</Text>
       </Pressable>
     </View>
   );
 }
+
+
 
 
 

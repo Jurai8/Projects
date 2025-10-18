@@ -8,6 +8,7 @@ export default function Profile() {
         <Text style={styles.text}> Profile page</Text>
         <View>
           <Button label='Sign in'/>
+          <Button label='Sign up'/>
         </View>
     </View>
   )
