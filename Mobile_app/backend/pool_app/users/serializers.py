@@ -3,19 +3,25 @@ from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
     class Meta:
         model = User
         fields = [
             'id', 
             'username', 
             'email',
+            'password',
             'city', 
             'country',
             'ranking',  # Read-only (auto from editable=False)
-            'last_known_lat',  # Read-only
-            'last_known_lng',  # Read-only
+            'location_lat',  # Read-only
+            'location_lng',  # Read-only
+            'last_location_update',
             'display_pic'
         ]
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def create(self, validated_data):
         # Extract password
@@ -30,6 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
     def update(self, instance, validated_data):
+
         # Extract password if present
         password = validated_data.pop('password', None)
         
