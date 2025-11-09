@@ -49,3 +49,9 @@ class UserSerializer(serializers.ModelSerializer):
             instance.save()
         
         return instance
+    
+
+class ListUsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name']

@@ -1,44 +1,42 @@
 import { Text, View, StyleSheet, TextInput, Pressable } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../api/axios';
 
 
+export default function UserSearch() {
 
-export default function SignIn() {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
+    const [username,setUsername] = useState('')
+    const [Error, setError] = useState(false);
 
-    const signIn = async(username, password) => {
-        console.log(username, password)
-        const response = await api.post('api/signin/', {
-            username: username,
-            password: password
-        })
 
-        // store the token
-        const token = response.data.token
+    async function findUser(username) {
 
-        localStorage.setItem('token', token)
+        try {
+            const response = await api.post('api/search/', {
+                username: username,
+            })
+
+            console.log(response.data)
+            return response.data
+        } catch (error) {
+            console.error(error)
+            setError(error)
+        }
+        
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Sign in</Text>
+        <View>
             <TextInput
                 style={styles.input}
                 onChangeText={setUsername}
                 value={username}
-                placeholder='username'
+                placeholder='Search for a user'
             />
-            <TextInput
-                style={styles.input}
-                onChangeText={setPassword}
-                value={password}
-                placeholder='password'
-            />
+
             <Pressable 
                 style={styles.button}
-                onPress={async () => {await signIn(username,password)}}
+                onPress={async () => {await findUser(username)}}
             >
                 <Text>Submit</Text>
             </Pressable>
