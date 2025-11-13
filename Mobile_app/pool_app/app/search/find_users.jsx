@@ -5,19 +5,22 @@ import api from '../api/axios';
 
 export default function UserSearch() {
 
-    const [username,setUsername] = useState('')
+    const [username,setUsername] = useState('');
     const [Error, setError] = useState(false);
+    const [ShowUsers, setShowUsers] = useState(false);
+    const [Users, setUsers] = useState(false);
 
 
     async function findUser(username) {
-
+        
         try {
-            const response = await api.post('api/search/', {
-                username: username,
+            const response = await api.get('api/search/', {
+                params: {
+                    username: username,
+                }
             })
 
-            console.log(response.data)
-            return response.data
+            setUsers(response.data.users)
         } catch (error) {
             console.error(error)
             setError(error)
@@ -25,8 +28,42 @@ export default function UserSearch() {
         
     }
 
+    useEffect(() => {
+
+        console.log("running....")
+
+        if (Users) {
+            setShowUsers(true)
+
+            console.log("set show users to true")
+        }
+        
+
+    }, [Users]);
+
+
+    // get user info
+        // send the request
+        // get the data
+        // send it through the url to profile
+        
+
     return (
-        <View>
+
+        ShowUsers ? (
+            <View style={styles.container}>
+                <Text styles={{fontSize: 20,}}>
+                    {`Results for the search "${username}"`}</Text>
+                <ul>
+                    {Users.map(user => (
+                        <li key={user.username}>
+                            {user.username} 
+                        </li>
+                    ))}
+                </ul>
+            </View>
+        ) : (
+            <View style={styles.container}>
             <TextInput
                 style={styles.input}
                 onChangeText={setUsername}
@@ -41,6 +78,8 @@ export default function UserSearch() {
                 <Text>Submit</Text>
             </Pressable>
         </View>
+        )
+       
     )
 }
 

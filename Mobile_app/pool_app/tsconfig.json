@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/(tabs)/about.jsx", "app/(tabs)/index.jsx", "app/(tabs)/profile.jsx", "app/_layout.jsx", "app/+not-found.jsx", "app/(tabs)/_layout.jsx", "components/Button.jsx"  ]
+, "app/(tabs)/about.jsx", "app/(tabs)/index.jsx", "app/user/profile.jsx", "app/_layout.jsx", "app/+not-found.jsx", "app/(tabs)/_layout.jsx", "components/Button.jsx"  ]
 }

@@ -1,13 +1,14 @@
-from django.shortcuts import render
-from rest_framework import viewsets, status
-from django.contrib.auth import authenticate
 from .models import User
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from .permissions import IsOwnerOrReadOnly
 from .serializers import UserSerializer, ListUsersSerializer
-from rest_framework.response import Response
+from django.contrib.auth import authenticate
+from django.shortcuts import render
+from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 
@@ -17,7 +18,35 @@ from rest_framework.authtoken.models import Token
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    
+
+    """
+      this custom view is for when a user wants to view another users profile
+    """
+    # /api/users/get_user/
+    @action(detail=False, methods=['get'])
+    def get_user(self, request):
+        # get username from request
+        req_user = request.query_params.get('username')
+
+        if not req_user:
+            return Response({'error': 'Username parameter required'}, status=400)
+
+       
+        try:
+            # query db for that user
+            user = User.objects.get(username=req_user)
+
+            # get the user data from the serializer
+            serializer = self.get_serializer(user)
+
+            # return serializer data
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=404)
+        
+
+        # ! i'll need a seperate profile view for the user that owns the profile
+
     def get_permissions(self):
         
         if self.action == 'create':
@@ -31,9 +60,11 @@ class UserViewSet(viewsets.ModelViewSet):
 class ListUsers(APIView):
     # permissions 
         ## Allow authenticated users to access this view
+    permission_classes = [AllowAny]
 
     def get(self, request):
         # Get the search string from query parameters (?username=john)
+        # ! return an error
         username = request.query_params.get('username', '')
         
         # Query the database for matching usernames
