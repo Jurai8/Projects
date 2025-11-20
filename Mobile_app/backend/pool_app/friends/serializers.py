@@ -1,25 +1,26 @@
 from rest_framework import serializers
-from .models import Friendship
+from .models import Relationship
+from django.utils import timezone
 
 
 
 class FriendRequestSerializer(serializers.ModelSerializer):
-    """Creates a Friendship instance when the user sends a friend request"""
+    """Creates a Relationship instance when the user sends a friend request"""
 
     class Meta:  
-        model = Friendship
-        fields = ['friendship_id', 'user1', 'user2', 'status', 'friend_since']
-        read_only_fields = ['friendship_id', 'friend_since', 'user1']  # Prevent manual setting
+        model = Relationship
+        fields = ['id', 'user1', 'user2', 'status', 'friend_since', 'blocked_since', 'blocked_by']
+        read_only_fields = ['relationship_id', 'friend_since',  'blocked_since', 'blocked_by', 'user1', 'user2']  # Prevent manual setting
     
 
     def create(self, validated_data):
         # Automatically set the sender of the request
         validated_data['user1'] = self.context['request'].user
 
-        return Friendship.objects.create(**validated_data)
+        return Relationship.objects.create(**validated_data)
     
 
-    """This will be called when the status of Friendship is updated"""
+    """This will be called when the status of the Relationship is updated"""
     def update(self,instance, validated_data):
         request = self.context.get('request')
         new_status = validated_data.get['status']
@@ -42,6 +43,9 @@ class FriendRequestSerializer(serializers.ModelSerializer):
                 "Status must be 'accepted' or 'rejected'"
             )
         
+        if new_status == 'accepted':
+            instance.friend_since = timezone.now().date()
+            instance.blocked_since = None
 
         # Only allow status updates
         instance.status = validated_data.get('status', instance.status)
@@ -56,7 +60,7 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         user2 = data['user2']
 
         # Check if the friendship already exists
-        if Friendship.friendship_exists(user1=user1, user2=user2):
+        if Relationship.are_friends(user1=user1, user2=user2):
             raise serializers.ValidationError("Friendship already exists")
         
         # Check if user is trying to friend themselves
@@ -71,9 +75,42 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 
 class BlockUserSerializer(serializers.ModelSerializer):
    class Meta:  
-        model = Friendship
-        fields = ['friendship_id', 'user1', 'user2', 'status', 'friend_since']
-        read_only_fields = ['friendship_id', 'friend_since', 'user1']  # Prevent manual setting
+        model = Relationship
+        fields = ['id', 'user1', 'user2', 'status', 'friend_since', 'blocked_since', 'blocked_by']
+        read_only_fields = ['relationship_id', 'friend_since',  'blocked_since', 'blocked_by', 'user1', 'user2']  
+
+
+        def create(self, validated_data):
+            validated_data['user1'] = self.context['request'].user
+            status = validated_data.get('status', 'pending')
+
+            if status == 'blocked':
+                validated_data['blocked_by'] = self.context['request'].user
+                validated_data['blocked_since'] = timezone.now().date()
+                validated_data['friend_since'] = None 
+
+
+
+            return Relationship.objects.create(**validated_data)
+        
+
+        def update(self, instance, validated_data):
+            """
+            The user may already have a friendship with this person or they need to unblock them 
+            """
+
+            # get the user
+            user = self.context['request'].user
+
+            instance.status = 'blocked'
+            instance.blocked_by = user
+            instance.blocked_since = timezone.now().date()
+            instance.friend_since = None
+            
+
+            instance.save()
+
+            return instance
         
         def validate(self, data):
             # any user can be blocked besides already blocked users and the current user
@@ -88,7 +125,7 @@ class BlockUserSerializer(serializers.ModelSerializer):
                 )
             
             # if the requester has already blocked the user
-            if Friendship.is_blocked(user1=user, user2=user2):
+            if Relationship.is_blocked_by(blocker=user, blocked_user=user2):
                 raise serializers.ValidationError(
                     "This user is already blocked by you"
                 )

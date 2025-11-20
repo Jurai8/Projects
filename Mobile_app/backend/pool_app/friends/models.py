@@ -34,6 +34,14 @@ class Relationship(models.Model):
         choices=STATUS_CHOICES,
         default='pending'
     )
+
+    friend_since = models.DateField(null=True, blank=True)
+    blocked_since = models.DateField(null=True, blank=True)
+
+    blocked_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='blocks_initiated'
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -101,6 +109,17 @@ class Relationship(models.Model):
             models.Q(user1=user1, user2=user2) | models.Q(user1=user2, user2=user1),
             status='blocked'
         ).exists()
+    
+    @classmethod
+    def is_blocked_by(cls, blocker, blocked_user):
+        """Check if blocker has blocked blocked_user"""
+        return cls.objects.filter(
+            models.Q(user1=blocker, user2=blocked_user) | 
+            models.Q(user1=blocked_user, user2=blocker),
+            status='blocked',
+            blocked_by=blocker
+        ).exists()
+        
     
     @classmethod
     def get_relationship(cls, user1, user2):

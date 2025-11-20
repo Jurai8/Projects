@@ -1,4 +1,4 @@
-from .models import Friendship
+from .models import Relationship
 from django.shortcuts import render
 from .serializers import UserSerializer, ListUsersSerializer
 from django.contrib.auth import authenticate
@@ -15,7 +15,7 @@ from .serializers import FriendRequestSerializer
     
     
 class FriendRequestViewSet(viewsets.ModelViewSet):
-    queryset = Friendship.objects.all()
+    queryset = Relationship.objects.all()
     serializer_class = FriendRequestSerializer
     permission_classes = [IsAuthenticated]
 
@@ -77,7 +77,7 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
     
 
 class BlockUserViewSet(viewsets.ModelViewSet):
-    queryset = Friendship.objects.all()
+    queryset = Relationship.objects.all()
     serializer_class = BlockUserSerializer
     permission_classes = [IsAuthenticated]
 
