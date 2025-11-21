@@ -101,11 +101,19 @@ class BlockUserSerializer(serializers.ModelSerializer):
 
             # get the user
             user = self.context['request'].user
+            status = validated_data['status']
 
-            instance.status = 'blocked'
-            instance.blocked_by = user
-            instance.blocked_since = timezone.now().date()
-            instance.friend_since = None
+            if status == 'blocked':
+                instance.status = 'blocked'
+                instance.blocked_by = user
+                instance.blocked_since = timezone.now().date()
+                instance.friend_since = None
+
+            if status == 'unblocked':
+                instance.status = 'unblocked'
+                instance.blocked_by = None
+                instance.blocked_since = None
+                instance.friend_since = None
             
 
             instance.save()
