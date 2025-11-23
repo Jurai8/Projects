@@ -1,6 +1,6 @@
 from .models import Relationship
 from django.shortcuts import render
-from .serializers import UserSerializer, ListUsersSerializer, BlockUserSerializer
+from .serializers import BlockUserSerializer
 from django.contrib.auth import authenticate
 from django.shortcuts import render
 from rest_framework import viewsets, status
@@ -126,7 +126,7 @@ class BlockUserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def block_user(self, request):
 
-        serializer = self.get_serializer_class(data=request.data)
+        serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
             return Response(
@@ -139,7 +139,7 @@ class BlockUserViewSet(viewsets.ModelViewSet):
             status=status.HTTP_400_BAD_REQUEST
         )
     
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], url_path='block')
     def unblock_user(self, request, pk=None):
         instance = self.get_object()
 
@@ -157,7 +157,7 @@ class BlockUserViewSet(viewsets.ModelViewSet):
         )
     
     # view users the user has blocked
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get'], url_path='block')
     def get_blocked_users(self, request):
         user = request.user
         queryset = Relationship.get_blocked_users(user)

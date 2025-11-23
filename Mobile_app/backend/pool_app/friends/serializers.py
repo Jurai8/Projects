@@ -10,7 +10,7 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     class Meta:  
         model = Relationship
         fields = ['id', 'user1', 'user2', 'status', 'friend_since', 'blocked_since', 'blocked_by']
-        read_only_fields = ['relationship_id', 'friend_since',  'blocked_since', 'blocked_by', 'user1', 'user2']  # Prevent manual setting
+        read_only_fields = ['id', 'friend_since',  'blocked_since', 'blocked_by', 'user1']  # Prevent manual setting
     
 
     def create(self, validated_data):
@@ -74,66 +74,74 @@ class FriendRequestSerializer(serializers.ModelSerializer):
 
 
 class BlockUserSerializer(serializers.ModelSerializer):
-   class Meta:  
+    class Meta:  
         model = Relationship
         fields = ['id', 'user1', 'user2', 'status', 'friend_since', 'blocked_since', 'blocked_by']
-        read_only_fields = ['relationship_id', 'friend_since',  'blocked_since', 'blocked_by', 'user1', 'user2']  
+        read_only_fields = ['id', 'friend_since',  'blocked_since', 'blocked_by', 'user1']  
 
 
-        def create(self, validated_data):
-            validated_data['user1'] = self.context['request'].user
-            status = validated_data.get('status', 'pending')
+    def create(self, validated_data):
+        validated_data['user1'] = self.context['request'].user
+        status = validated_data.get('status')
 
-            if status == 'blocked':
-                validated_data['blocked_by'] = self.context['request'].user
-                validated_data['blocked_since'] = timezone.now().date()
-                validated_data['friend_since'] = None 
+        if not status:
+            raise serializers.ValidationError("Status is required")
+        
+        if status == 'blocked':
+            validated_data['blocked_by'] = self.context['request'].user
+            validated_data['blocked_since'] = timezone.now().date()
+            validated_data['friend_since'] = None 
 
 
 
-            return Relationship.objects.create(**validated_data)
+        return Relationship.objects.create(**validated_data)
+    
+
+    def update(self, instance, validated_data):
+        """
+        The user may already have a friendship with this person or they need to unblock them 
+        """
+
+        # get the user
+        user = self.context['request'].user
+        status = validated_data['status']
+
+        if status == 'blocked':
+            instance.status = 'blocked'
+            instance.blocked_by = user
+            instance.blocked_since = timezone.now().date()
+            instance.friend_since = None
+
+        if status == 'unblocked':
+            instance.status = 'unblocked'
+            instance.blocked_by = None
+            instance.blocked_since = None
+            instance.friend_since = None
         
 
-        def update(self, instance, validated_data):
-            """
-            The user may already have a friendship with this person or they need to unblock them 
-            """
+        instance.save()
 
-            # get the user
-            user = self.context['request'].user
-            status = validated_data['status']
+        return instance
+    
+    def validate(self, data):
+        # any user can be blocked besides already blocked users and the current user
 
-            if status == 'blocked':
-                instance.status = 'blocked'
-                instance.blocked_by = user
-                instance.blocked_since = timezone.now().date()
-                instance.friend_since = None
+        user = self.context['request'].user
+        user2 = data.get('user2')  # Won't crash if missing
 
-            if status == 'unblocked':
-                instance.status = 'unblocked'
-                instance.blocked_by = None
-                instance.blocked_since = None
-                instance.friend_since = None
-            
+        if not user2:
+            raise serializers.ValidationError("user2 is required")
 
-            instance.save()
-
-            return instance
+        # if the user tries to block themself
+        if user == user2:
+            raise serializers.ValidationError(
+                "Cannot block yourself"
+            )
         
-        def validate(self, data):
-            # any user can be blocked besides already blocked users and the current user
-
-            user = self.context['request'].user
-            user2 = data['user2']
-
-            # if the user tries to block themself
-            if user == user2:
-                raise serializers.ValidationError(
-                    "Cannot block yourself"
-                )
-            
-            # if the requester has already blocked the user
-            if Relationship.is_blocked_by(blocker=user, blocked_user=user2):
-                raise serializers.ValidationError(
-                    "This user is already blocked by you"
-                )
+        # if the requester has already blocked the user
+        if Relationship.is_blocked_by(blocker=user, blocked_user=user2):
+            raise serializers.ValidationError(
+                "This user is already blocked by you"
+            )
+        
+        return data

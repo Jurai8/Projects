@@ -35,7 +35,10 @@ class TestFriendships(APITestCase):
             format='json'
         )
 
+        print(f"📦 Response-1: {response.json()}")
+        
         # check if it succeeded
+        self.assertEqual(response.json()['status'], 'pending')
         self.assertEqual(response.status_code, 201)
 
 
@@ -57,10 +60,16 @@ class TestBlocks(APITestCase):
 
     # test if the user can block other user
     def test_blocking(self):
-        url = reverse('block-block_user')
+        url = reverse('block-block-user')
         response = self.client.post(url,
-            {'user2': self.user2.id},
+            {
+                'user2': self.user2.id,
+                'status': 'blocked'
+            },
             format='json'
         )
 
+        print(f"📦 Response: {response.json()}")
+        
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()['status'], 'blocked')

@@ -17,7 +17,6 @@ class Relationship(models.Model):
         ('unblocked', 'Unblocked')
     ]
     
-    relationship_id = models.AutoField(primary_key=True)
     user1 = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
