@@ -21,9 +21,9 @@ class FriendRequestSerializer(serializers.ModelSerializer):
     
 
     """This will be called when the status of the Relationship is updated"""
-    def update(self,instance, validated_data):
+    def update(self, instance, validated_data):
         request = self.context.get('request')
-        new_status = validated_data.get['status']
+        new_status = validated_data.get('status')
         
 
         # Validation: Only recipient can accept/reject
@@ -94,6 +94,7 @@ class BlockUserSerializer(serializers.ModelSerializer):
 
 
 
+        instance = Relationship.objects.create(**validated_data)
         return Relationship.objects.create(**validated_data)
     
 

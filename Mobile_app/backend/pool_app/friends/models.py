@@ -69,6 +69,9 @@ class Relationship(models.Model):
     def is_friendship(self):
         return self.status in ['pending', 'accepted', 'rejected']
     
+    def is_relationship(self):
+        return self.status in ['pending', 'accepted', 'rejected', 'blocked', 'unblocked']
+    
     @property
     def is_block(self):
         return self.status == 'blocked'

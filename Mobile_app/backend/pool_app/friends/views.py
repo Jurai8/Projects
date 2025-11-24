@@ -38,9 +38,12 @@ class FriendRequestViewSet(viewsets.ModelViewSet):
         )
     
     @action(detail=True, methods=['post'])
-    def accept(self, request):
+    def accept(self, request, pk=None):
         """Updates friendship status (accepts friend request)"""
-        friendship = self.get_object()  # Get the friendship by ID from URL
+
+        # Get the friendship instance (automatically uses pk from url)
+        friendship = self.get_object()
+
         serializer = self.get_serializer(friendship, data=request.data, partial=True)
 
         if serializer.is_valid():
@@ -129,6 +132,8 @@ class BlockUserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():
+            serializer.save()
+            
             return Response(
                 serializer.data,  
                 status=status.HTTP_201_CREATED 
@@ -146,6 +151,7 @@ class BlockUserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data={'status': 'unblocked'})
 
         if serializer.is_valid():
+            serializer.save()
             return Response(
                 serializer.data,  
                 status=status.HTTP_200_OK 
