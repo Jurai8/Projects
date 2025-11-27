@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Relationship
 from django.utils import timezone
+from django.db import transaction
 
 
 
@@ -17,7 +18,13 @@ class FriendRequestSerializer(serializers.ModelSerializer):
         # Automatically set the sender of the request
         validated_data['user1'] = self.context['request'].user
 
-        return Relationship.objects.create(**validated_data)
+        instance, created = Relationship.objects.update_or_create(**validated_data)
+
+        if created == False:
+            raise serializers.ValidationError("Could not create or update relationship instance")
+        
+
+        return instance
     
 
     """This will be called when the status of the Relationship is updated"""
@@ -79,7 +86,7 @@ class BlockUserSerializer(serializers.ModelSerializer):
         fields = ['id', 'user1', 'user2', 'status', 'friend_since', 'blocked_since', 'blocked_by']
         read_only_fields = ['id', 'friend_since',  'blocked_since', 'blocked_by', 'user1']  
 
-
+    @transaction.atomic
     def create(self, validated_data):
         validated_data['user1'] = self.context['request'].user
         status = validated_data.get('status')
@@ -93,9 +100,12 @@ class BlockUserSerializer(serializers.ModelSerializer):
             validated_data['friend_since'] = None 
 
 
+        instance, created = Relationship.objects.update_or_create(**validated_data)
 
-        instance = Relationship.objects.create(**validated_data)
-        return Relationship.objects.create(**validated_data)
+        if created == False:
+            raise serializers.ValidationError("Could not create or update relationship instance")
+        
+        return instance
     
 
     def update(self, instance, validated_data):
