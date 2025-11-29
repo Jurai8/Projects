@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'friends',
+    'games',
     'corsheaders',
     'rest_framework.authtoken',
 ]
